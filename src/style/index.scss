@@ -3,6 +3,8 @@
   --file-explorer-width: var(--default-explorer-width);
   --resize-panel-border-width: 16px;
   --resize-panel-border-color: red;
+  --gutter-height: 0px;
+  // --gutter-height: 20px;
 }
 
 .light-mode {
@@ -21,6 +23,7 @@
 
 body {
   margin: 0;
+  font-size: 1em;
   font-family: Avenir, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
     Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji,
     Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
@@ -28,4 +31,11 @@ body {
 
 .no-select {
   user-select: none;
+}
+
+// Overrides the box shadow at the bottom of the tab view
+// that monaco adds when scrolling down in the editor
+.monaco-editor .scroll-decoration {
+  box-shadow: none !important;
+  // border-top: 1px solid var(--color-panel-border);
 }

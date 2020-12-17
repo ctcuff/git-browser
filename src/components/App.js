@@ -5,20 +5,22 @@ import { parseCSSVar, setCSSVar } from '../scripts/util'
 import PropTypes from 'prop-types'
 import ExplorerPanel from './ExplorerPanel'
 import GitHubAPI from '../scripts/github-api'
+import Gutter from './Gutter'
+import { Tab, TabView } from './Tabs'
 
 const clamp = (min, value, max) => Math.max(min, Math.min(value, max))
-
 class App extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      selectedFileName: '',
-      selectedFileContents: ''
+      // Used to make sure the same tab can't be
+      // opened multiple times
+      openedFilePaths: new Set(),
+      openedFiles: []
     }
 
     this.mousePosition = 0
-    this.isMouseDown = false
 
     this.inputRef = React.createRef()
     this.rightPanelRef = React.createRef()
@@ -28,6 +30,9 @@ class App extends React.Component {
     this.onPanelMouseDown = this.onPanelMouseDown.bind(this)
     this.resizePanel = this.resizePanel.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
+    this.onTabClosed = this.onTabClosed.bind(this)
+    this.closeAllTabs = this.closeAllTabs.bind(this)
+    this.renderTab = this.renderTab.bind(this)
   }
 
   componentDidMount() {
@@ -39,14 +44,27 @@ class App extends React.Component {
   }
 
   onSelectFile(node) {
+    const { openedFilePaths, openedFiles } = this.state
+
     if (node.type === 'folder') {
+      return
+    }
+
+    // Don't open this file in a new tab since it's already open
+    if (openedFilePaths.has(node.path)) {
       return
     }
 
     GitHubAPI.getFile(node.url).then(content => {
       this.setState({
-        selectedFileContents: atob(content),
-        selectedFileName: node.name
+        openedFilePaths: new Set(openedFilePaths.add(node.path)),
+        openedFiles: [
+          ...openedFiles,
+          {
+            content: atob(content),
+            name: node.name
+          }
+        ]
       })
     })
   }
@@ -93,28 +111,56 @@ class App extends React.Component {
     document.removeEventListener('mousemove', this.resizePanel)
   }
 
-  renderFile(type) {}
+  renderTab(file, index) {
+    return (
+      <Tab title={file.name} key={index}>
+        <Editor
+          fileName={file.name}
+          content={file.content}
+          colorScheme={this.props.mode}
+        />
+      </Tab>
+    )
+  }
+
+  onTabClosed(closedIndex) {
+    const openedFiles = this.state.openedFiles.filter((file, index) => {
+      return closedIndex !== index
+    })
+    const openedFilePaths = new Set(openedFiles.map(node => node.path))
+
+    this.setState({
+      openedFilePaths,
+      openedFiles
+    })
+  }
+
+  closeAllTabs() {
+    this.setState({
+      openedFilePaths: new Set(),
+      openedFiles: []
+    })
+  }
 
   render() {
     const colorClass = `${this.props.mode}-mode`
 
     return (
       <div className={`app ${colorClass}`}>
-        <ExplorerPanel onSelectFile={this.onSelectFile} />
+        <ExplorerPanel
+          onSelectFile={this.onSelectFile}
+          onSearchFinished={this.closeAllTabs}
+        />
         <div
           className="right"
           onMouseDown={this.onPanelMouseDown}
           ref={this.rightPanelRef}
         >
-          {this.state.selectedFileName ? (
-            <Editor
-              fileName={this.state.selectedFileName}
-              content={this.state.selectedFileContents}
-              colorScheme={this.props.mode}
-            />
-          ) : // <h1>No file selected</h1>
-          null}
+          <TabView onTabClosed={this.onTabClosed}>
+            {this.state.openedFiles.map(this.renderTab)}
+          </TabView>
         </div>
+        <Gutter />
       </div>
     )
   }

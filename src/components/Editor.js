@@ -45,8 +45,7 @@ class Editor extends React.Component {
       },
       automaticLayout: true,
       fontSize: 14,
-      theme: this.props.colorScheme === 'dark' ? 'vs-dark' : 'vs-light',
-      fontFamily: 'consolas'
+      theme: this.props.colorScheme === 'dark' ? 'vs-dark' : 'vs-light'
     })
 
     // Used to give a line of space before the

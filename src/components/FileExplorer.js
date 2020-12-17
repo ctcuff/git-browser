@@ -19,9 +19,10 @@ class FileExplorer extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-  // Don't allow this component to re-render if:
-  //  - It doesn't have any nodes to render
-  //  - A user searches for the same repository twice
+    // Watch for changes in props and don't allow
+    // this component to re-render if:
+    //  - It doesn't have any nodes to render
+    //  - A user searches for the same repository twice
     if (
       !props.nodes ||
       Object.keys(props.nodes).length === 0 ||

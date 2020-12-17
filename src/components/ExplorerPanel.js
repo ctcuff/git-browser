@@ -14,7 +14,7 @@ class ExplorerPanel extends React.Component {
     this.state = {
       selectedFileName: '',
       selectedFileContents: '',
-      treeData: null,
+      treeData: data,
       inputValue: '',
       repoName: '',
       isExplorerOpen: false
@@ -44,6 +44,7 @@ class ExplorerPanel extends React.Component {
 
     GitHubAPI.getTree(inputText)
       .then(res => {
+        this.props.onSearchFinished()
         this.setState({
           treeData: Tree.treeify(res.tree),
           isExplorerOpen: true
@@ -79,7 +80,8 @@ class ExplorerPanel extends React.Component {
 }
 
 ExplorerPanel.propTypes = {
-  onSelectFile: PropTypes.func.isRequired
+  onSelectFile: PropTypes.func.isRequired,
+  onSearchFinished: PropTypes.func.isRequired
 }
 
 export default ExplorerPanel

@@ -2,7 +2,6 @@ import './style/index.scss'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './components/App'
-import Collapse from './components/Collapse'
 import { Provider } from 'react-redux'
 import store from './store'
 
