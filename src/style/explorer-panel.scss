@@ -1,0 +1,35 @@
+.explorer-panel {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: var(--file-explorer-width);
+  overflow: auto;
+  background-color: var(--color-panel-background);
+  color: var(--color-panel-text);
+  border-right: 1px solid var(--color-panel-border);
+  position: relative;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #b9b9b9;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #6e6e6e;
+  }
+
+  .search-field {
+    display: flex;
+
+    input {
+      width: 100%;
+    }
+  }
+}
