@@ -81,6 +81,10 @@ class TabView extends React.Component {
   render() {
     const tabs = this.state.tabs
 
+    if (tabs.length <= 0) {
+      return null
+    }
+
     return (
       <Tabs
         className="tabs"

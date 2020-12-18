@@ -2,7 +2,7 @@
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: var(--file-explorer-width);
-  overflow: auto;
+  overflow: hidden auto;
   background-color: var(--color-panel-background);
   color: var(--color-panel-text);
   border-right: 1px solid var(--color-panel-border);

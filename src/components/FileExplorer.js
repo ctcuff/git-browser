@@ -77,6 +77,11 @@ class FileExplorer extends Component {
 
   render() {
     const rootNodes = this.getRootNodes()
+
+    if (!rootNodes || rootNodes.length === 0) {
+      return null
+    }
+
     return (
       <div className="file-explorer">
         <React.Fragment>

@@ -1,8 +1,9 @@
 :root {
   --default-explorer-width: 250px;
   --file-explorer-width: var(--default-explorer-width);
-  --resize-panel-border-width: 16px;
+  --resize-panel-border-width: 8px;
   --resize-panel-border-color: red;
+  --tab-bar-height: 30px;
   --gutter-height: 0px;
   // --gutter-height: 20px;
 }
