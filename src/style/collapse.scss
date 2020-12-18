@@ -43,16 +43,6 @@
 
     .content {
       height: 100%;
-
-      // Makes sure the content doesn't clip into the header
-      // when the collapse is open because of the negative margin
-      & > * {
-        padding-top: 1px;
-      }
-
-      &:last-child {
-        padding-bottom: 1px;
-      }
     }
   }
 

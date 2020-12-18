@@ -6,6 +6,7 @@ import Collapse from './Collapse'
 import PropTypes from 'prop-types'
 import data from '../assets/response.json'
 import GitHubAPI from '../scripts/github-api'
+import SearchInput from './SearchInput'
 
 class ExplorerPanel extends React.Component {
   constructor(props) {
@@ -17,7 +18,9 @@ class ExplorerPanel extends React.Component {
       treeData: data,
       inputValue: '',
       repoName: '',
-      isExplorerOpen: false
+      isFileExplorerOpen: false,
+      searchErrorMessage: null,
+      isLoading: false
     }
 
     this.inputRef = React.createRef()
@@ -25,58 +28,70 @@ class ExplorerPanel extends React.Component {
     this.getRepo = this.getRepo.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
     this.onFileExplorerToggle = this.onFileExplorerToggle.bind(this)
+    this.toggleLoading = this.toggleLoading.bind(this)
   }
 
-  onInputChange(event) {
-    this.setState({ inputValue: event.currentTarget.value })
+  onInputChange(inputValue) {
+    this.setState({ inputValue })
   }
 
-  getRepo() {
-    const inputText = this.state.inputValue
+  toggleLoading() {
+    this.setState({ isLoading: !this.state.isLoading })
+  }
 
-    if (!inputText) {
+  getRepo(inputValue) {
+    if (!inputValue) {
       return
     }
 
+    this.toggleLoading()
+
     this.setState({
       treeData: {},
-      repoName: inputText
+      repoName: inputValue,
+      searchErrorMessage: null,
+      isLoading: true
     })
 
-    GitHubAPI.getTree(inputText)
+    GitHubAPI.getTree(inputValue)
       .then(res => {
-        this.props.onSearchFinished()
         this.setState({
           treeData: Tree.treeify(res.tree),
-          isExplorerOpen: true
+          isFileExplorerOpen: true
         })
       })
-      .catch(err => console.error(err))
+      .catch(searchErrorMessage => {
+        this.setState({ searchErrorMessage })
+      })
+      .finally(() => {
+        this.props.onSearchFinished()
+        this.toggleLoading()
+      })
   }
 
   onFileExplorerToggle(isOpen) {
     // Update state to make sure the code panel re-opens
     // when a new repo is searched
-    this.setState({ isExplorerOpen: isOpen })
+    this.setState({ isFileExplorerOpen: isOpen })
   }
 
   render() {
     return (
       <div className="explorer-panel">
-        <Collapse title="search">
-          <div className="search-field">
-            <input
-              type="text"
-              ref={this.inputRef}
-              value={this.state.inputValue}
-              onChange={this.onInputChange}
-            />
-            <button onClick={this.getRepo}>Search</button>
-          </div>
+        <Collapse title="search" open>
+          <SearchInput
+            className="search-panel"
+            onChange={this.onInputChange}
+            onSearch={this.getRepo}
+            placeholder="GitHub repo URL"
+            hasError={!!this.state.searchErrorMessage}
+            errorMessage={this.state.searchErrorMessage}
+            isLoading={this.state.isLoading}
+          />
         </Collapse>
         <Collapse
           title="code"
-          open={this.state.isExplorerOpen}
+          open={this.state.isFileExplorerOpen}
           onToggle={this.onFileExplorerToggle}
         >
           <FileExplorer

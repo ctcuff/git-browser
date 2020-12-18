@@ -48,7 +48,7 @@
   }
 
   .tab--selected {
-    border-bottom: 2px solid #001799;
+    border-bottom: 2px solid var(--color-tab-border-bottom-active);
   }
 
   .tab-panel--selected {

@@ -12,6 +12,7 @@
   --color-panel-text: #000000;
   --color-file-hover: #e3e8ec;
   --color-panel-border: #dddddd;
+  --color-tab-border-bottom-active: #001799
 }
 
 .dark-mode {
@@ -37,5 +38,4 @@ body {
 // that monaco adds when scrolling down in the editor
 .monaco-editor .scroll-decoration {
   box-shadow: none !important;
-  // border-top: 1px solid var(--color-panel-border);
 }
