@@ -24,6 +24,7 @@ class ExplorerPanel extends React.Component {
 
     this.getRepo = this.getRepo.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
+    this.onFileExplorerToggle = this.onFileExplorerToggle.bind(this)
   }
 
   onInputChange(event) {
@@ -53,6 +54,12 @@ class ExplorerPanel extends React.Component {
       .catch(err => console.error(err))
   }
 
+  onFileExplorerToggle(isOpen) {
+    // Update state to make sure the code panel re-opens
+    // when a new repo is searched
+    this.setState({ isExplorerOpen: isOpen })
+  }
+
   render() {
     return (
       <div className="explorer-panel">
@@ -67,7 +74,11 @@ class ExplorerPanel extends React.Component {
             <button onClick={this.getRepo}>Search</button>
           </div>
         </Collapse>
-        <Collapse title="code" open={this.state.isExplorerOpen}>
+        <Collapse
+          title="code"
+          open={this.state.isExplorerOpen}
+          onToggle={this.onFileExplorerToggle}
+        >
           <FileExplorer
             onSelectFile={this.props.onSelectFile}
             nodes={this.state.treeData}

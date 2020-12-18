@@ -15,7 +15,7 @@
     align-items: center;
     cursor: pointer;
     border-bottom: 2px solid transparent;
-    padding: 0.1em 1.2em 0.1em 1em;
+    padding: 0.1em 0 0.1em 1em;
     user-select: none;
 
     &:focus {
@@ -24,13 +24,12 @@
 
     .tab-close-button {
       border: none;
-      margin: 0;
-      padding: 0;
+      padding: 0 0.9em 0 0.6em;
       background-color: transparent;
-      font-size: 1.5em;
-      margin-left: 0.5em;
-      opacity: 0;
+      font-size: 1em;
+      margin: 2px 0 0 0.2em;
       cursor: pointer;
+      opacity: 0;
       height: 100%;
       text-align: center;
       color: #353535;
@@ -49,7 +48,6 @@
   }
 
   .tab--selected {
-    // background-color: var(--color-file-hover);
     border-bottom: 2px solid #001799;
   }
 

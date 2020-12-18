@@ -1,6 +1,5 @@
 .collapse {
   $font-color: #000000d9;
-  $transition-duration: 0.1s;
 
   // Allows the header to stretch to the full width of
   // the panel when it's resized
@@ -15,15 +14,17 @@
     border: none;
     font-size: 0.9em;
     margin: 0;
-    padding: 0;
     align-items: center;
     padding: 0.5em;
     cursor: pointer;
     color: $font-color;
     border-bottom: 1px solid #e6e6e6;
+    border-top: 1px solid #e6e6e6;
+    margin-top: -1px; // Cancels the overlapping borders
     position: sticky;
     top: 0;
     text-transform: capitalize;
+    box-sizing: border-box;
 
     &:focus {
       outline: none;
@@ -33,31 +34,34 @@
   .toggle-icon {
     margin-right: 0.5em;
     color: $font-color;
-    // transition: transform $transition-duration ease-in-out;
-  }
-
-  .content {
-    transition: max-height $transition-duration ease-in-out;
   }
 
   &.is-open {
-    // border-bottom: 1px solid #e6e6e6;
     .toggle-icon {
       transform: rotate(90deg);
     }
 
     .content {
-      // overflow: auto;
       height: 100%;
+
+      // Makes sure the content doesn't clip into the header
+      // when the collapse is open because of the negative margin
+      & > * {
+        padding-top: 1px;
+      }
+
+      &:last-child {
+        padding-bottom: 1px;
+      }
     }
   }
 
   &.is-closed {
     display: unset;
-    //  border-bottom: none;
-   .content {
-     height: 0;
-    overflow-y: hidden;
-   }
+
+    .content {
+      height: 0;
+      overflow-y: hidden;
+    }
   }
 }

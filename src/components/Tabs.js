@@ -1,11 +1,8 @@
 import '../style/tabs.scss'
 import React from 'react'
-import {
-  Tabs as ReactTabs,
-  Tab as ReactTab,
-  TabList,
-  TabPanel as ReactTabPanel
-} from 'react-tabs'
+import { Tabs, TabList, TabPanel, Tab as ReactTab } from 'react-tabs'
+import PropTypes from 'prop-types'
+import { noop } from '../scripts/util'
 
 const Tab = props => <React.Fragment>{props.children}</React.Fragment>
 
@@ -45,7 +42,6 @@ class TabView extends React.Component {
   }
 
   closeTab(clickedIndex) {
-    this.props.onTabClosed(clickedIndex)
     let selectedTabIndex = this.state.selectedTabIndex
 
     // If the first tabs was closed but there are still tabs left,
@@ -71,7 +67,10 @@ class TabView extends React.Component {
   }
 
   onSelect(index, last, event) {
+    // Clicking anywhere on the tab fires the tab's onSelect
+    // event so we need to watch for a click on the close button
     if (event.target.nodeName === 'BUTTON') {
+      this.props.onTabClosed(index)
       this.closeTab(index)
       return
     }
@@ -83,7 +82,7 @@ class TabView extends React.Component {
     const tabs = this.state.tabs
 
     return (
-      <ReactTabs
+      <Tabs
         className="tabs"
         onSelect={this.onSelect}
         selectedIndex={this.state.selectedTabIndex}
@@ -101,17 +100,44 @@ class TabView extends React.Component {
         </TabList>
 
         {tabs.map((tab, index) => (
-          <ReactTabPanel
+          <TabPanel
             selectedClassName="tab-panel--selected"
             className="tab-panel"
             key={index}
           >
             {tab.props.children}
-          </ReactTabPanel>
+          </TabPanel>
         ))}
-      </ReactTabs>
+      </Tabs>
     )
   }
+}
+
+Tab.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node
+  ])
+}
+
+TabView.propTypes = {
+  // Make sure the tab view only has tabs as children
+  children: PropTypes.oneOfType([
+    PropTypes.shape({
+      type: PropTypes.oneOf([Tab])
+    }),
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        type: PropTypes.oneOf([Tab])
+      })
+    )
+  ]),
+  onTabClosed: PropTypes.func,
+}
+
+TabView.defaultProps = {
+  onTabClosed: noop
 }
 
 export { TabView, Tab }

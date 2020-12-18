@@ -39,4 +39,6 @@ const getLanguageFromFileName = fileName => {
   return index === -1 ? 'plaintext' : languageData[fileName.slice(index)]
 }
 
-export { parseCSSVar, setCSSVar, debounce, getLanguageFromFileName }
+const noop = () => {}
+
+export { parseCSSVar, setCSSVar, debounce, getLanguageFromFileName, noop }
