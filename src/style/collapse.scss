@@ -11,19 +11,19 @@
     display: flex;
     width: 100%;
     text-align: left;
+    text-transform: capitalize;
     border: none;
+    border-bottom: 1px solid #e6e6e6;
+    border-top: 1px solid #e6e6e6;
     font-size: 0.9em;
     margin: 0;
+    margin-top: -1px; // Cancels the overlapping borders
     align-items: center;
     padding: 0.5em;
     cursor: pointer;
     color: $font-color;
-    border-bottom: 1px solid #e6e6e6;
-    border-top: 1px solid #e6e6e6;
-    margin-top: -1px; // Cancels the overlapping borders
     position: sticky;
     top: 0;
-    text-transform: capitalize;
     box-sizing: border-box;
 
     &:focus {
@@ -34,6 +34,7 @@
   .toggle-icon {
     margin-right: 0.5em;
     color: $font-color;
+    flex-shrink: 0;
   }
 
   &.is-open {

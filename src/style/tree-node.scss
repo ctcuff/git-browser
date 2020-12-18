@@ -13,24 +13,27 @@
     background: var(--color-file-hover);
   }
 
-  // &:first-child {
-  //   margin-top: $margin;
-  // }
-
   &:last-child {
     margin-bottom: $margin;
   }
-}
 
-.tree-node__icon {
-  font-size: 16px;
-  display: flex;
+  .tree-node__icon {
+    font-size: 16px;
+    display: flex;
 
-  &.toggle {
-    margin-right: 8px;
+    &.toggle {
+      margin-right: 8px;
+    }
+
+    &.type {
+      margin-right: 10px;
+    }
   }
 
-  &.type {
-    margin-right: 10px;
+  .node-label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

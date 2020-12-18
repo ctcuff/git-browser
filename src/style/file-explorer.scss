@@ -1,4 +1,8 @@
 .file-explorer {
   display: table;
   width: 100%;
+  // Used in combination with text-overflow: ellipsis to
+  // allow the text in the explorer panel to display ellipsis
+  // when the text grows past the panel width
+  table-layout: fixed;
 }

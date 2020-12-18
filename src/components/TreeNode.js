@@ -56,11 +56,13 @@ const onSelectNode = (node, props) => {
 const TreeNode = props => {
   const { node, getChildren, level } = props
   const children = getChildren(node)
+  const nodeLabel = getNodeLabel(node)
 
   return (
     <React.Fragment>
       <div
         className="tree-node"
+        title={nodeLabel}
         style={{ paddingLeft: getPaddingLeft(level, node.type) }}
         onClick={() => onSelectNode(node, props)}
       >
@@ -70,7 +72,7 @@ const TreeNode = props => {
         <div className="tree-node__icon type">
           {renderIcon(node.type, node.isOpen)}
         </div>
-        <span>{getNodeLabel(node)}</span>
+        <span className="node-label">{nodeLabel}</span>
       </div>
       {node.isOpen
         ? children.map(childNode => (
