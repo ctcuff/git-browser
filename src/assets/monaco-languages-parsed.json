@@ -164,5 +164,6 @@
    ".xsl": "xml",
    ".yaml": "yaml",
    ".yml": "yaml",
-   ".vue": "html"
+   ".vue": "html",
+   ".pm": "perl"
 }

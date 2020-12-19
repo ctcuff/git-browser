@@ -57,6 +57,9 @@
 
   .tab--selected {
     border-bottom: 2px solid var(--color-tab-border-bottom-active);
+    .tab-close-button {
+      opacity: 1;
+    }
   }
 
   .tab-panel--selected {

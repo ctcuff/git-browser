@@ -20,7 +20,7 @@ const SearchInput = props => {
   }
 
   const onChange = event => {
-    const value = event.currentTarget.value
+    const value = event.currentTarget.value.trim()
     setInputValue(value)
     props.onChange(value)
   }
@@ -62,6 +62,7 @@ const SearchInput = props => {
           className={hasError ? 'input--error' : undefined}
           onChange={onChange}
           placeholder={props.placeholder}
+          value={props.value}
         />
         <button
           className="search-button"
@@ -85,23 +86,23 @@ const SearchInput = props => {
 }
 
 SearchInput.propTypes = {
-  value: PropTypes.string,
-  onChange: PropTypes.func,
   onSearch: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
   placeholder: PropTypes.string,
   className: PropTypes.string,
   hasError: PropTypes.bool,
   errorMessage: PropTypes.string,
-  isLoading: PropTypes.bool
+  isLoading: PropTypes.bool,
 }
 
-SearchInput.defaultPros = {
+SearchInput.defaultProps = {
   onChange: noop,
-  value: '',
   placeholder: '',
   hasError: false,
   errorMessage: '',
-  isLoading: false
+  isLoading: false,
+  initialValue: ''
 }
 
 export default SearchInput

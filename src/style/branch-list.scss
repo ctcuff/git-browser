@@ -1,0 +1,39 @@
+.branch-list {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  margin: 0;
+  padding: 0;
+  padding-left: 0;
+  flex-shrink: 0;
+
+  li {
+    display: flex;
+    list-style: none;
+    padding: 3px 12px 3px 18px;
+    cursor: pointer;
+    align-items: center;
+
+    &.branch--current,
+    &:hover {
+      background-color: var(--color-file-hover);
+    }
+
+    &:last-child {
+      margin-bottom: 12px;
+    }
+  }
+
+  .branch-name {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .branch-icon {
+    flex-shrink: 0;
+    margin-right: 0.5em;
+  }
+}

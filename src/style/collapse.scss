@@ -1,5 +1,6 @@
 .collapse {
   $font-color: #000000d9;
+  $border-color: #d6d6d6;
 
   // Allows the header to stretch to the full width of
   // the panel when it's resized
@@ -13,8 +14,8 @@
     text-align: left;
     text-transform: capitalize;
     border: none;
-    border-bottom: 1px solid #e6e6e6;
-    border-top: 1px solid #e6e6e6;
+    border-bottom: 1px solid $border-color;
+    border-top: 1px solid $border-color;
     font-size: 0.9em;
     margin: 0;
     margin-top: -1px; // Cancels the overlapping borders
@@ -25,6 +26,7 @@
     position: sticky;
     top: 0;
     box-sizing: border-box;
+    z-index: 100;
 
     &:focus {
       outline: none;

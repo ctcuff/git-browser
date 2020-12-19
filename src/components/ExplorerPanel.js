@@ -4,9 +4,11 @@ import FileExplorer from './FileExplorer'
 import Tree from '../scripts/tree'
 import Collapse from './Collapse'
 import PropTypes from 'prop-types'
-import data from '../assets/response.json'
 import GitHubAPI from '../scripts/github-api'
 import SearchInput from './SearchInput'
+import BranchList from './BranchList'
+import sampleBranchData from '../assets/sample-branches-api-response.json'
+import sampleTreeData from '../assets/sample-tree-data.json'
 
 class ExplorerPanel extends React.Component {
   constructor(props) {
@@ -15,58 +17,90 @@ class ExplorerPanel extends React.Component {
     this.state = {
       selectedFileName: '',
       selectedFileContents: '',
-      treeData: data,
+      treeData: sampleTreeData,
       inputValue: '',
-      repoName: '',
+      repoUrl: '',
+      currentRepoLoaded: '',
       isFileExplorerOpen: false,
       searchErrorMessage: null,
-      isLoading: false
+      isLoading: false,
+      branches: sampleBranchData,
+      currentBranch: ''
     }
 
     this.inputRef = React.createRef()
 
     this.getRepo = this.getRepo.bind(this)
+    this.getBranches = this.getBranches.bind(this)
+    this.getTree = this.getTree.bind(this)
+    this.onBranchClick = this.onBranchClick.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
     this.onFileExplorerToggle = this.onFileExplorerToggle.bind(this)
-    this.toggleLoading = this.toggleLoading.bind(this)
+    this.setLoading = this.setLoading.bind(this)
   }
 
   onInputChange(inputValue) {
     this.setState({ inputValue })
   }
 
-  toggleLoading() {
-    this.setState({ isLoading: !this.state.isLoading })
+  setLoading(isLoading) {
+    this.setState({ isLoading })
   }
 
-  getRepo(inputValue) {
-    if (!inputValue) {
+  getRepo(url) {
+    if (!url || this.state.repoUrl === url) {
       return
     }
 
-    this.toggleLoading()
+    this.setLoading(true)
+    this.setState({ searchErrorMessage: null })
 
-    this.setState({
-      treeData: {},
-      repoName: inputValue,
-      searchErrorMessage: null,
-      isLoading: true
-    })
+    GitHubAPI.getRepo(url)
+      .then(async repo => {
+        this.setState({ currentBranch: repo.default_branch })
 
-    GitHubAPI.getTree(inputValue)
-      .then(res => {
-        this.setState({
-          treeData: Tree.treeify(res.tree),
-          isFileExplorerOpen: true
-        })
+        await this.getTree(repo.defaultBranchUrl)
+        await this.getBranches(url)
+
+        this.props.onSearchFinished()
       })
       .catch(searchErrorMessage => {
         this.setState({ searchErrorMessage })
       })
       .finally(() => {
-        this.props.onSearchFinished()
-        this.toggleLoading()
+        this.setLoading(false)
       })
+  }
+
+  getTree(branchUrl) {
+    if (this.state.repoUrl === branchUrl) {
+      return Promise.resolve()
+    }
+
+    this.setLoading(true)
+
+    return GitHubAPI.getTree(branchUrl)
+      .then(tree => {
+        this.setState({
+          repoUrl: branchUrl,
+          treeData: Tree.treeify(tree),
+          isFileExplorerOpen: true
+        })
+      })
+      .finally(() => {
+        this.setLoading(false)
+      })
+  }
+
+  getBranches(url) {
+    return GitHubAPI.getBranches(url).then(branches => {
+      this.setState({ branches })
+    })
+  }
+
+  onBranchClick(branch) {
+    this.setState({ currentBranch: branch.name })
+    this.getTree(branch.url)
   }
 
   onFileExplorerToggle(isOpen) {
@@ -87,6 +121,7 @@ class ExplorerPanel extends React.Component {
             hasError={!!this.state.searchErrorMessage}
             errorMessage={this.state.searchErrorMessage}
             isLoading={this.state.isLoading}
+            value={this.state.inputValue}
           />
         </Collapse>
         <Collapse
@@ -97,7 +132,14 @@ class ExplorerPanel extends React.Component {
           <FileExplorer
             onSelectFile={this.props.onSelectFile}
             nodes={this.state.treeData}
-            repoName={this.state.repoName}
+            repoName={this.state.repoUrl}
+          />
+        </Collapse>
+        <Collapse title="branches">
+          <BranchList
+            branches={this.state.branches}
+            onBranchClick={this.onBranchClick}
+            currentBranch={this.state.currentBranch}
           />
         </Collapse>
       </div>
