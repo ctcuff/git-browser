@@ -22,10 +22,6 @@ class App extends React.Component {
 
     this.mousePosition = 0
 
-    this.inputRef = React.createRef()
-    this.rightPanelRef = React.createRef()
-    this.leftPanelRef = React.createRef()
-
     this.onSelectFile = this.onSelectFile.bind(this)
     this.onPanelMouseDown = this.onPanelMouseDown.bind(this)
     this.resizePanel = this.resizePanel.bind(this)
@@ -33,6 +29,7 @@ class App extends React.Component {
     this.onTabClosed = this.onTabClosed.bind(this)
     this.closeAllTabs = this.closeAllTabs.bind(this)
     this.renderTab = this.renderTab.bind(this)
+    this.resize = this.resize.bind(this)
   }
 
   componentDidMount() {
@@ -69,7 +66,7 @@ class App extends React.Component {
     })
   }
 
-  resizePanel(event) {
+  resize(event) {
     // The smallest the panel is allowed to be before
     // it snaps to 0px
     const absoluteMin = 60
@@ -95,19 +92,20 @@ class App extends React.Component {
     setCSSVar('--file-explorer-width', newSize + 'px')
   }
 
-  onPanelMouseDown(event) {
-    const e = event.nativeEvent
-    const borderSize = parseCSSVar('--resize-panel-border-width')
+  resizePanel(event) {
+    requestAnimationFrame(() => this.resize(event))
+  }
 
-    if (e.offsetX < borderSize) {
-      this.mousePosition = e.x
-      document.body.classList.add('no-select')
-      document.addEventListener('mousemove', this.resizePanel)
-    }
+  onPanelMouseDown(event) {
+    this.mousePosition = event.nativeEvent.x
+    // Adds user-select: none to the body to prevent highlighting
+    // everything when the user is dragging the resize panel
+    document.body.classList.add('is-resizing')
+    document.addEventListener('mousemove', this.resizePanel)
   }
 
   onMouseUp() {
-    document.body.classList.remove('no-select')
+    document.body.classList.remove('is-resizing')
     document.removeEventListener('mousemove', this.resizePanel)
   }
 
@@ -151,11 +149,8 @@ class App extends React.Component {
           onSelectFile={this.onSelectFile}
           onSearchFinished={this.closeAllTabs}
         />
-        <div
-          className="right"
-          onMouseDown={this.onPanelMouseDown}
-          ref={this.rightPanelRef}
-        >
+        <div className="right">
+          <div className="resize-panel" onMouseDown={this.onPanelMouseDown} />
           <TabView onTabClosed={this.onTabClosed}>
             {this.state.openedFiles.map(this.renderTab)}
           </TabView>

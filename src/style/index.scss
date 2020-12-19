@@ -1,8 +1,6 @@
 :root {
   --default-explorer-width: 250px;
   --file-explorer-width: var(--default-explorer-width);
-  --resize-panel-border-width: 8px;
-  --resize-panel-border-color: red;
   --tab-bar-height: 30px;
   --gutter-height: 0px;
   // --gutter-height: 20px;
@@ -13,7 +11,7 @@
   --color-panel-text: #000000;
   --color-file-hover: #e3e8ec;
   --color-panel-border: #dddddd;
-  --color-tab-border-bottom-active: #001799
+  --color-tab-border-bottom-active: #001799;
 }
 
 .dark-mode {
@@ -31,7 +29,7 @@ body {
     Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
 }
 
-.no-select {
+.is-resizing {
   user-select: none;
 }
 

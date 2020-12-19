@@ -9,14 +9,19 @@
     overflow: hidden;
     position: relative;
 
-    &::after {
-      content: ' ';
+    .resize-panel {
       position: absolute;
       left: 0;
-      width: var(--resize-panel-border-width);
-      // background-color: red;
+      width: 8px;
+      background-color: transparent;
       height: 100%;
       cursor: col-resize;
+      z-index: 2;
+      transition: background-color 0.4s ease-in-out;
+
+      &:hover {
+        background-color: rgba(146, 146, 146, 0.5);
+      }
     }
 
     h1 {

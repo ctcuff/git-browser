@@ -43,7 +43,8 @@ class ExplorerPanel extends React.Component {
     this.getTree = this.getTree.bind(this)
     this.getBranch = this.getBranch.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
-    this.onFileExplorerToggle = this.onFileExplorerToggle.bind(this)
+    this.onCodePanelToggle = this.onCodePanelToggle.bind(this)
+    this.onBranchPanelToggle = this.onBranchPanelToggle.bind(this)
     this.toggleLoading = this.toggleLoading.bind(this)
   }
 
@@ -110,10 +111,12 @@ class ExplorerPanel extends React.Component {
     this.getTree(branch.repoUrl, branch.name)
   }
 
-  onFileExplorerToggle(isOpen) {
-    // Update state to make sure the code panel re-opens
-    // when a new repo is searched
-    this.setState({ isCodePanelOpen: isOpen })
+  onCodePanelToggle(isCodePanelOpen) {
+    this.setState({ isCodePanelOpen })
+  }
+
+  onBranchPanelToggle(isBranchPanelOpen) {
+    this.setState({ isBranchPanelOpen })
   }
 
   render() {
@@ -151,7 +154,7 @@ class ExplorerPanel extends React.Component {
         <Collapse
           title="code"
           open={isCodePanelOpen}
-          onToggle={this.onFileExplorerToggle}
+          onToggle={this.onCodePanelToggle}
         >
           <FileExplorer
             onSelectFile={this.props.onSelectFile}
@@ -159,7 +162,11 @@ class ExplorerPanel extends React.Component {
             key={key}
           />
         </Collapse>
-        <Collapse title="branches" open={isBranchPanelOpen}>
+        <Collapse
+          title="branches"
+          open={isBranchPanelOpen}
+          onToggle={this.onBranchPanelToggle}
+        >
           <BranchList
             branches={branches}
             onBranchClick={this.getBranch}
