@@ -17,7 +17,8 @@ class App extends React.Component {
       // Used to make sure the same tab can't be
       // opened multiple times
       openedFilePaths: new Set(),
-      openedFiles: []
+      openedFiles: [],
+      activeTabIndex: 0
     }
 
     this.mousePosition = 0
@@ -30,6 +31,8 @@ class App extends React.Component {
     this.closeAllTabs = this.closeAllTabs.bind(this)
     this.renderTab = this.renderTab.bind(this)
     this.resize = this.resize.bind(this)
+    this.findFileIndex = this.findFileIndex.bind(this)
+    this.setActiveTabIndex = this.setActiveTabIndex.bind(this)
   }
 
   componentDidMount() {
@@ -49,21 +52,36 @@ class App extends React.Component {
 
     // Don't open this file in a new tab since it's already open
     if (openedFilePaths.has(node.path)) {
+      this.setActiveTabIndex(this.findFileIndex(node.path))
       return
     }
 
     GitHubAPI.getFile(node.url).then(content => {
       this.setState({
+        activeTabIndex: openedFiles.length,
         openedFilePaths: new Set(openedFilePaths.add(node.path)),
         openedFiles: [
           ...openedFiles,
           {
             content: atob(content),
-            name: node.name
+            name: node.name,
+            path: node.path
           }
         ]
       })
     })
+  }
+
+  findFileIndex(path) {
+    const openedFiles = this.state.openedFiles
+
+    for (let i = 0; i < openedFiles.length; i++) {
+      if (openedFiles[i].path === path) {
+        return i
+      }
+    }
+
+    return 0
   }
 
   resize(event) {
@@ -121,15 +139,30 @@ class App extends React.Component {
     )
   }
 
-  onTabClosed(closedIndex) {
+  onTabClosed(tabIndex) {
+    let activeTabIndex = this.state.activeTabIndex
     const openedFiles = this.state.openedFiles.filter((file, index) => {
-      return closedIndex !== index
+      return tabIndex !== index
     })
     const openedFilePaths = new Set(openedFiles.map(node => node.path))
 
+    // If the active tab was closed but there are still tabs left,
+    // set the tab to the left of the closed tab as the active tab,
+    // but only as long as there are still tabs to the left.
+    if (tabIndex === activeTabIndex) {
+      activeTabIndex = Math.max(activeTabIndex - 1, 0)
+    }
+
+    // Make sure the currently active tab doesn't change when tabs
+    // to the left of it are closed
+    if (tabIndex < activeTabIndex) {
+      activeTabIndex -= 1
+    }
+
     this.setState({
       openedFilePaths,
-      openedFiles
+      openedFiles,
+      activeTabIndex
     })
   }
 
@@ -138,6 +171,10 @@ class App extends React.Component {
       openedFilePaths: new Set(),
       openedFiles: []
     })
+  }
+
+  setActiveTabIndex(activeTabIndex) {
+    this.setState({ activeTabIndex })
   }
 
   render() {
@@ -151,7 +188,12 @@ class App extends React.Component {
         />
         <div className="right">
           <div className="resize-panel" onMouseDown={this.onPanelMouseDown} />
-          <TabView onTabClosed={this.onTabClosed}>
+          <TabView
+            onTabClosed={this.onTabClosed}
+            activeTabIndex={this.state.activeTabIndex}
+            key={this.state.openedFiles.length}
+            onSelectTab={this.setActiveTabIndex}
+          >
             {this.state.openedFiles.map(this.renderTab)}
           </TabView>
         </div>
