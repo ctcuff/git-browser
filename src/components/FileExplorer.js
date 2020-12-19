@@ -18,25 +18,6 @@ class FileExplorer extends Component {
     this.onSelectNode = this.onSelectNode.bind(this)
   }
 
-  static getDerivedStateFromProps(props, state) {
-    // Watch for changes in props and don't allow
-    // this component to re-render if:
-    //  - It doesn't have any nodes to render
-    //  - A user searches for the same repository twice
-    if (
-      !props.nodes ||
-      Object.keys(props.nodes).length === 0 ||
-      props.repoName === state.repoName
-    ) {
-      return null
-    }
-
-    return {
-      nodes: props.nodes,
-      repoName: props.repoName
-    }
-  }
-
   getRootNodes() {
     const nodes = {}
     const [left, right] = partition(

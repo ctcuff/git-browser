@@ -1,3 +1,5 @@
+import { OAUTH_TOKEN } from '../config'
+
 const BASE_API_URL = 'https://api.github.com'
 const BASE_REPO_URL = BASE_API_URL + '/repos'
 const ERROR_INVALID_GITHUB_URL = 'URL must be a GitHub URL'
@@ -5,6 +7,17 @@ const ERROR_REPO_NOT_FOUND = "Couldn't find repository"
 const ERROR_INVALID_QUERY = 'Could not request API, invalid query'
 const UNKNOWN_SEARCH_ERROR = 'An error occurred while searching'
 const UNKNOWN_REQUEST_ERROR = 'An error occurred while making the request'
+
+const request = url => {
+  return fetch(
+    url,
+    OAUTH_TOKEN && {
+      headers: {
+        Authorization: `token ${OAUTH_TOKEN}`
+      }
+    }
+  )
+}
 
 const isUrlValid = url => {
   try {
@@ -78,7 +91,7 @@ class GitHubAPI {
    *
    * @see https://docs.github.com/en/free-pro-team/rest/reference/repos#get-a-repository
    */
-  static getRepo(repoUrl) {
+  static getDefaultBranch(repoUrl) {
     if (!isGithubUrl(repoUrl)) {
       return Promise.reject(ERROR_INVALID_GITHUB_URL)
     }
@@ -86,11 +99,12 @@ class GitHubAPI {
     const repoPath = extractRepoPath(repoUrl)
     const apiUrl = BASE_REPO_URL + '/' + repoPath
 
-    return fetch(apiUrl)
+    return request(apiUrl)
       .then(res => {
         if (res.ok) {
           return res.json()
         }
+
         switch (res.status) {
           case 404:
             return Promise.reject(ERROR_REPO_NOT_FOUND)
@@ -99,13 +113,11 @@ class GitHubAPI {
         }
       })
       .then(res => {
-        if (res.message && res.message.toLowerCase() === 'not found') {
+        const { default_branch, message } = res
+        if (message && message.toLowerCase() === 'not found') {
           return Promise.reject(ERROR_REPO_NOT_FOUND)
         }
-
-        res.defaultBranchUrl = buildBranchUrl(repoPath, res.default_branch)
-
-        return res
+        return default_branch
       })
       .catch(err => {
         console.error(err)
@@ -114,22 +126,41 @@ class GitHubAPI {
   }
 
   /**
-   * Takes a github api url: `https://api.github.com/repos/user/repo/git/trees/branch`,
+   * Takes a github url: `https://github.com/user/repo/`,
    * and returns the tree (all files) from the given branch.
    *
    * @see https://docs.github.com/en/free-pro-team/rest/reference/git#get-a-tree
    */
-  static getTree(branchUrl) {
-    if (!isUrlValid(branchUrl)) {
-      return Promise.reject(ERROR_INVALID_QUERY)
+  static getTree(repoUrl, branch = 'default') {
+    if (branch === 'default') {
+      return GitHubAPI.getDefaultBranch(repoUrl)
+        .then(branchName => this.getBranch(repoUrl, branchName))
+        .catch(err => {
+          console.error(err)
+          return Promise.reject(err)
+        })
     }
 
-    return fetch(branchUrl)
+    return this.getBranch(repoUrl, branch)
+  }
+
+  /**
+   * Takes a github url: `https://github.com/user/repo/` and a
+   * branch name and returns the tree (all files).
+   */
+  static getBranch(repoUrl, branch) {
+    const repoPath = extractRepoPath(repoUrl)
+    const branchUrl = buildBranchUrl(repoPath, branch)
+
+    return request(branchUrl)
       .then(res => res.json())
-      .then(res => res.tree)
+      .then(res => {
+        res.branch = branch
+        return res
+      })
       .catch(err => {
         console.error(err)
-        return Promise.reject(UNKNOWN_SEARCH_ERROR)
+        return Promise.reject(UNKNOWN_REQUEST_ERROR)
       })
   }
 
@@ -140,7 +171,7 @@ class GitHubAPI {
    * @see https://docs.github.com/en/free-pro-team/rest/reference/git#get-a-blob
    */
   static getFile(url) {
-    return fetch(url)
+    return request(url)
       .then(res => res.json())
       .then(res => res.content)
       .catch(err => {
@@ -163,14 +194,22 @@ class GitHubAPI {
     const repoPath = extractRepoPath(repoUrl)
     const branchesUrl = buildBranchesUrl(repoPath)
 
-    return fetch(branchesUrl)
-      .then(res => res.json())
+    return request(branchesUrl + '?per_page=100')
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+
+        switch (res.status) {
+          case 404:
+            return Promise.reject(ERROR_REPO_NOT_FOUND)
+          default:
+            return Promise.reject(UNKNOWN_SEARCH_ERROR)
+        }
+      })
       .then(res => {
         return res.map(branch => {
-          // Add the branch's tree url to to the branch
-          // object so we can fetch all files when it's clicked
-          const branchUrl = buildBranchUrl(repoPath, branch.name)
-          branch.url = branchUrl
+          branch.repoUrl = repoUrl
           return branch
         })
       })

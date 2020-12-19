@@ -31,13 +31,16 @@ const BranchList = props => {
 BranchList.propTypes = {
   branches: PropTypes.arrayOf(
     PropTypes.shape({
+      // Matches the shape of the branch object returned by
+      // the GitHub API (except repoUrl is a property that
+      // was manually added)
       name: PropTypes.string.isRequired,
-      url: PropTypes.string.isRequired,
       commit: PropTypes.shape({
-        sha: PropTypes.string,
-        url: PropTypes.string
+        sha: PropTypes.string.isRequired,
+        url: PropTypes.string.isRequired
       }),
-      protected: PropTypes.bool
+      protected: PropTypes.bool.isRequired,
+      repoUrl: PropTypes.string.isRequired,
     })
   ),
   onBranchClick: PropTypes.func,
