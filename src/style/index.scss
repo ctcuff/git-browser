@@ -11,7 +11,7 @@
   --color-panel-background: #ffffff;
   --color-panel-text: #000000;
   --color-panel-border: #dfe3e6;
-  --color-list-item-hover: #dbeaff;
+  --color-list-item-hover: #e3eeff;
   --color-text-primary: #000000;
   --color-text-secondary: #353535;
   --color-border: #dfe3e6;
@@ -19,6 +19,7 @@
   --color-collapse-header: #fafbfc;
   --color-app-bg: #ffffff;
   --color-gutter: #007acc;
+  --color-scrollbar: rgba(0, 0, 0, 0.45);
 }
 
 .dark-mode {
@@ -34,6 +35,7 @@
   --color-collapse-header: #2d2d2d;
   --color-app-bg: #1e1e1e;
   --color-gutter: #007acc;
+  --color-scrollbar: rgb(146, 146, 146);
 }
 
 body {

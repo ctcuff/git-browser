@@ -70,7 +70,20 @@
 
   .tab--selected {
     color: var(--color-text-primary);
-    border-bottom: 3px solid var(--color-tab-border-bottom-active);
+    position: relative;
+
+    // Using a pseudo-element here so that the title of the tab
+    // doesn't shift when that active border is added
+    &::before {
+      content: '';
+      position: absolute;
+      height: 3px;
+      bottom: -3px;
+      left: 0;
+      right: 0;
+      background-color: var(--color-tab-border-bottom-active);
+    }
+
     .tab-close-button {
       opacity: 1;
     }
@@ -81,7 +94,7 @@
   }
 
   .simplebar-scrollbar::before {
-    background-color: rgba(0, 0, 0, 0.45);
+    background-color: var(--color-scrollbar);
     border-radius: 0;
   }
 }

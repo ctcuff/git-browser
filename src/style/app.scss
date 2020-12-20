@@ -14,19 +14,20 @@
       position: absolute;
       left: 0;
       width: 8px;
-      background-color: transparent;
+      opacity: 0;
       height: 100%;
       cursor: col-resize;
       z-index: 2;
-      transition: background-color 0.2s ease-in-out;
+      background-color: var(--color-scrollbar);
+      transition: opacity 0.2s ease-in-out;
 
       &:hover {
-        background-color: var(--color-border);
+        opacity: 0.5;
       }
 
       &:active {
         // The state when the mouse is down on the resize panel
-        background-color: var(--color-list-item-hover);
+        opacity: 1;
       }
     }
 

@@ -10,16 +10,29 @@
     padding: 1em 0.5em;
   }
 
-  .simplebar-scrollbar::before {
-    background-color: rgba(0, 0, 0, 0.45);
-    border-radius: 0;
-  }
-
   .simplebar-placeholder {
     // Overriding this property allows the explorer panel
     // to not overflow the page. Without it, We'd have to
     // set overflow: hidden in app.scss
     // https://github.com/Grsmto/simplebar/issues/487
     height: 100% !important;
+  }
+
+  // Need to use !important here to override some
+  // om simplebar's default properties. This allows
+  // the scrollbar to always show on hover.
+  .simplebar-scrollbar::before {
+    background-color: var(--color-scrollbar);
+    border-radius: 0;
+    opacity: 0 !important;
+    // The exit transition (mouseleave)
+    transition: opacity 0.2s ease-in-out 1s !important;
+  }
+
+  &:hover .simplebar-scrollbar::before,
+  &:active .simplebar-scrollbar::before {
+    opacity: 0.45 !important;
+    // The enter transition (mouseenter)
+    transition: opacity 0.2s ease-in-out 0s !important;
   }
 }
