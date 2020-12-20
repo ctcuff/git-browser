@@ -1,8 +1,6 @@
 const path = require('path')
 const { HotModuleReplacementPlugin } = require('webpack')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
-const APP_DIR = path.resolve(__dirname, './src');
-const MONACO_DIR = path.resolve(__dirname, './node_modules/monaco-editor')
 
 module.exports = {
   plugins: [new HotModuleReplacementPlugin(), new MonacoWebpackPlugin()],
@@ -42,33 +40,19 @@ module.exports = {
         ]
       },
       {
-        test: /\.css$/,
-        include: APP_DIR,
+        test: /\.ttf$/,
+        use: ['file-loader']
+      },
+      {
+        test: /\.css?$/,
         use: [
           {
             loader: 'style-loader'
           },
           {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              namedExport: true
-            }
+            loader: 'css-loader'
           }
         ]
-      },
-      {
-        test: /\.css$/,
-        include: MONACO_DIR,
-        use: ['style-loader', 'css-loader']
-      },
-      // {
-      //   test: /\.css$/,
-      //   use: ['style-loader', 'css-loader']
-      // },
-      {
-        test: /\.ttf$/,
-        use: ['file-loader']
       },
       {
         test: /\.scss$/,
