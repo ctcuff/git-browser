@@ -1,4 +1,5 @@
 import '../style/explorer-panel.scss'
+import 'simplebar/dist/simplebar.css'
 import React from 'react'
 import FileExplorer from './FileExplorer'
 import Tree from '../scripts/tree'
@@ -9,6 +10,7 @@ import SearchInput from './SearchInput'
 import BranchList from './BranchList'
 import sampleBranchData from '../assets/sample-branch-data.json'
 import sampleTreeData from '../assets/sample-tree-data.json'
+import SimpleBar from 'simplebar-react'
 
 const debugState = {
   treeData: sampleTreeData,
@@ -138,7 +140,7 @@ class ExplorerPanel extends React.Component {
     const key = currentRepoUrl + '/' + currentBranch
 
     return (
-      <div className="explorer-panel">
+      <SimpleBar className="explorer-panel">
         <Collapse title="search" open>
           <SearchInput
             className="search-panel"
@@ -173,7 +175,7 @@ class ExplorerPanel extends React.Component {
             currentBranch={currentBranch}
           />
         </Collapse>
-      </div>
+      </SimpleBar>
     )
   }
 }

@@ -2,30 +2,24 @@
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: var(--file-explorer-width);
-  overflow: hidden auto;
   background-color: var(--color-panel-background);
   color: var(--color-panel-text);
   border-right: 1px solid var(--color-border);
-  position: relative;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #b9b9b9;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: #6e6e6e;
-  }
 
   .search-panel {
     padding: 1em 0.5em;
+  }
+
+  .simplebar-scrollbar::before {
+    background-color: rgba(0, 0, 0, 0.45);
+    border-radius: 0;
+  }
+
+  .simplebar-placeholder {
+    // Overriding this property allows the explorer panel
+    // to not overflow the page. Without it, We'd have to
+    // set overflow: hidden in app.scss
+    // https://github.com/Grsmto/simplebar/issues/487
+    height: 100% !important;
   }
 }
