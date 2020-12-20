@@ -15,30 +15,36 @@ const setCSSVar = (key, value, element = document.documentElement) => {
   element.style.setProperty(key, value)
 }
 
-// Returns a function, that, as long as it continues to be invoked,
-// will not be triggered. The function will be called after it
-//stops being called for "wait" milliseconds
-const debounce = (func, wait) => {
-  let timeout
-  return function () {
-    const context = this
-    const args = arguments
+const getLanguageFromFileName = fileName => {
+  // This is an extension-less file. Usually, rendering the
+  // file as a shell file also handles rendering plaintext
+  if (!fileName.includes('.')) {
+    return 'shell'
+  }
 
-    const later = function () {
-      timeout = null
-      func.apply(context, args)
+  if (languageData[fileName]) {
+    return languageData[fileName]
+  }
+
+  let extension = ''
+  fileName = fileName.trim()
+
+  // Read through the file name backwards to try to read
+  // the extension of the file, stopping when we see a `.`
+  for (let i = fileName.length - 1; i >= 0; i--) {
+    if (fileName[i] === '.') {
+      extension += '.'
+      break
     }
 
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
+    extension += fileName[i]
   }
-}
 
-const getLanguageFromFileName = fileName => {
-  const index = fileName.lastIndexOf('.')
-  return index === -1 ? 'plaintext' : languageData[fileName.slice(index)]
+  extension = extension.split('').reverse().join('')
+
+  return languageData[extension] || 'plaintext'
 }
 
 const noop = () => {}
 
-export { parseCSSVar, setCSSVar, debounce, getLanguageFromFileName, noop }
+export { parseCSSVar, setCSSVar, getLanguageFromFileName, noop }

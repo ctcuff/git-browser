@@ -166,5 +166,6 @@
    ".yml": "yaml",
    ".vue": "html",
    ".pm": "perl",
-   ".perl": "perl"
+   ".perl": "perl",
+   ".prettierrc": "json"
 }
