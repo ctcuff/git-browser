@@ -17,15 +17,40 @@
       height: 100%;
       cursor: col-resize;
       z-index: 2;
-      transition: background-color 0.4s ease-in-out;
+      transition: background-color 0.2s ease-in-out;
 
       &:hover {
         background-color: rgba(146, 146, 146, 0.5);
+      }
+
+      &:active {
+        // The state when the mouse is down on the resize panel
+        background-color :rgba(0, 0, 0, 0.5);
       }
     }
 
     h1 {
       margin: 0;
     }
+  }
+
+  .resize-overlay {
+    display: none;
+  }
+}
+
+.is-resizing {
+  // Adds an overlay to the app so that content won't get selected
+  // when the user is dragging the resize panel
+  .resize-overlay {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: transparent;
+    z-index: 3;
+    cursor: col-resize;
   }
 }

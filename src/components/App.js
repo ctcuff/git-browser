@@ -182,6 +182,7 @@ class App extends React.Component {
 
     return (
       <div className={`app ${colorClass}`}>
+        <div className="resize-overlay" />
         <ExplorerPanel
           onSelectFile={this.onSelectFile}
           onSearchFinished={this.closeAllTabs}
