@@ -4,19 +4,20 @@ const BASE_API_URL = 'https://api.github.com'
 const BASE_REPO_URL = BASE_API_URL + '/repos'
 const ERROR_INVALID_GITHUB_URL = 'URL must be a GitHub URL'
 const ERROR_REPO_NOT_FOUND = "Couldn't find repository"
-const ERROR_INVALID_QUERY = 'Could not request API, invalid query'
 const UNKNOWN_SEARCH_ERROR = 'An error occurred while searching'
 const UNKNOWN_REQUEST_ERROR = 'An error occurred while making the request'
 
 const request = url => {
-  return fetch(
-    url,
-    OAUTH_TOKEN && {
-      headers: {
-        Authorization: `token ${OAUTH_TOKEN}`
-      }
+  const config = {
+    headers: {
     }
-  )
+  }
+
+  if (OAUTH_TOKEN) {
+    config.headers.Authorization = `token ${OAUTH_TOKEN}`
+  }
+
+  return fetch(url, config)
 }
 
 const isUrlValid = url => {
