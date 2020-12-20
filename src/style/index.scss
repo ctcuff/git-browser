@@ -7,18 +7,33 @@
 }
 
 .light-mode {
+  --color-primary: #ffffff;
   --color-panel-background: #ffffff;
   --color-panel-text: #000000;
-  --color-file-hover: #dbeaff;
-  --color-panel-border: #dddddd;
+  --color-panel-border: #dfe3e6;
+  --color-list-item-hover: #dbeaff;
+  --color-text-primary: #000000;
+  --color-text-secondary: #353535;
+  --color-border: #dfe3e6;
   --color-tab-border-bottom-active: #001799;
+  --color-collapse-header: #fafbfc;
+  --color-app-bg: #ffffff;
+  --color-gutter: #007acc;
 }
 
 .dark-mode {
+  --color-primary: #212122;
   --color-panel-background: #212122;
   --color-panel-text: #bdbdbd;
-  --color-file-hover: #303036;
   --color-panel-border: transparent;
+  --color-list-item-hover: #303036;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #bdbdbd;
+  --color-border: #424242;
+  --color-tab-border-bottom-active: #006fcc;
+  --color-collapse-header: #2d2d2d;
+  --color-app-bg: #1e1e1e;
+  --color-gutter: #007acc;
 }
 
 body {

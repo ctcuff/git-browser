@@ -1,6 +1,7 @@
 .app {
   height: calc(100vh - var(--gutter-height));
   display: flex;
+  background-color: var(--color-app-bg);
 
   .right {
     display: flex;
@@ -20,12 +21,12 @@
       transition: background-color 0.2s ease-in-out;
 
       &:hover {
-        background-color: rgba(146, 146, 146, 0.5);
+        background-color: var(--color-border);
       }
 
       &:active {
         // The state when the mouse is down on the resize panel
-        background-color :rgba(0, 0, 0, 0.5);
+        background-color: var(--color-list-item-hover);
       }
     }
 

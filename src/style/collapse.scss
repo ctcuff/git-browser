@@ -1,28 +1,25 @@
 .collapse {
-  $font-color: #000000d9;
-  $border-color: #d6d6d6;
-
   // Allows the header to stretch to the full width of
   // the panel when it's resized
   display: table;
   width: 100%;
 
   .header {
-    background-color: #fafafa;
+    background-color: var(--color-collapse-header);
+    color: var(--color-text-secondary);
     display: flex;
     width: 100%;
     text-align: left;
     text-transform: capitalize;
     border: none;
-    border-bottom: 1px solid $border-color;
-    border-top: 1px solid $border-color;
+    border-bottom: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border);
     font-size: 0.9em;
     margin: 0;
     margin-top: -1px; // Cancels the overlapping borders
     align-items: center;
     padding: 0.5em;
     cursor: pointer;
-    color: $font-color;
     position: sticky;
     top: 0;
     box-sizing: border-box;
@@ -35,7 +32,7 @@
 
   .toggle-icon {
     margin-right: 0.5em;
-    color: $font-color;
+    color: var(--color-text-primary);
     flex-shrink: 0;
   }
 

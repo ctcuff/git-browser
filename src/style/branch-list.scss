@@ -16,7 +16,8 @@
 
     &.branch--current,
     &:hover {
-      background-color: var(--color-file-hover);
+      color: var(--color-text-primary);
+      background-color: var(--color-list-item-hover);
     }
 
     &:last-child {
