@@ -165,5 +165,6 @@
    ".yaml": "yaml",
    ".yml": "yaml",
    ".vue": "html",
-   ".pm": "perl"
+   ".pm": "perl",
+   ".perl": "perl"
 }
