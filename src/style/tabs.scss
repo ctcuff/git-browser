@@ -2,16 +2,23 @@
   width: 100%;
   overflow: hidden;
 
+  .scroll-container {
+    height: var(--tab-bar-height);
+    left: 0;
+    right: 0;
+    z-index: 999;
+    top: 0;
+    background-color: transparent;
+  }
+
   .tab-list {
     display: flex;
     list-style: none;
     padding: 0;
     margin: 0;
-    overflow-x: auto;
     border-bottom: 1px solid var(--color-border);
-    position: absolute;
-    height: var(--tab-bar-height);
     color: var(--color-text-secondary);
+    height: 31px;
     top: 0;
     left: 0;
     right: 0;
@@ -48,6 +55,10 @@
       }
     }
 
+    .tab-title {
+      white-space: nowrap;
+    }
+
     &:hover {
       color: var(--color-text-primary);
       background-color: var(--color-list-item-hover);
@@ -58,14 +69,19 @@
   }
 
   .tab--selected {
-    border-bottom: 2px solid var(--color-tab-border-bottom-active);
     color: var(--color-text-primary);
+    border-bottom: 3px solid var(--color-tab-border-bottom-active);
     .tab-close-button {
       opacity: 1;
     }
   }
 
   .tab-panel--selected {
-    height: 100%;
+    height: calc(100% - var(--tab-bar-height));
+  }
+
+  .simplebar-scrollbar::before {
+    background-color: rgba(0, 0, 0, 0.45);
+    border-radius: 0;
   }
 }

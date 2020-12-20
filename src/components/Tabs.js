@@ -1,13 +1,19 @@
+import 'simplebar/dist/simplebar.css'
 import '../style/tabs.scss'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Tabs, TabList, TabPanel, Tab as ReactTab } from 'react-tabs'
 import PropTypes from 'prop-types'
+import SimpleBar from 'simplebar-react'
 
 const Tab = props => <React.Fragment>{props.children}</React.Fragment>
 
 const TabView = props => {
   const { onTabClosed, onSelectTab, activeTabIndex } = props
   const tabs = props.children
+
+  if (tabs.length <= 0) {
+    return null
+  }
 
   const onSelect = (index, prevIndex, event) => {
     // Clicking anywhere on the tab fires the tab's onSelect
@@ -20,24 +26,26 @@ const TabView = props => {
     onSelectTab(index)
   }
 
-  if (tabs.length <= 0) {
-    return null
-  }
-
   return (
     <Tabs className="tabs" onSelect={onSelect} selectedIndex={activeTabIndex}>
-      <TabList className="tab-list">
-        {tabs.map((tab, index) => (
-          <ReactTab
-            className="tab"
-            selectedClassName="tab--selected"
-            key={index}
-          >
-            <span>{tab.props.title}</span>{' '}
-            <button className="tab-close-button">&times;</button>
-          </ReactTab>
-        ))}
-      </TabList>
+      <SimpleBar>
+        <div className="scroll-container">
+          <TabList className="tab-list">
+            {tabs.map((tab, index) => (
+              <ReactTab
+                className="tab"
+                selectedClassName="tab--selected"
+                key={index}
+              >
+                <span className="tab-title" title={tab.props.hint}>
+                  {tab.props.title}
+                </span>{' '}
+                <button className="tab-close-button">&times;</button>
+              </ReactTab>
+            ))}
+          </TabList>
+        </div>
+      </SimpleBar>
       {tabs.map((tab, index) => (
         <TabPanel
           selectedClassName="tab-panel--selected"
@@ -56,7 +64,8 @@ Tab.propTypes = {
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node
-  ])
+  ]),
+  hint: PropTypes.string
 }
 
 TabView.propTypes = {

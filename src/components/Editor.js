@@ -47,15 +47,6 @@ class Editor extends React.Component {
       fontSize: 14,
       theme: this.props.colorScheme === 'dark' ? 'vs-dark' : 'vs-light'
     })
-
-    // Gives the editor a small amount of space before the first line
-    this.editor.changeViewZones(changeAccessor => {
-      changeAccessor.addZone({
-        afterLineNumber: 0,
-        heightInPx: 4,
-        domNode: document.createElement('div')
-      })
-    })
   }
 
   componentWillUnmount() {

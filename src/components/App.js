@@ -129,7 +129,7 @@ class App extends React.Component {
 
   renderTab(file, index) {
     return (
-      <Tab title={file.name} key={index}>
+      <Tab title={file.name} key={index} hint={file.path}>
         <Editor
           fileName={file.name}
           content={file.content}
@@ -192,7 +192,6 @@ class App extends React.Component {
           <TabView
             onTabClosed={this.onTabClosed}
             activeTabIndex={this.state.activeTabIndex}
-            key={this.state.openedFiles.length}
             onSelectTab={this.setActiveTabIndex}
           >
             {this.state.openedFiles.map(this.renderTab)}

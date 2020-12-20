@@ -62,7 +62,7 @@ const TreeNode = props => {
     <React.Fragment>
       <div
         className="tree-node"
-        title={nodeLabel}
+        title={node.path}
         style={{ paddingLeft: getPaddingLeft(level, node.type) }}
         onClick={() => onSelectNode(node, props)}
       >

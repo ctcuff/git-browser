@@ -1,6 +1,5 @@
 #monaco-editor-container {
   width: 100%;
-  height: calc(100% - var(--tab-bar-height));
-  margin-top: var(--tab-bar-height);
+  height: 100%;
   overflow: hidden;
 }
