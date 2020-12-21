@@ -1,0 +1,17 @@
+{
+  // Allows vscode intellisense for global jest object
+  "typeAcquisition": {
+    "include": ["jest"]
+  },
+  // Allows vscode intellisense for absolute
+  // imports from the src directory
+  "compilerOptions": {
+    "target": "es2017",
+    "allowSyntheticDefaultImports": false,
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

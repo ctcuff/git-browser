@@ -9,25 +9,27 @@ class Editor extends React.Component {
     super(props)
     this.editorRef = React.createRef()
     this.updateEditor = this.updateEditor.bind(this)
+    this.getTheme = this.getTheme.bind(this)
+  }
+
+  getTheme(colorScheme) {
+    return colorScheme === 'dark' ? 'vs-dark' : 'vs-light'
   }
 
   componentDidUpdate(prevProps) {
     const { colorScheme, content } = this.props
 
     if (prevProps.colorScheme !== colorScheme) {
-      monacoEditor.setTheme(colorScheme === 'dark' ? 'vs-dark' : 'vs-light')
+      monacoEditor.setTheme(this.getTheme(colorScheme))
     }
 
     if (prevProps.content === content) {
-      console.log('No Update')
       return
     }
 
     if (this.editor) {
       this.updateEditor()
     }
-
-    console.log('update')
   }
 
   componentDidMount() {
@@ -45,7 +47,7 @@ class Editor extends React.Component {
       },
       automaticLayout: true,
       fontSize: 14,
-      theme: this.props.colorScheme === 'dark' ? 'vs-dark' : 'vs-light'
+      theme: this.getTheme(this.props.colorScheme)
     })
   }
 

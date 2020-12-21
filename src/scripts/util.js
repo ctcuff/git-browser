@@ -45,6 +45,7 @@ const getLanguageFromFileName = fileName => {
   return languageData[extension] || 'plaintext'
 }
 
+/* istanbul ignore next */
 const noop = () => {}
 
 export { parseCSSVar, setCSSVar, getLanguageFromFileName, noop }
