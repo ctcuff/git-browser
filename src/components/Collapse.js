@@ -35,7 +35,8 @@ const Collapse = props => {
 Collapse.propTypes = {
   title: PropTypes.string.isRequired,
   open: PropTypes.bool,
-  onToggle: PropTypes.func
+  onToggle: PropTypes.func,
+  children: PropTypes.node
 }
 
 Collapse.defaultProps = {

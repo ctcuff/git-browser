@@ -94,7 +94,8 @@ TreeNode.propTypes = {
     name: PropTypes.string,
     path: PropTypes.path,
     url: PropTypes.string,
-    isRoot: PropTypes.bool
+    isRoot: PropTypes.bool,
+    isOpen: PropTypes.bool
   }).isRequired,
   getChildren: PropTypes.func.isRequired,
   level: PropTypes.number.isRequired,

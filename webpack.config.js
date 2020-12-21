@@ -19,7 +19,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(jsx|js)$/,
+        test: /\.(js)$/,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [
@@ -36,7 +36,8 @@ module.exports = {
                 '@babel/preset-react'
               ]
             }
-          }
+          },
+          'eslint-loader'
         ]
       },
       {

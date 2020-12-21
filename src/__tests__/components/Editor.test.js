@@ -26,7 +26,7 @@ describe('Editor', () => {
 
     expect(setTheme).toHaveBeenCalledWith('vs-dark')
     expect(updateEditor).toHaveBeenCalledTimes(2)
-  }),
+  })
 
   test('mounts', () => {
     const createModel = jest.spyOn(editor, 'createModel')
@@ -41,7 +41,7 @@ describe('Editor', () => {
     )
 
     expect(create).toHaveBeenCalled()
-  }),
+  })
 
   test('cleans up  editor on unmount', () => {
     const getModel = jest.spyOn(editor, 'getModel')

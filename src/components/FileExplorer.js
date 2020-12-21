@@ -15,7 +15,6 @@ class FileExplorer extends Component {
     this.getRootNodes = this.getRootNodes.bind(this)
     this.getChildren = this.getChildren.bind(this)
     this.onToggle = this.onToggle.bind(this)
-    this.onSelectNode = this.onSelectNode.bind(this)
   }
 
   getRootNodes() {
@@ -50,10 +49,6 @@ class FileExplorer extends Component {
     nodes[node.path].isOpen = !node.isOpen
 
     this.setState({ nodes })
-  }
-
-  onSelectNode(node) {
-    this.props.onSelect(node)
   }
 
   render() {

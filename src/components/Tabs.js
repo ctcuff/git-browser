@@ -81,7 +81,8 @@ TabView.propTypes = {
     )
   ]),
   onTabClosed: PropTypes.func.isRequired,
-  activeTabIndex: PropTypes.number.isRequired
+  activeTabIndex: PropTypes.number.isRequired,
+  onSelectTab: PropTypes.func.isRequired
 }
 
 export { TabView, Tab }
