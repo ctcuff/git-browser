@@ -40,7 +40,7 @@ BranchList.propTypes = {
         url: PropTypes.string.isRequired
       }),
       protected: PropTypes.bool.isRequired,
-      repoUrl: PropTypes.string.isRequired,
+      repoUrl: PropTypes.string.isRequired
     })
   ),
   onBranchClick: PropTypes.func,

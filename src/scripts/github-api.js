@@ -1,89 +1,9 @@
-import { OAUTH_TOKEN } from '../config'
+import URLUtil, { BASE_REPO_URL } from './url-util'
 
-const BASE_API_URL = 'https://api.github.com'
-const BASE_REPO_URL = BASE_API_URL + '/repos'
 const ERROR_INVALID_GITHUB_URL = 'URL must be a GitHub URL'
 const ERROR_REPO_NOT_FOUND = "Couldn't find repository"
 const UNKNOWN_SEARCH_ERROR = 'An error occurred while searching'
 const UNKNOWN_REQUEST_ERROR = 'An error occurred while making the request'
-
-const request = url => {
-  const config = {
-    headers: {
-    }
-  }
-
-  if (OAUTH_TOKEN) {
-    config.headers.Authorization = `token ${OAUTH_TOKEN}`
-  }
-
-  return fetch(url, config)
-}
-
-const isUrlValid = url => {
-  try {
-    new URL(addScheme(url))
-    return true
-  } catch (e) {
-    return false
-  }
-}
-
-const isGithubUrl = url => {
-  if (!isUrlValid(url)) {
-    return false
-  }
-
-  try {
-    const { hostname } = new URL(addScheme(url))
-    return hostname.toLowerCase() === 'github.com'
-  } catch (e) {
-    return false
-  }
-}
-
-const addScheme = url => {
-  if (!url.startsWith('http') || !url.startsWith('https')) {
-    return 'https://' + url
-  }
-  return url
-}
-
-/**
- * Takes a github url: 'https://github.com/user/repo-name'
- * and returns the string `user/repo-name`
- */
-const extractRepoPath = url => {
-  if (!isUrlValid(url)) {
-    throw new Error(`Invalid URL: ${url}`)
-  }
-
-  const parsedUrl = new URL(addScheme(url))
-
-  if (!parsedUrl.pathname) {
-    throw new Error(`Error retrieving pathname from URL ${url}`)
-  }
-
-  let path = parsedUrl.pathname
-
-  if (path.startsWith('/')) {
-    path = path.slice(1)
-  }
-
-  if (path.endsWith('/')) {
-    path = path.slice(0, path.length - 1)
-  }
-
-  return path
-}
-
-const buildBranchUrl = (repoPath, branchName) => {
-  return `${BASE_REPO_URL}/${repoPath}/git/trees/${branchName}?recursive=true`
-}
-
-const buildBranchesUrl = repoPath => {
-  return `${BASE_REPO_URL}/${repoPath}/branches`
-}
 
 class GitHubAPI {
   /**
@@ -93,14 +13,18 @@ class GitHubAPI {
    * @see https://docs.github.com/en/free-pro-team/rest/reference/repos#get-a-repository
    */
   static getDefaultBranch(repoUrl) {
-    if (!isGithubUrl(repoUrl)) {
+    if (!URLUtil.isGithubUrl(repoUrl)) {
       return Promise.reject(ERROR_INVALID_GITHUB_URL)
     }
 
-    const repoPath = extractRepoPath(repoUrl)
+    const repoPath = URLUtil.extractRepoPath(repoUrl)
     const apiUrl = BASE_REPO_URL + '/' + repoPath
 
-    return request(apiUrl)
+    if (!repoPath) {
+      return Promise.reject(ERROR_REPO_NOT_FOUND)
+    }
+
+    return URLUtil.request(apiUrl)
       .then(res => {
         if (res.ok) {
           return res.json()
@@ -121,6 +45,7 @@ class GitHubAPI {
         return default_branch
       })
       .catch(err => {
+        // eslint-disable-next-line no-console
         console.error(err)
         return Promise.reject(err)
       })
@@ -137,6 +62,7 @@ class GitHubAPI {
       return GitHubAPI.getDefaultBranch(repoUrl)
         .then(branchName => this.getBranch(repoUrl, branchName))
         .catch(err => {
+          // eslint-disable-next-line no-console
           console.error(err)
           return Promise.reject(err)
         })
@@ -150,16 +76,21 @@ class GitHubAPI {
    * branch name and returns the tree (all files).
    */
   static getBranch(repoUrl, branch) {
-    const repoPath = extractRepoPath(repoUrl)
-    const branchUrl = buildBranchUrl(repoPath, branch)
+    const repoPath = URLUtil.extractRepoPath(repoUrl)
+    const branchUrl = URLUtil.buildBranchUrl(repoPath, branch)
 
-    return request(branchUrl)
+    if (!repoPath) {
+      return Promise.reject(ERROR_REPO_NOT_FOUND)
+    }
+
+    return URLUtil.request(branchUrl)
       .then(res => res.json())
       .then(res => {
         res.branch = branch
         return res
       })
       .catch(err => {
+        // eslint-disable-next-line no-console
         console.error(err)
         return Promise.reject(UNKNOWN_REQUEST_ERROR)
       })
@@ -172,10 +103,11 @@ class GitHubAPI {
    * @see https://docs.github.com/en/free-pro-team/rest/reference/git#get-a-blob
    */
   static getFile(url) {
-    return request(url)
+    return URLUtil.request(url)
       .then(res => res.json())
       .then(res => res.content)
       .catch(err => {
+        // eslint-disable-next-line no-console
         console.error(err)
         return Promise.reject(UNKNOWN_REQUEST_ERROR)
       })
@@ -188,14 +120,18 @@ class GitHubAPI {
    * @see https://docs.github.com/en/free-pro-team/rest/reference/repos#branches
    */
   static getBranches(repoUrl) {
-    if (!isGithubUrl(repoUrl)) {
+    if (!URLUtil.isGithubUrl(repoUrl)) {
       return Promise.reject(ERROR_INVALID_GITHUB_URL)
     }
 
-    const repoPath = extractRepoPath(repoUrl)
-    const branchesUrl = buildBranchesUrl(repoPath)
+    const repoPath = URLUtil.extractRepoPath(repoUrl)
+    const branchesUrl = URLUtil.buildBranchesUrl(repoPath)
 
-    return request(branchesUrl + '?per_page=100')
+    if (!repoPath) {
+      return Promise.reject(ERROR_REPO_NOT_FOUND)
+    }
+
+    return URLUtil.request(branchesUrl + '?per_page=100')
       .then(res => {
         if (res.ok) {
           return res.json()
@@ -215,6 +151,7 @@ class GitHubAPI {
         })
       })
       .catch(err => {
+        // eslint-disable-next-line no-console
         console.error(err)
         return Promise.reject(UNKNOWN_REQUEST_ERROR)
       })

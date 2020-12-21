@@ -10,7 +10,7 @@
     "build": "webpack --config webpack.config.js",
     "dev": "webpack-dev-server",
     "test": "jest",
-    "test:ci": "yarn test --bail",
+    "test:ci": "yarn test --bail --passWithNoTests --coverage",
     "lint": "eslint './src/**/*.js'",
     "format": "yarn format:js && yarn format:scss",
     "format:js": "prettier --write './src/**/*.js'",

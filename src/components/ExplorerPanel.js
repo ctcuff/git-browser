@@ -63,7 +63,10 @@ class ExplorerPanel extends React.Component {
       return
     }
 
-    this.setState({ searchErrorMessage: null })
+    this.setState({
+      searchErrorMessage: null,
+      currentRepoUrl: url
+    })
     this.getTree(url, 'default')
     this.getBranches(url)
   }
@@ -86,7 +89,6 @@ class ExplorerPanel extends React.Component {
       .then(res => {
         this.props.onSearchFinished()
         this.setState({
-          currentRepoUrl: repoUrl,
           treeData: Tree.treeify(res.tree),
           currentBranch: res.branch,
           isCodePanelOpen: true
