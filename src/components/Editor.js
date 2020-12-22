@@ -1,7 +1,12 @@
+/* eslint-disable no-unused-vars */
 import '../style/editor.scss'
+import 'codemirror/lib/codemirror.css'
+import '../style/github-theme.scss'
+import 'codemirror/addon/scroll/simplescrollbars'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { editor as monacoEditor } from 'monaco-editor/esm/vs/editor/editor.api.js'
+import CodeMirror from 'codemirror'
+// import { UnControlled as CodeMirror } from 'react-codemirror2'
 import { getLanguageFromFileName } from '../scripts/util'
 
 class Editor extends React.Component {
@@ -10,6 +15,7 @@ class Editor extends React.Component {
     this.editorRef = React.createRef()
     this.updateEditor = this.updateEditor.bind(this)
     this.getTheme = this.getTheme.bind(this)
+    this.initEditor = this.initEditor.bind(this)
   }
 
   getTheme(colorScheme) {
@@ -17,11 +23,11 @@ class Editor extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { colorScheme, content } = this.props
+    const { content } = this.props
 
-    if (prevProps.colorScheme !== colorScheme) {
-      monacoEditor.setTheme(this.getTheme(colorScheme))
-    }
+    // if (prevProps.colorScheme !== colorScheme) {
+    //   monacoEditor.setTheme(this.getTheme(colorScheme))
+    // }
 
     if (prevProps.content === content) {
       return
@@ -33,40 +39,57 @@ class Editor extends React.Component {
   }
 
   componentDidMount() {
-    const { content, fileName } = this.props
-    const model = monacoEditor.createModel(
-      content,
-      getLanguageFromFileName(fileName)
-    )
+    this.initEditor()
+  }
 
-    this.editor = monacoEditor.create(this.editorRef.current, {
-      model,
-      quickSuggestions: false,
+  async initEditor() {
+    const { content, fileName } = this.props
+    let language = getLanguageFromFileName(fileName)
+
+    console.log({ language })
+
+    try {
+      await import(`codemirror/mode/${language}/${language}`)
+    } catch (e) {
+      console.warn(e)
+      language = ''
+    }
+
+    this.editor = CodeMirror(this.editorRef.current, {
+      value: content,
+      mode: language,
+      lineNumbers: true,
       readOnly: true,
-      minimap: {
-        enabled: false
-      },
-      automaticLayout: true,
-      fontSize: 14,
-      theme: this.getTheme(this.props.colorScheme)
+      cursorBlinkRate: 0,
+      fixedGutter: false,
+      theme: 'github',
+      scrollbarStyle: 'overlay'
     })
   }
 
-  componentWillUnmount() {
-    this.editor.getModel().dispose()
-    this.editor.dispose()
-  }
+  componentWillUnmount() {}
 
   updateEditor() {
-    const { fileName, content } = this.props
-    const model = this.editor.getModel()
-
-    model.setValue(content)
-    monacoEditor.setModelLanguage(model, getLanguageFromFileName(fileName))
+    // const { fileName, content } = this.props
+    // this.editor.refresh()
   }
 
   render() {
-    return <div id="monaco-editor-container" ref={this.editorRef} />
+    // return (
+    //   <CodeMirror
+    //     className="editor"
+    //     value={this.props.content}
+    //     ref={this.editorRef}
+    //     options={{
+    //       mode: 'javascript',
+    //       theme: 'default',
+    //       lineNumbers: true,
+    //       readOnly: true,
+    //       cursorBlinkRate: 0
+    //     }}
+    //   />
+    // )
+    return <div className="editor" ref={this.editorRef}></div>
   }
 }
 

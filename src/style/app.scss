@@ -17,7 +17,7 @@
       opacity: 0;
       height: 100%;
       cursor: col-resize;
-      z-index: 2;
+      z-index: 99999;
       background-color: var(--color-scrollbar);
       transition: opacity 0.2s ease-in-out;
 

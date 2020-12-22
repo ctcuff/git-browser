@@ -1,5 +1,30 @@
-#monaco-editor-container {
+.editor {
   width: 100%;
   height: 100%;
   overflow: hidden;
+
+  .CodeMirror {
+    height: 100%;
+    width: 100%;
+    font-size: 14px;
+    line-height: 22px;
+
+    font-family: monospace, consolas, Menlo, SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+    // font-family: monospace, consolas;
+
+  }
+
+  .CodeMirror-cursor {
+    display: none;
+  }
+
+  .CodeMirror-gutters {
+    background-color: #ffffff;
+    border: none;
+    // width: 100px;
+  }
+
+  .CodeMirror-linenumbers {
+    // width: 100px;
+  }
 }

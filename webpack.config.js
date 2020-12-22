@@ -1,15 +1,11 @@
 const path = require('path')
 const { HotModuleReplacementPlugin } = require('webpack')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
   plugins: [
     new HotModuleReplacementPlugin(),
-    new MonacoWebpackPlugin(),
-    new BundleAnalyzerPlugin(),
     new CleanWebpackPlugin(),
     new HTMLWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html')
