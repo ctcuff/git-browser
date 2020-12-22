@@ -1,7 +1,7 @@
 import '../style/editor.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { editor as monacoEditor } from 'monaco-editor'
+import { editor as monacoEditor } from 'monaco-editor/esm/vs/editor/editor.api.js'
 import { getLanguageFromFileName } from '../scripts/util'
 
 class Editor extends React.Component {
@@ -41,6 +41,7 @@ class Editor extends React.Component {
 
     this.editor = monacoEditor.create(this.editorRef.current, {
       model,
+      quickSuggestions: false,
       readOnly: true,
       minimap: {
         enabled: false

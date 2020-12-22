@@ -1,7 +1,7 @@
 import React from 'react'
 import Editor from 'src/components/Editor'
 import { mount } from 'enzyme'
-import { editor } from 'monaco-editor'
+import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js'
 import { getLanguageFromFileName } from 'src/scripts/util'
 
 describe('Editor', () => {

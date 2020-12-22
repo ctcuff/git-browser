@@ -1,16 +1,28 @@
 const path = require('path')
 const { HotModuleReplacementPlugin } = require('webpack')
+const HTMLWebpackPlugin = require('html-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
-  plugins: [new HotModuleReplacementPlugin(), new MonacoWebpackPlugin()],
+  plugins: [
+    new HotModuleReplacementPlugin(),
+    new MonacoWebpackPlugin(),
+    new BundleAnalyzerPlugin(),
+    new CleanWebpackPlugin(),
+    new HTMLWebpackPlugin({
+      template: path.resolve(__dirname, 'public', 'index.html')
+    })
+  ],
+  mode: 'development',
   entry: path.resolve(__dirname, 'src', 'index.js'),
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
   },
   devServer: {
-    contentBase: path.resolve(__dirname, 'dist'),
+    contentBase: path.resolve(__dirname, 'public'),
     open: false,
     clientLogLevel: 'silent',
     port: 9000,
@@ -19,7 +31,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js)$/,
+        test: /\.js$/,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [
@@ -41,7 +53,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.ttf$/,
+        test: /\.(ttf|png|jpg)$/,
         use: ['file-loader']
       },
       {

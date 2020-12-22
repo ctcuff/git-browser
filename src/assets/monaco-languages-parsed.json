@@ -167,5 +167,8 @@
    ".vue": "html",
    ".pm": "perl",
    ".perl": "perl",
-   ".prettierrc": "json"
+   ".prettierrc": "json",
+   ".png": "png",
+   ".jpg": "jpg",
+   ".jpeg": "jpg"
 }
