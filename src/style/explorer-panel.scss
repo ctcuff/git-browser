@@ -1,10 +1,7 @@
+@import './mixins/media';
+
 .explorer-panel {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: var(--file-explorer-width);
-  background-color: var(--color-panel-background);
-  color: var(--color-panel-text);
-  border-right: 1px solid var(--color-border);
+  height: 100%;
 
   .search-panel {
     padding: 1em 0.5em;
@@ -12,8 +9,7 @@
 
   .simplebar-placeholder {
     // Overriding this property allows the explorer panel
-    // to not overflow the page. Without it, We'd have to
-    // set overflow: hidden in app.scss
+    // to not overflow the page.
     // https://github.com/Grsmto/simplebar/issues/487
     height: 100% !important;
   }
@@ -27,12 +23,18 @@
     opacity: 0 !important;
     // The exit transition (mouseleave)
     transition: opacity 0.2s ease-in-out 1s !important;
+
+    @include mobile() {
+      display: none;
+    }
   }
 
-  &:hover .simplebar-scrollbar::before,
-  &:active .simplebar-scrollbar::before {
-    opacity: 0.45 !important;
-    // The enter transition (mouseenter)
-    transition: opacity 0.2s ease-in-out 0s !important;
+  @include desktop() {
+    &:hover .simplebar-scrollbar::before,
+    &:active .simplebar-scrollbar::before {
+      opacity: 0.45 !important;
+      // The enter transition (mouseenter)
+      transition: opacity 0.2s ease-in-out 0s !important;
+    }
   }
 }

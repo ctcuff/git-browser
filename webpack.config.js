@@ -2,14 +2,24 @@ const path = require('path')
 const { HotModuleReplacementPlugin } = require('webpack')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
   plugins: [
     new HotModuleReplacementPlugin(),
-    new MonacoWebpackPlugin(),
-    new BundleAnalyzerPlugin(),
+    new MonacoWebpackPlugin({
+      features: [
+        '!contextmenu',
+        '!codeAction',
+        '!codelens',
+        '!coreCommands',
+        '!gotoError',
+        '!indentation',
+        '!parameterHints',
+        '!rename',
+        '!suggest'
+      ]
+    }),
     new CleanWebpackPlugin(),
     new HTMLWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html')
@@ -57,24 +67,16 @@ module.exports = {
         use: ['file-loader']
       },
       {
-        test: /\.css?$/,
+        test: /\.(css|scss)$/,
         use: [
           {
             loader: 'style-loader'
           },
           {
             loader: 'css-loader'
-          }
-        ]
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          {
-            loader: 'style-loader'
           },
           {
-            loader: 'css-loader'
+            loader: 'postcss-loader'
           },
           {
             loader: 'sass-loader'

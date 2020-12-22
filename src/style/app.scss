@@ -1,7 +1,74 @@
+@import '../style/mixins/media';
+
 .app {
-  height: calc(100vh - var(--gutter-height));
+  $toggle-button-height: 32px;
+
+  overflow: hidden;
+  height: calc((var(--vh, 1vh) * 100) - var(--gutter-height));
   display: flex;
   background-color: var(--color-app-bg);
+
+  .left {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+    color: var(--color-panel-text);
+    border-right: 1px solid var(--color-border);
+    position: relative;
+
+    @include desktop() {
+      flex-basis: var(--file-explorer-width);
+    }
+
+    &.panel-open {
+      @include mobile() {
+        flex-basis: 90%;
+      }
+    }
+
+    &.panel-closed {
+      @include mobile() {
+        flex-basis: 32px;
+      }
+    }
+  }
+
+  .panel-toggle {
+    width: 100%;
+    height: $toggle-button-height;
+    border: none;
+    background-color: var(--color-collapse-header);
+    font-size: 0.9em;
+    padding: 0.5em;
+    display: none;
+    font-size: 1em;
+
+    &:focus {
+      outline: none;
+    }
+
+    @include mobile() {
+      display: block;
+    }
+  }
+
+  .panel-toggle-icon {
+    color: var(--color-text-primary);
+  }
+
+  .mobile-panel-overlay {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    background-color: var(--color-collapse-header);
+    top: $toggle-button-height;
+    bottom: 0;
+
+    @include desktop() {
+      display: none;
+    }
+  }
 
   .right {
     display: flex;
@@ -9,31 +76,40 @@
     height: 100%;
     overflow: hidden;
     position: relative;
+  }
 
-    .resize-panel {
-      position: absolute;
-      left: 0;
-      width: 8px;
-      opacity: 0;
-      height: 100%;
-      cursor: col-resize;
-      z-index: 2;
-      background-color: var(--color-scrollbar);
-      transition: opacity 0.2s ease-in-out;
+  .resize-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    width: 12px;
+    opacity: 0;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 2;
+    background-color: var(--color-scrollbar);
+    transition: opacity 0.2s ease-in-out;
 
-      &:hover {
-        opacity: 0.5;
-      }
-
-      &:active {
-        // The state when the mouse is down on the resize panel
-        opacity: 1;
-      }
+    &:hover {
+      opacity: 0.5;
     }
 
-    h1 {
-      margin: 0;
+    &:active {
+      // The state when the mouse is down on the resize panel
+      opacity: 1;
     }
+
+    @include mobile() {
+      display: none;
+    }
+  }
+
+  .resize-icon {
+    color: var(--color-primary);
+    font-size: 2em;
+    transform: scale(2);
   }
 
   .image-wrapper {
@@ -68,5 +144,9 @@
     background-color: transparent;
     z-index: 3;
     cursor: col-resize;
+
+    @include mobile() {
+      display: none;
+    }
   }
 }

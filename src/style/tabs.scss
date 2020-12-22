@@ -1,3 +1,5 @@
+@import './mixins/media';
+
 .tabs {
   width: 100%;
   overflow: hidden;
@@ -59,11 +61,13 @@
       white-space: nowrap;
     }
 
-    &:hover {
-      color: var(--color-text-primary);
-      background-color: var(--color-list-item-hover);
-      .tab-close-button {
-        opacity: 1;
+    @include desktop() {
+      &:hover {
+        color: var(--color-text-primary);
+        background-color: var(--color-list-item-hover);
+        .tab-close-button {
+          opacity: 1;
+        }
       }
     }
   }
@@ -96,5 +100,9 @@
   .simplebar-scrollbar::before {
     background-color: var(--color-scrollbar);
     border-radius: 0;
+
+    @include mobile() {
+      display: none;
+    }
   }
 }

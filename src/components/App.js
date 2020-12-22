@@ -11,6 +11,9 @@ import ExplorerPanel from './ExplorerPanel'
 import GitHubAPI from '../scripts/github-api'
 import Gutter from './Gutter'
 import { Tab, TabView } from './Tabs'
+import { AiOutlineLeft, AiOutlineMenu } from 'react-icons/ai'
+import { BsThreeDotsVertical } from 'react-icons/bs'
+import debounce from 'lodash/debounce'
 
 const clamp = (min, value, max) => Math.max(min, Math.min(value, max))
 class App extends React.Component {
@@ -22,7 +25,8 @@ class App extends React.Component {
       // opened multiple times
       openedFilePaths: new Set(),
       openedFiles: [],
-      activeTabIndex: 0
+      activeTabIndex: 0,
+      isExplorerOpen: false
     }
 
     this.mousePosition = 0
@@ -37,14 +41,25 @@ class App extends React.Component {
     this.resize = this.resize.bind(this)
     this.findFileIndex = this.findFileIndex.bind(this)
     this.setActiveTabIndex = this.setActiveTabIndex.bind(this)
+    this.toggleExplorer = this.toggleExplorer.bind(this)
+    this.updateViewport = debounce(this.updateViewport.bind(this), 250)
   }
 
   componentDidMount() {
+    this.updateViewport()
     document.addEventListener('mouseup', this.onMouseUp)
+    window.addEventListener('resize', this.updateViewport)
   }
 
   componentWillUnmount() {
     document.removeEventListener('mouseup', this.onMouseUp)
+    window.removeEventListener('resize', this.updateViewport)
+  }
+
+  updateViewport() {
+    // Updates the --vh variable used in the height mixin
+    const vh = window.innerHeight * 0.01
+    setCSSVar('--vh', `${vh}px`)
   }
 
   onSelectFile(node) {
@@ -91,7 +106,7 @@ class App extends React.Component {
   resize(event) {
     // The smallest the panel is allowed to be before
     // it snaps to 0px
-    const absoluteMin = 60
+    const absoluteMin = 80
     const absoluteMax = document.body.clientWidth - 100
     const diff = this.mousePosition - event.x
     const panelSize = parseCSSVar('--file-explorer-width')
@@ -106,8 +121,8 @@ class App extends React.Component {
     this.mousePosition = newSize
 
     // Snaps the panel closed when the cursor position
-    // reaches half of the panel's absolute minimum size
-    if (event.x < absoluteMin / 2) {
+    // reaches two thirds the panel's absolute minimum size
+    if (event.x < (2 * absoluteMin) / 3) {
       newSize = 0
     }
 
@@ -202,24 +217,42 @@ class App extends React.Component {
     this.setState({ activeTabIndex })
   }
 
+  toggleExplorer() {
+    this.setState({ isExplorerOpen: !this.state.isExplorerOpen })
+  }
+
   render() {
     const colorClass = `${this.props.mode}-mode`
+    const openClass = this.state.isExplorerOpen ? 'panel-open' : 'panel-closed'
+    const { isExplorerOpen, activeTabIndex, openedFiles } = this.state
 
     return (
       <div className={`app ${colorClass}`}>
         <div className="resize-overlay" />
-        <ExplorerPanel
-          onSelectFile={this.onSelectFile}
-          onSearchFinished={this.closeAllTabs}
-        />
+        <div className={`left ${openClass}`}>
+          <button className="panel-toggle" onClick={this.toggleExplorer}>
+            {isExplorerOpen ? (
+              <AiOutlineLeft className="panel-toggle-icon" />
+            ) : (
+              <AiOutlineMenu className="panel-toggle-icon" />
+            )}
+          </button>
+          {isExplorerOpen ? null : <div className="mobile-panel-overlay" />}
+          <ExplorerPanel
+            onSelectFile={this.onSelectFile}
+            onSearchFinished={this.closeAllTabs}
+          />
+        </div>
         <div className="right">
-          <div className="resize-panel" onMouseDown={this.onPanelMouseDown} />
+          <div className="resize-panel" onMouseDown={this.onPanelMouseDown}>
+            <BsThreeDotsVertical className="resize-icon" />
+          </div>
           <TabView
             onTabClosed={this.onTabClosed}
-            activeTabIndex={this.state.activeTabIndex}
+            activeTabIndex={activeTabIndex}
             onSelectTab={this.setActiveTabIndex}
           >
-            {this.state.openedFiles.map(this.renderTab)}
+            {openedFiles.map(this.renderTab)}
           </TabView>
         </div>
         <Gutter />
