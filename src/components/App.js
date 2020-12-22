@@ -1,7 +1,11 @@
 import '../style/app.scss'
 import React from 'react'
 import Editor from './Editor'
-import { parseCSSVar, setCSSVar } from '../scripts/util'
+import {
+  parseCSSVar,
+  setCSSVar,
+  getLanguageFromFileName
+} from '../scripts/util'
 import PropTypes from 'prop-types'
 import ExplorerPanel from './ExplorerPanel'
 import GitHubAPI from '../scripts/github-api'
@@ -63,7 +67,7 @@ class App extends React.Component {
         openedFiles: [
           ...openedFiles,
           {
-            content: atob(content),
+            content,
             name: node.name,
             path: node.path
           }
@@ -128,13 +132,34 @@ class App extends React.Component {
   }
 
   renderTab(file, index) {
+    let component
+    const language = getLanguageFromFileName(file.name)
+
+    switch (language) {
+      case 'png':
+      case 'jpg':
+        component = (
+          <div className="image-wrapper">
+            <img
+              src={'data:image/png;base64,' + file.content}
+              alt={file.name}
+            />
+          </div>
+        )
+        break
+      default:
+        component = (
+          <Editor
+            fileName={file.name}
+            content={atob(file.content)}
+            colorScheme={this.props.mode}
+          />
+        )
+    }
+
     return (
       <Tab title={file.name} key={index} hint={file.path}>
-        <Editor
-          fileName={file.name}
-          content={file.content}
-          colorScheme={this.props.mode}
-        />
+        {component}
       </Tab>
     )
   }
