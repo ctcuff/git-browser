@@ -12,7 +12,6 @@ module.exports = {
         '!contextmenu',
         '!codeAction',
         '!codelens',
-        '!coreCommands',
         '!gotoError',
         '!indentation',
         '!parameterHints',

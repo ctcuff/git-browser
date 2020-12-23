@@ -1,15 +1,20 @@
 import '../style/editor.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { editor as monacoEditor } from 'monaco-editor/esm/vs/editor/editor.api.js'
 import { getLanguageFromFileName } from '../scripts/util'
+import LoadingOverlay from './LoadingOverlay'
 
 class Editor extends React.Component {
   constructor(props) {
     super(props)
+
+    this.state = {
+      isLoading: false
+    }
+
     this.editorRef = React.createRef()
-    this.updateEditor = this.updateEditor.bind(this)
     this.getTheme = this.getTheme.bind(this)
+    this.initEditor = this.initEditor.bind(this)
   }
 
   getTheme(colorScheme) {
@@ -17,29 +22,48 @@ class Editor extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { colorScheme, content } = this.props
+    const colorScheme = this.props.colorScheme
 
     if (prevProps.colorScheme !== colorScheme) {
-      monacoEditor.setTheme(this.getTheme(colorScheme))
-    }
-
-    if (prevProps.content === content) {
-      return
-    }
-
-    if (this.editor) {
-      this.updateEditor()
+      this.monaco.setTheme(this.getTheme(colorScheme))
     }
   }
 
   componentDidMount() {
-    const { content, fileName } = this.props
-    const model = monacoEditor.createModel(
-      content,
-      getLanguageFromFileName(fileName)
+    this.initEditor()
+  }
+
+  async initEditor() {
+    this.setState({ isLoading: true })
+
+    // monaco editor is loaded asynchronously to prevent unnecessarily
+    // bundling all of the editor API when the project is built.
+    const { editor: monaco, languages } = await import(
+      'monaco-editor/esm/vs/editor/editor.api.js'
     )
 
-    this.editor = monacoEditor.create(this.editorRef.current, {
+    const languageOpts = {
+      noSemanticValidation: true,
+      noSyntaxValidation: true,
+      noSuggestionDiagnostics: true
+    }
+
+    // Disables lint warnings and syntax errors for languages
+    languages.typescript.typescriptDefaults.setDiagnosticsOptions(languageOpts)
+    languages.typescript.javascriptDefaults.setDiagnosticsOptions(languageOpts)
+    languages.css.cssDefaults.setDiagnosticsOptions({
+      validate: false
+    })
+    languages.json.jsonDefaults.setDiagnosticsOptions({
+      validate: false
+    })
+
+    const model = monaco.createModel(
+      this.props.content,
+      getLanguageFromFileName(this.props.fileName)
+    )
+
+    this.editor = monaco.create(this.editorRef.current, {
       model,
       quickSuggestions: false,
       readOnly: true,
@@ -48,8 +72,12 @@ class Editor extends React.Component {
       },
       automaticLayout: true,
       fontSize: 14,
-      theme: this.getTheme(this.props.colorScheme)
+      theme: this.getTheme(this.props.colorScheme),
+      renderIndentGuides: false
     })
+
+    this.monaco = monaco
+    this.setState({ isLoading: false })
   }
 
   componentWillUnmount() {
@@ -57,23 +85,19 @@ class Editor extends React.Component {
     this.editor.dispose()
   }
 
-  updateEditor() {
-    const { fileName, content } = this.props
-    const model = this.editor.getModel()
-
-    model.setValue(content)
-    monacoEditor.setModelLanguage(model, getLanguageFromFileName(fileName))
-  }
-
   render() {
-    return <div id="monaco-editor-container" ref={this.editorRef} />
+    return (
+      <div className="monaco-editor-container" ref={this.editorRef}>
+        {this.state.isLoading && <LoadingOverlay text="Rendering..." />}
+      </div>
+    )
   }
 }
 
 Editor.propTypes = {
-  fileName: PropTypes.string,
-  content: PropTypes.string,
-  colorScheme: PropTypes.string
+  fileName: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
+  colorScheme: PropTypes.string.isRequired
 }
 
 export default Editor

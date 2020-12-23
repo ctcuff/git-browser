@@ -58,17 +58,25 @@ class ExplorerPanel extends React.Component {
     this.setState({ isLoading: !this.state.isLoading })
   }
 
-  getRepo(url) {
+  async getRepo(url) {
     if (!url || this.state.currentRepoUrl === url) {
       return
     }
 
-    this.setState({
-      searchErrorMessage: null,
-      currentRepoUrl: url
-    })
-    this.getTree(url, 'default')
-    this.getBranches(url)
+    this.props.onSearchStarted()
+
+    this.setState({ searchErrorMessage: null })
+
+    // If we try to load the tree for the repository and it
+    // fails, don't try to load the branches
+    try {
+      await this.getTree(url, 'default')
+      await this.getBranches(url)
+    } catch (err) {
+      // Ignored
+    }
+
+    this.props.onSearchFinished()
   }
 
   getTree(repoUrl, branch) {
@@ -80,22 +88,23 @@ class ExplorerPanel extends React.Component {
     ) {
       // Don't search if the repository hasn't changed, or
       // if the branch name hasn't changed
-      return
+      return Promise.resolve()
     }
 
     this.toggleLoading()
 
-    GitHubAPI.getTree(repoUrl, branch)
+    return GitHubAPI.getTree(repoUrl, branch)
       .then(res => {
-        this.props.onSearchFinished()
         this.setState({
           treeData: Tree.treeify(res.tree),
           currentBranch: res.branch,
+          currentRepoUrl: repoUrl,
           isCodePanelOpen: true
         })
       })
       .catch(searchErrorMessage => {
         this.setState({ searchErrorMessage })
+        return Promise.reject(searchErrorMessage)
       })
       .finally(() => {
         this.toggleLoading()
@@ -112,7 +121,10 @@ class ExplorerPanel extends React.Component {
   }
 
   getBranch(branch) {
-    this.getTree(branch.repoUrl, branch.name)
+    this.props.onSearchStarted()
+    this.getTree(branch.repoUrl, branch.name).finally(() => {
+      this.props.onSearchFinished()
+    })
   }
 
   onCodePanelToggle(isCodePanelOpen) {
@@ -184,6 +196,7 @@ class ExplorerPanel extends React.Component {
 
 ExplorerPanel.propTypes = {
   onSelectFile: PropTypes.func.isRequired,
+  onSearchStarted: PropTypes.func.isRequired,
   onSearchFinished: PropTypes.func.isRequired
 }
 

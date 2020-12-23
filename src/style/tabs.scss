@@ -72,6 +72,15 @@
     }
   }
 
+  .tab-panel {
+    display: none;
+  }
+
+  .tab-panel--selected {
+    display: block;
+    height: calc(100% - var(--tab-bar-height));
+  }
+
   .tab--selected {
     color: var(--color-text-primary);
     position: relative;
@@ -91,10 +100,6 @@
     .tab-close-button {
       opacity: 1;
     }
-  }
-
-  .tab-panel--selected {
-    height: calc(100% - var(--tab-bar-height));
   }
 
   .simplebar-scrollbar::before {

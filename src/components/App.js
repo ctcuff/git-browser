@@ -14,8 +14,10 @@ import { Tab, TabView } from './Tabs'
 import { AiOutlineLeft, AiOutlineMenu } from 'react-icons/ai'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import debounce from 'lodash/debounce'
+import LoadingOverlay from './LoadingOverlay'
 
 const clamp = (min, value, max) => Math.max(min, Math.min(value, max))
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -24,9 +26,10 @@ class App extends React.Component {
       // Used to make sure the same tab can't be
       // opened multiple times
       openedFilePaths: new Set(),
-      openedFiles: [],
+      openedTabs: [],
       activeTabIndex: 0,
-      isExplorerOpen: false
+      isExplorerOpen: false,
+      isLoading: false
     }
 
     this.mousePosition = 0
@@ -36,13 +39,15 @@ class App extends React.Component {
     this.resizePanel = this.resizePanel.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
     this.onTabClosed = this.onTabClosed.bind(this)
-    this.closeAllTabs = this.closeAllTabs.bind(this)
+    this.onSearchFinished = this.onSearchFinished.bind(this)
     this.renderTab = this.renderTab.bind(this)
     this.resize = this.resize.bind(this)
-    this.findFileIndex = this.findFileIndex.bind(this)
+    this.findTabIndex = this.findTabIndex.bind(this)
     this.setActiveTabIndex = this.setActiveTabIndex.bind(this)
     this.toggleExplorer = this.toggleExplorer.bind(this)
     this.updateViewport = debounce(this.updateViewport.bind(this), 250)
+    this.loadFile = this.loadFile.bind(this)
+    this.toggleLoadingOverlay = this.toggleLoadingOverlay.bind(this)
   }
 
   componentDidMount() {
@@ -59,11 +64,11 @@ class App extends React.Component {
   updateViewport() {
     // Updates the --vh variable used in the height mixin
     const vh = window.innerHeight * 0.01
-    setCSSVar('--vh', `${vh}px`)
+    setCSSVar('--vh', vh + 'px')
   }
 
   onSelectFile(node) {
-    const { openedFilePaths, openedFiles } = this.state
+    const { openedFilePaths, openedTabs } = this.state
 
     if (node.type === 'folder') {
       return
@@ -71,41 +76,64 @@ class App extends React.Component {
 
     // Don't open this file in a new tab since it's already open
     if (openedFilePaths.has(node.path)) {
-      this.setActiveTabIndex(this.findFileIndex(node.path))
+      this.setActiveTabIndex(this.findTabIndex(node.path))
       return
     }
 
-    GitHubAPI.getFile(node.url).then(content => {
-      this.setState({
-        activeTabIndex: openedFiles.length,
+    // Render a temporary loading tab while we wait for the
+    // GitHub API request to finish
+    this.setState(
+      {
         openedFilePaths: new Set(openedFilePaths.add(node.path)),
-        openedFiles: [
-          ...openedFiles,
+        activeTabIndex: openedTabs.length,
+        openedTabs: [
+          ...openedTabs,
           {
-            content,
-            name: node.name,
+            isLoading: true,
+            index: openedTabs.length,
+            title: node.name,
             path: node.path
           }
         ]
-      })
+      },
+      () => this.loadFile(node)
+    )
+  }
+
+  loadFile(node) {
+    GitHubAPI.getFile(node.url).then(content => {
+      const tabs = this.state.openedTabs
+      const tabIndex = this.findTabIndex(node.path)
+
+      // The index will be -1 if the tab was closed
+      // before the request finished loading
+      if (tabIndex >= 0) {
+        // Replace the loading tab with the loaded file content
+        tabs[tabIndex].content = content
+        tabs[tabIndex].isLoading = false
+
+        this.setState({
+          activeTabIndex: this.state.activeTabIndex,
+          openedTabs: tabs
+        })
+      }
     })
   }
 
-  findFileIndex(path) {
-    const openedFiles = this.state.openedFiles
+  findTabIndex(path) {
+    const openedTabs = this.state.openedTabs
 
-    for (let i = 0; i < openedFiles.length; i++) {
-      if (openedFiles[i].path === path) {
+    for (let i = 0; i < openedTabs.length; i++) {
+      if (openedTabs[i].path === path) {
         return i
       }
     }
 
-    return 0
+    return -1
   }
 
   resize(event) {
-    // The smallest the panel is allowed to be before
-    // it snaps to 0px
+    // The smallest the panel is allowed to be before it snaps to 0px
     const absoluteMin = 80
     const absoluteMax = document.body.clientWidth - 100
     const diff = this.mousePosition - event.x
@@ -146,34 +174,39 @@ class App extends React.Component {
     document.removeEventListener('mousemove', this.resizePanel)
   }
 
-  renderTab(file, index) {
+  renderTab(tab, index) {
+    if (tab.isLoading) {
+      return (
+        <Tab title={tab.title} key={tab.index} hint={`Loading ${tab.title}`}>
+          <LoadingOverlay text={`Loading ${tab.title}...`} />
+        </Tab>
+      )
+    }
+
     let component
-    const language = getLanguageFromFileName(file.name)
+    const language = getLanguageFromFileName(tab.title)
 
     switch (language) {
       case 'png':
       case 'jpg':
         component = (
           <div className="image-wrapper">
-            <img
-              src={'data:image/png;base64,' + file.content}
-              alt={file.name}
-            />
+            <img src={'data:image/png;base64,' + tab.content} alt={tab.title} />
           </div>
         )
         break
       default:
         component = (
           <Editor
-            fileName={file.name}
-            content={atob(file.content)}
+            fileName={tab.title}
+            content={atob(tab.content)}
             colorScheme={this.props.mode}
           />
         )
     }
 
     return (
-      <Tab title={file.name} key={index} hint={file.path}>
+      <Tab title={tab.title} key={index} hint={tab.path}>
         {component}
       </Tab>
     )
@@ -181,10 +214,10 @@ class App extends React.Component {
 
   onTabClosed(tabIndex) {
     let activeTabIndex = this.state.activeTabIndex
-    const openedFiles = this.state.openedFiles.filter((file, index) => {
+    const openedTabs = this.state.openedTabs.filter((tab, index) => {
       return tabIndex !== index
     })
-    const openedFilePaths = new Set(openedFiles.map(node => node.path))
+    const openedFilePaths = new Set(openedTabs.map(node => node.path))
 
     // If the active tab was closed but there are still tabs left,
     // set the tab to the left of the closed tab as the active tab,
@@ -201,16 +234,21 @@ class App extends React.Component {
 
     this.setState({
       openedFilePaths,
-      openedFiles,
+      openedTabs,
       activeTabIndex
     })
   }
 
-  closeAllTabs() {
+  onSearchFinished() {
     this.setState({
       openedFilePaths: new Set(),
-      openedFiles: []
+      openedTabs: [],
+      isLoading: false
     })
+  }
+
+  toggleLoadingOverlay() {
+    this.setState({ isLoading: !this.state.isLoading })
   }
 
   setActiveTabIndex(activeTabIndex) {
@@ -224,7 +262,7 @@ class App extends React.Component {
   render() {
     const colorClass = `${this.props.mode}-mode`
     const openClass = this.state.isExplorerOpen ? 'panel-open' : 'panel-closed'
-    const { isExplorerOpen, activeTabIndex, openedFiles } = this.state
+    const { isExplorerOpen, activeTabIndex, openedTabs, isLoading } = this.state
 
     return (
       <div className={`app ${colorClass}`}>
@@ -240,20 +278,25 @@ class App extends React.Component {
           {isExplorerOpen ? null : <div className="mobile-panel-overlay" />}
           <ExplorerPanel
             onSelectFile={this.onSelectFile}
-            onSearchFinished={this.closeAllTabs}
+            onSearchFinished={this.onSearchFinished}
+            onSearchStarted={this.toggleLoadingOverlay}
           />
         </div>
         <div className="right">
           <div className="resize-panel" onMouseDown={this.onPanelMouseDown}>
             <BsThreeDotsVertical className="resize-icon" />
           </div>
-          <TabView
-            onTabClosed={this.onTabClosed}
-            activeTabIndex={activeTabIndex}
-            onSelectTab={this.setActiveTabIndex}
-          >
-            {openedFiles.map(this.renderTab)}
-          </TabView>
+          {isLoading ? (
+            <LoadingOverlay text="Loading repository..." />
+          ) : (
+            <TabView
+              onTabClosed={this.onTabClosed}
+              activeTabIndex={activeTabIndex}
+              onSelectTab={this.setActiveTabIndex}
+            >
+              {openedTabs.map(this.renderTab)}
+            </TabView>
+          )}
         </div>
         <Gutter />
       </div>
