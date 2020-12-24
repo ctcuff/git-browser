@@ -10,7 +10,6 @@
     right: 0;
     z-index: 999;
     top: 0;
-    background-color: transparent;
   }
 
   .tab-list {
@@ -72,13 +71,10 @@
     }
   }
 
-  .tab-panel {
-    display: none;
-  }
-
   .tab-panel--selected {
     display: block;
-    height: calc(100% - var(--tab-bar-height));
+    height: calc(100% - var(--tab-bar-height) + var(--scrollbar-height));
+    transform: translateY(calc(-1 * var(--scrollbar-height)));
   }
 
   .tab--selected {

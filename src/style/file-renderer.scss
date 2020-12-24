@@ -1,0 +1,23 @@
+.file-renderer {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  .unsupported {
+    text-align: center;
+
+    .reload-btn {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: inherit;
+      font-family: inherit;
+      color: blue;
+      width: 100%;
+      margin-bottom: 0.7em;
+    }
+  }
+}

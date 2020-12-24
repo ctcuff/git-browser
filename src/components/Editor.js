@@ -1,7 +1,7 @@
 import '../style/editor.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { getLanguageFromFileName } from '../scripts/util'
+import { getLanguageFromFileName, parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
 
 class Editor extends React.Component {
@@ -60,7 +60,7 @@ class Editor extends React.Component {
 
     const model = monaco.createModel(
       this.props.content,
-      getLanguageFromFileName(this.props.fileName)
+      getLanguageFromFileName(this.props.fileName).language
     )
 
     this.editor = monaco.create(this.editorRef.current, {
@@ -76,6 +76,16 @@ class Editor extends React.Component {
       renderIndentGuides: false
     })
 
+    // Gives the editor a small amount of space before the first line
+    // to account for the size of the horizontal tab scrollbar
+    this.editor.changeViewZones(changeAccessor => {
+      changeAccessor.addZone({
+        afterLineNumber: 0,
+        heightInPx: parseCSSVar('--scrollbar-height'),
+        domNode: document.createElement('div')
+      })
+    })
+
     this.monaco = monaco
     this.setState({ isLoading: false })
   }
@@ -88,7 +98,7 @@ class Editor extends React.Component {
   render() {
     return (
       <div className="monaco-editor-container" ref={this.editorRef}>
-        {this.state.isLoading && <LoadingOverlay text="Rendering..." />}
+        {this.state.isLoading && <LoadingOverlay text="Loading editor..." />}
       </div>
     )
   }

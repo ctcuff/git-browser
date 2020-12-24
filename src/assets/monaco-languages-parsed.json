@@ -1,174 +1,1107 @@
 {
-   ".txt": "plaintext",
-   ".abap": "abap",
-   ".cls": "apex",
-   ".azcli": "azcli",
-   ".bat": "bat",
-   ".cmd": "bat",
-   ".mligo": "cameligo",
-   ".clj": "clojure",
-   ".cljs": "clojure",
-   ".cljc": "clojure",
-   ".edn": "clojure",
-   ".coffee": "coffeescript",
-   ".c": "c",
-   ".h": "c",
-   ".cpp": "cpp",
-   ".cc": "cpp",
-   ".cxx": "cpp",
-   ".hpp": "cpp",
-   ".hh": "cpp",
-   ".hxx": "cpp",
-   ".cs": "csharp",
-   ".csx": "csharp",
-   ".cake": "csharp",
-   ".css": "css",
-   ".dart": "dart",
-   ".dockerfile": "dockerfile",
-   ".fs": "fsharp",
-   ".fsi": "fsharp",
-   ".ml": "fsharp",
-   ".mli": "fsharp",
-   ".fsx": "fsharp",
-   ".fsscript": "fsharp",
-   ".go": "go",
-   ".graphql": "graphql",
-   ".gql": "graphql",
-   ".handlebars": "handlebars",
-   ".hbs": "handlebars",
-   ".tf": "hcl",
-   ".tfvars": "hcl",
-   ".hcl": "hcl",
-   ".html": "html",
-   ".htm": "html",
-   ".shtml": "html",
-   ".xhtml": "html",
-   ".mdoc": "html",
-   ".jsp": "html",
-   ".asp": "html",
-   ".aspx": "html",
-   ".jshtm": "html",
-   ".ini": "ini",
-   ".properties": "ini",
-   ".gitconfig": "ini",
-   ".java": "java",
-   ".jav": "java",
-   ".js": "javascript",
-   ".es6": "javascript",
-   ".jsx": "javascript",
-   ".mjs": "javascript",
-   ".json": "json",
-   ".bowerrc": "json",
-   ".jshintrc": "json",
-   ".jscsrc": "json",
-   ".eslintrc": "json",
-   ".babelrc": "json",
-   ".har": "json",
-   ".jl": "julia",
-   ".kt": "kotlin",
-   ".less": "less",
-   ".lex": "lexon",
-   ".lua": "lua",
-   ".md": "markdown",
-   ".markdown": "markdown",
-   ".mdown": "markdown",
-   ".mkdn": "markdown",
-   ".mkd": "markdown",
-   ".mdwn": "markdown",
-   ".mdtxt": "markdown",
-   ".mdtext": "markdown",
-   ".s": "mips",
-   ".dax": "msdax",
-   ".msdax": "msdax",
-   ".m": "objective-c",
-   ".pas": "pascal",
-   ".p": "pascal",
-   ".pp": "pascal",
-   ".ligo": "pascaligo",
-   ".pl": "perl",
-   ".php": "php",
-   ".php4": "php",
-   ".php5": "php",
-   ".phtml": "php",
-   ".ctp": "php",
-   ".dats": "postiats",
-   ".sats": "postiats",
-   ".hats": "postiats",
-   ".pq": "powerquery",
-   ".pqm": "powerquery",
-   ".ps1": "powershell",
-   ".psm1": "powershell",
-   ".psd1": "powershell",
-   ".jade": "pug",
-   ".pug": "pug",
-   ".py": "python",
-   ".rpy": "python",
-   ".pyw": "python",
-   ".cpy": "python",
-   ".gyp": "python",
-   ".gypi": "python",
-   ".r": "r",
-   ".rhistory": "r",
-   ".rmd": "r",
-   ".rprofile": "r",
-   ".rt": "r",
-   ".cshtml": "razor",
-   ".redis": "redis",
-   ".rst": "restructuredtext",
-   ".rb": "ruby",
-   ".rbx": "ruby",
-   ".rjs": "ruby",
-   ".gemspec": "ruby",
-   ".rs": "rust",
-   ".rlib": "rust",
-   ".sb": "sb",
-   ".scala": "scala",
-   ".sc": "scala",
-   ".sbt": "scala",
-   ".scm": "scheme",
-   ".ss": "scheme",
-   ".sch": "scheme",
-   ".rkt": "scheme",
-   ".scss": "scss",
-   ".sh": "shell",
-   ".bash": "shell",
-   ".sol": "sol",
-   ".aes": "aes",
-   ".sql": "sql",
-   ".st": "st",
-   ".iecst": "st",
-   ".iecplc": "st",
-   ".lc3lib": "st",
-   ".swift": "swift",
-   ".sv": "systemverilog",
-   ".svh": "systemverilog",
-   ".v": "verilog",
-   ".vh": "verilog",
-   ".tcl": "tcl",
-   ".twig": "twig",
-   ".ts": "typescript",
-   ".tsx": "typescript",
-   ".vb": "vb",
-   ".xml": "xml",
-   ".dtd": "xml",
-   ".ascx": "xml",
-   ".csproj": "xml",
-   ".config": "xml",
-   ".wxi": "xml",
-   ".wxl": "xml",
-   ".wxs": "xml",
-   ".xaml": "xml",
-   ".svg": "xml",
-   ".svgz": "xml",
-   ".opf": "xml",
-   ".xsl": "xml",
-   ".yaml": "yaml",
-   ".yml": "yaml",
-   ".vue": "html",
-   ".pm": "perl",
-   ".perl": "perl",
-   ".prettierrc": "json",
-   ".png": "png",
-   ".jpg": "jpg",
-   ".jpeg": "jpg"
+  ".txt": {
+    "language": "plaintext",
+    "displayName": "Plain Text",
+    "canEditorRender": true,
+    "extension": ".txt"
+  },
+  ".abap": {
+    "language": "abap",
+    "displayName": "abap",
+    "canEditorRender": true,
+    "extension": ".abap"
+  },
+  ".cls": {
+    "language": "apex",
+    "displayName": "Apex",
+    "canEditorRender": true,
+    "extension": ".cls"
+  },
+  ".azcli": {
+    "language": "azcli",
+    "displayName": "Azure CLI",
+    "canEditorRender": true,
+    "extension": ".azcli"
+  },
+  ".bat": {
+    "language": "bat",
+    "displayName": "Batch",
+    "canEditorRender": true,
+    "extension": ".bat"
+  },
+  ".cmd": {
+    "language": "bat",
+    "displayName": "Batch",
+    "canEditorRender": true,
+    "extension": ".cmd"
+  },
+  ".mligo": {
+    "language": "cameligo",
+    "displayName": "Cameligo",
+    "canEditorRender": true,
+    "extension": ".mligo"
+  },
+  ".clj": {
+    "language": "clojure",
+    "displayName": "clojure",
+    "canEditorRender": true,
+    "extension": ".clj"
+  },
+  ".cljs": {
+    "language": "clojure",
+    "displayName": "clojure",
+    "canEditorRender": true,
+    "extension": ".cljs"
+  },
+  ".cljc": {
+    "language": "clojure",
+    "displayName": "clojure",
+    "canEditorRender": true,
+    "extension": ".cljc"
+  },
+  ".edn": {
+    "language": "clojure",
+    "displayName": "clojure",
+    "canEditorRender": true,
+    "extension": ".edn"
+  },
+  ".coffee": {
+    "language": "coffeescript",
+    "displayName": "CoffeeScript",
+    "canEditorRender": true,
+    "extension": ".coffee"
+  },
+  ".c": {
+    "language": "c",
+    "displayName": "C",
+    "canEditorRender": true,
+    "extension": ".c"
+  },
+  ".h": {
+    "language": "c",
+    "displayName": "C",
+    "canEditorRender": true,
+    "extension": ".h"
+  },
+  ".cpp": {
+    "language": "cpp",
+    "displayName": "C++",
+    "canEditorRender": true,
+    "extension": ".cpp"
+  },
+  ".cc": {
+    "language": "cpp",
+    "displayName": "C++",
+    "canEditorRender": true,
+    "extension": ".cc"
+  },
+  ".cxx": {
+    "language": "cpp",
+    "displayName": "C++",
+    "canEditorRender": true,
+    "extension": ".cxx"
+  },
+  ".hpp": {
+    "language": "cpp",
+    "displayName": "C++",
+    "canEditorRender": true,
+    "extension": ".hpp"
+  },
+  ".hh": {
+    "language": "cpp",
+    "displayName": "C++",
+    "canEditorRender": true,
+    "extension": ".hh"
+  },
+  ".hxx": {
+    "language": "cpp",
+    "displayName": "C++",
+    "canEditorRender": true,
+    "extension": ".hxx"
+  },
+  ".cs": {
+    "language": "csharp",
+    "displayName": "C#",
+    "canEditorRender": true,
+    "extension": ".cs"
+  },
+  ".csx": {
+    "language": "csharp",
+    "displayName": "C#",
+    "canEditorRender": true,
+    "extension": ".csx"
+  },
+  ".cake": {
+    "language": "csharp",
+    "displayName": "C#",
+    "canEditorRender": true,
+    "extension": ".cake"
+  },
+  ".css": {
+    "language": "css",
+    "displayName": "CSS",
+    "canEditorRender": true,
+    "extension": ".css"
+  },
+  ".dart": {
+    "language": "dart",
+    "displayName": "Dart",
+    "canEditorRender": true,
+    "extension": ".dart"
+  },
+  ".dockerfile": {
+    "language": "dockerfile",
+    "displayName": "Dockerfile",
+    "canEditorRender": true,
+    "extension": ".dockerfile"
+  },
+  "Dockerfile": {
+    "language": "dockerfile",
+    "displayName": "Dockerfile",
+    "canEditorRender": true,
+    "extension": "Dockerfile"
+  },
+  ".fs": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "canEditorRender": true,
+    "extension": ".fs"
+  },
+  ".fsi": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "canEditorRender": true,
+    "extension": ".fsi"
+  },
+  ".ml": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "canEditorRender": true,
+    "extension": ".ml"
+  },
+  ".mli": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "canEditorRender": true,
+    "extension": ".mli"
+  },
+  ".fsx": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "canEditorRender": true,
+    "extension": ".fsx"
+  },
+  ".fsscript": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "canEditorRender": true,
+    "extension": ".fsscript"
+  },
+  ".go": {
+    "language": "go",
+    "displayName": "Go",
+    "canEditorRender": true,
+    "extension": ".go"
+  },
+  ".graphql": {
+    "language": "graphql",
+    "displayName": "GraphQL",
+    "canEditorRender": true,
+    "extension": ".graphql"
+  },
+  ".gql": {
+    "language": "graphql",
+    "displayName": "GraphQL",
+    "canEditorRender": true,
+    "extension": ".gql"
+  },
+  ".handlebars": {
+    "language": "handlebars",
+    "displayName": "Handlebars",
+    "canEditorRender": true,
+    "extension": ".handlebars"
+  },
+  ".hbs": {
+    "language": "handlebars",
+    "displayName": "Handlebars",
+    "canEditorRender": true,
+    "extension": ".hbs"
+  },
+  ".tf": {
+    "language": "hcl",
+    "displayName": "Terraform",
+    "canEditorRender": true,
+    "extension": ".tf"
+  },
+  ".tfvars": {
+    "language": "hcl",
+    "displayName": "Terraform",
+    "canEditorRender": true,
+    "extension": ".tfvars"
+  },
+  ".hcl": {
+    "language": "hcl",
+    "displayName": "Terraform",
+    "canEditorRender": true,
+    "extension": ".hcl"
+  },
+  ".html": {
+    "language": "html",
+    "displayName": "HTML",
+    "canEditorRender": true,
+    "extension": ".html"
+  },
+  ".htm": {
+    "language": "html",
+    "displayName": "HTML",
+    "canEditorRender": true,
+    "extension": ".htm"
+  },
+  ".shtml": {
+    "language": "html",
+    "displayName": "HTML",
+    "canEditorRender": true,
+    "extension": ".shtml"
+  },
+  ".xhtml": {
+    "language": "html",
+    "displayName": "HTML",
+    "canEditorRender": true,
+    "extension": ".xhtml"
+  },
+  ".mdoc": {
+    "language": "html",
+    "displayName": "HTML",
+    "canEditorRender": true,
+    "extension": ".mdoc"
+  },
+  ".jsp": {
+    "language": "html",
+    "displayName": "HTML",
+    "canEditorRender": true,
+    "extension": ".jsp"
+  },
+  ".asp": {
+    "language": "html",
+    "displayName": "HTML",
+    "canEditorRender": true,
+    "extension": ".asp"
+  },
+  ".aspx": {
+    "language": "html",
+    "displayName": "HTML",
+    "canEditorRender": true,
+    "extension": ".aspx"
+  },
+  ".jshtm": {
+    "language": "html",
+    "displayName": "HTML",
+    "canEditorRender": true,
+    "extension": ".jshtm"
+  },
+  ".ini": {
+    "language": "ini",
+    "displayName": "Ini",
+    "canEditorRender": true,
+    "extension": ".ini"
+  },
+  ".properties": {
+    "language": "ini",
+    "displayName": "Ini",
+    "canEditorRender": true,
+    "extension": ".properties"
+  },
+  ".gitconfig": {
+    "language": "ini",
+    "displayName": "Ini",
+    "canEditorRender": true,
+    "extension": ".gitconfig"
+  },
+  "config": {
+    "language": "ini",
+    "displayName": "Ini",
+    "canEditorRender": true,
+    "extension": "config"
+  },
+  ".gitattributes": {
+    "language": "ini",
+    "displayName": "Ini",
+    "canEditorRender": true,
+    "extension": ".gitattributes"
+  },
+  ".editorconfig": {
+    "language": "ini",
+    "displayName": "Ini",
+    "canEditorRender": true,
+    "extension": ".editorconfig"
+  },
+  ".java": {
+    "language": "java",
+    "displayName": "Java",
+    "canEditorRender": true,
+    "extension": ".java"
+  },
+  ".jav": {
+    "language": "java",
+    "displayName": "Java",
+    "canEditorRender": true,
+    "extension": ".jav"
+  },
+  ".js": {
+    "language": "javascript",
+    "displayName": "JavaScript",
+    "canEditorRender": true,
+    "extension": ".js"
+  },
+  ".es6": {
+    "language": "javascript",
+    "displayName": "JavaScript",
+    "canEditorRender": true,
+    "extension": ".es6"
+  },
+  ".jsx": {
+    "language": "javascript",
+    "displayName": "JavaScript",
+    "canEditorRender": true,
+    "extension": ".jsx"
+  },
+  ".mjs": {
+    "language": "javascript",
+    "displayName": "JavaScript",
+    "canEditorRender": true,
+    "extension": ".mjs"
+  },
+  "jakefile": {
+    "language": "javascript",
+    "displayName": "JavaScript",
+    "canEditorRender": true,
+    "extension": "jakefile"
+  },
+  ".json": {
+    "language": "json",
+    "displayName": "JSON",
+    "canEditorRender": true,
+    "extension": ".json"
+  },
+  ".bowerrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "canEditorRender": true,
+    "extension": ".bowerrc"
+  },
+  ".jshintrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "canEditorRender": true,
+    "extension": ".jshintrc"
+  },
+  ".jscsrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "canEditorRender": true,
+    "extension": ".jscsrc"
+  },
+  ".eslintrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "canEditorRender": true,
+    "extension": ".eslintrc"
+  },
+  ".babelrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "canEditorRender": true,
+    "extension": ".babelrc"
+  },
+  ".har": {
+    "language": "json",
+    "displayName": "JSON",
+    "canEditorRender": true,
+    "extension": ".har"
+  },
+  ".jl": {
+    "language": "julia",
+    "displayName": "julia",
+    "canEditorRender": true,
+    "extension": ".jl"
+  },
+  ".kt": {
+    "language": "kotlin",
+    "displayName": "Kotlin",
+    "canEditorRender": true,
+    "extension": ".kt"
+  },
+  ".less": {
+    "language": "less",
+    "displayName": "Less",
+    "canEditorRender": true,
+    "extension": ".less"
+  },
+  ".lex": {
+    "language": "lexon",
+    "displayName": "Lexon",
+    "canEditorRender": true,
+    "extension": ".lex"
+  },
+  ".lua": {
+    "language": "lua",
+    "displayName": "Lua",
+    "canEditorRender": true,
+    "extension": ".lua"
+  },
+  ".md": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "canEditorRender": true,
+    "extension": ".md"
+  },
+  ".markdown": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "canEditorRender": true,
+    "extension": ".markdown"
+  },
+  ".mdown": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "canEditorRender": true,
+    "extension": ".mdown"
+  },
+  ".mkdn": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "canEditorRender": true,
+    "extension": ".mkdn"
+  },
+  ".mkd": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "canEditorRender": true,
+    "extension": ".mkd"
+  },
+  ".mdwn": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "canEditorRender": true,
+    "extension": ".mdwn"
+  },
+  ".mdtxt": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "canEditorRender": true,
+    "extension": ".mdtxt"
+  },
+  ".mdtext": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "canEditorRender": true,
+    "extension": ".mdtext"
+  },
+  ".s": {
+    "language": "mips",
+    "displayName": "MIPS",
+    "canEditorRender": true,
+    "extension": ".s"
+  },
+  ".dax": {
+    "language": "msdax",
+    "displayName": "DAX",
+    "canEditorRender": true,
+    "extension": ".dax"
+  },
+  ".msdax": {
+    "language": "msdax",
+    "displayName": "DAX",
+    "canEditorRender": true,
+    "extension": ".msdax"
+  },
+  ".m": {
+    "language": "objective-c",
+    "displayName": "Objective-C",
+    "canEditorRender": true,
+    "extension": ".m"
+  },
+  ".pas": {
+    "language": "pascal",
+    "displayName": "Pascal",
+    "canEditorRender": true,
+    "extension": ".pas"
+  },
+  ".p": {
+    "language": "pascal",
+    "displayName": "Pascal",
+    "canEditorRender": true,
+    "extension": ".p"
+  },
+  ".pp": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "canEditorRender": true,
+    "extension": ".pp"
+  },
+  ".ligo": {
+    "language": "pascaligo",
+    "displayName": "Pascaligo",
+    "canEditorRender": true,
+    "extension": ".ligo"
+  },
+  ".pl": {
+    "language": "perl",
+    "displayName": "Perl",
+    "canEditorRender": true,
+    "extension": ".pl"
+  },
+  ".php": {
+    "language": "php",
+    "displayName": "PHP",
+    "canEditorRender": true,
+    "extension": ".php"
+  },
+  ".php4": {
+    "language": "php",
+    "displayName": "PHP",
+    "canEditorRender": true,
+    "extension": ".php4"
+  },
+  ".php5": {
+    "language": "php",
+    "displayName": "PHP",
+    "canEditorRender": true,
+    "extension": ".php5"
+  },
+  ".phtml": {
+    "language": "php",
+    "displayName": "PHP",
+    "canEditorRender": true,
+    "extension": ".phtml"
+  },
+  ".ctp": {
+    "language": "php",
+    "displayName": "PHP",
+    "canEditorRender": true,
+    "extension": ".ctp"
+  },
+  ".dats": {
+    "language": "postiats",
+    "displayName": "ATS",
+    "canEditorRender": true,
+    "extension": ".dats"
+  },
+  ".sats": {
+    "language": "postiats",
+    "displayName": "ATS",
+    "canEditorRender": true,
+    "extension": ".sats"
+  },
+  ".hats": {
+    "language": "postiats",
+    "displayName": "ATS",
+    "canEditorRender": true,
+    "extension": ".hats"
+  },
+  ".pq": {
+    "language": "powerquery",
+    "displayName": "PQ",
+    "canEditorRender": true,
+    "extension": ".pq"
+  },
+  ".pqm": {
+    "language": "powerquery",
+    "displayName": "PQ",
+    "canEditorRender": true,
+    "extension": ".pqm"
+  },
+  ".ps1": {
+    "language": "powershell",
+    "displayName": "PowerShell",
+    "canEditorRender": true,
+    "extension": ".ps1"
+  },
+  ".psm1": {
+    "language": "powershell",
+    "displayName": "PowerShell",
+    "canEditorRender": true,
+    "extension": ".psm1"
+  },
+  ".psd1": {
+    "language": "powershell",
+    "displayName": "PowerShell",
+    "canEditorRender": true,
+    "extension": ".psd1"
+  },
+  ".jade": {
+    "language": "pug",
+    "displayName": "Pug",
+    "canEditorRender": true,
+    "extension": ".jade"
+  },
+  ".pug": {
+    "language": "pug",
+    "displayName": "Pug",
+    "canEditorRender": true,
+    "extension": ".pug"
+  },
+  ".py": {
+    "language": "python",
+    "displayName": "Python",
+    "canEditorRender": true,
+    "extension": ".py"
+  },
+  ".rpy": {
+    "language": "python",
+    "displayName": "Python",
+    "canEditorRender": true,
+    "extension": ".rpy"
+  },
+  ".pyw": {
+    "language": "python",
+    "displayName": "Python",
+    "canEditorRender": true,
+    "extension": ".pyw"
+  },
+  ".cpy": {
+    "language": "python",
+    "displayName": "Python",
+    "canEditorRender": true,
+    "extension": ".cpy"
+  },
+  ".gyp": {
+    "language": "python",
+    "displayName": "Python",
+    "canEditorRender": true,
+    "extension": ".gyp"
+  },
+  ".gypi": {
+    "language": "python",
+    "displayName": "Python",
+    "canEditorRender": true,
+    "extension": ".gypi"
+  },
+  ".r": {
+    "language": "r",
+    "displayName": "R",
+    "canEditorRender": true,
+    "extension": ".r"
+  },
+  ".rhistory": {
+    "language": "r",
+    "displayName": "R",
+    "canEditorRender": true,
+    "extension": ".rhistory"
+  },
+  ".rmd": {
+    "language": "r",
+    "displayName": "R",
+    "canEditorRender": true,
+    "extension": ".rmd"
+  },
+  ".rprofile": {
+    "language": "r",
+    "displayName": "R",
+    "canEditorRender": true,
+    "extension": ".rprofile"
+  },
+  ".rt": {
+    "language": "r",
+    "displayName": "R",
+    "canEditorRender": true,
+    "extension": ".rt"
+  },
+  ".cshtml": {
+    "language": "razor",
+    "displayName": "Razor",
+    "canEditorRender": true,
+    "extension": ".cshtml"
+  },
+  ".redis": {
+    "language": "redis",
+    "displayName": "redis",
+    "canEditorRender": true,
+    "extension": ".redis"
+  },
+  ".rst": {
+    "language": "restructuredtext",
+    "displayName": "reStructuredText",
+    "canEditorRender": true,
+    "extension": ".rst"
+  },
+  ".rb": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "canEditorRender": true,
+    "extension": ".rb"
+  },
+  ".rbx": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "canEditorRender": true,
+    "extension": ".rbx"
+  },
+  ".rjs": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "canEditorRender": true,
+    "extension": ".rjs"
+  },
+  ".gemspec": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "canEditorRender": true,
+    "extension": ".gemspec"
+  },
+  "rakefile": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "canEditorRender": true,
+    "extension": "rakefile"
+  },
+  "Gemfile": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "canEditorRender": true,
+    "extension": "Gemfile"
+  },
+  ".rs": {
+    "language": "rust",
+    "displayName": "Rust",
+    "canEditorRender": true,
+    "extension": ".rs"
+  },
+  ".rlib": {
+    "language": "rust",
+    "displayName": "Rust",
+    "canEditorRender": true,
+    "extension": ".rlib"
+  },
+  ".sb": {
+    "language": "sb",
+    "displayName": "Small Basic",
+    "canEditorRender": true,
+    "extension": ".sb"
+  },
+  ".scala": {
+    "language": "scala",
+    "displayName": "Scala",
+    "canEditorRender": true,
+    "extension": ".scala"
+  },
+  ".sc": {
+    "language": "scala",
+    "displayName": "Scala",
+    "canEditorRender": true,
+    "extension": ".sc"
+  },
+  ".sbt": {
+    "language": "scala",
+    "displayName": "Scala",
+    "canEditorRender": true,
+    "extension": ".sbt"
+  },
+  ".scm": {
+    "language": "scheme",
+    "displayName": "scheme",
+    "canEditorRender": true,
+    "extension": ".scm"
+  },
+  ".ss": {
+    "language": "scheme",
+    "displayName": "scheme",
+    "canEditorRender": true,
+    "extension": ".ss"
+  },
+  ".sch": {
+    "language": "scheme",
+    "displayName": "scheme",
+    "canEditorRender": true,
+    "extension": ".sch"
+  },
+  ".rkt": {
+    "language": "scheme",
+    "displayName": "scheme",
+    "canEditorRender": true,
+    "extension": ".rkt"
+  },
+  ".scss": {
+    "language": "scss",
+    "displayName": "Sass",
+    "canEditorRender": true,
+    "extension": ".scss"
+  },
+  ".sh": {
+    "language": "shell",
+    "displayName": "Shell",
+    "canEditorRender": true,
+    "extension": ".sh"
+  },
+  ".bash": {
+    "language": "shell",
+    "displayName": "Shell",
+    "canEditorRender": true,
+    "extension": ".bash"
+  },
+  ".sol": {
+    "language": "sol",
+    "displayName": "sol",
+    "canEditorRender": true,
+    "extension": ".sol"
+  },
+  ".aes": {
+    "language": "aes",
+    "displayName": "aes",
+    "canEditorRender": true,
+    "extension": ".aes"
+  },
+  ".sql": {
+    "language": "sql",
+    "displayName": "SQL",
+    "canEditorRender": true,
+    "extension": ".sql"
+  },
+  ".st": {
+    "language": "st",
+    "displayName": "StructuredText",
+    "canEditorRender": true,
+    "extension": ".st"
+  },
+  ".iecst": {
+    "language": "st",
+    "displayName": "StructuredText",
+    "canEditorRender": true,
+    "extension": ".iecst"
+  },
+  ".iecplc": {
+    "language": "st",
+    "displayName": "StructuredText",
+    "canEditorRender": true,
+    "extension": ".iecplc"
+  },
+  ".lc3lib": {
+    "language": "st",
+    "displayName": "StructuredText",
+    "canEditorRender": true,
+    "extension": ".lc3lib"
+  },
+  ".swift": {
+    "language": "swift",
+    "displayName": "Swift",
+    "canEditorRender": true,
+    "extension": ".swift"
+  },
+  ".sv": {
+    "language": "systemverilog",
+    "displayName": "SV",
+    "canEditorRender": true,
+    "extension": ".sv"
+  },
+  ".svh": {
+    "language": "systemverilog",
+    "displayName": "SV",
+    "canEditorRender": true,
+    "extension": ".svh"
+  },
+  ".v": {
+    "language": "verilog",
+    "displayName": "V",
+    "canEditorRender": true,
+    "extension": ".v"
+  },
+  ".vh": {
+    "language": "verilog",
+    "displayName": "V",
+    "canEditorRender": true,
+    "extension": ".vh"
+  },
+  ".tcl": {
+    "language": "tcl",
+    "displayName": "tcl",
+    "canEditorRender": true,
+    "extension": ".tcl"
+  },
+  ".twig": {
+    "language": "twig",
+    "displayName": "Twig",
+    "canEditorRender": true,
+    "extension": ".twig"
+  },
+  ".ts": {
+    "language": "typescript",
+    "displayName": "TypeScript",
+    "canEditorRender": true,
+    "extension": ".ts"
+  },
+  ".tsx": {
+    "language": "typescript",
+    "displayName": "TypeScript",
+    "canEditorRender": true,
+    "extension": ".tsx"
+  },
+  ".vb": {
+    "language": "vb",
+    "displayName": "Visual Basic",
+    "canEditorRender": true,
+    "extension": ".vb"
+  },
+  ".xml": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".xml"
+  },
+  ".dtd": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".dtd"
+  },
+  ".ascx": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".ascx"
+  },
+  ".csproj": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".csproj"
+  },
+  ".config": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".config"
+  },
+  ".wxi": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".wxi"
+  },
+  ".wxl": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".wxl"
+  },
+  ".wxs": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".wxs"
+  },
+  ".xaml": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".xaml"
+  },
+  ".svg": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".svg"
+  },
+  ".svgz": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".svgz"
+  },
+  ".opf": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".opf"
+  },
+  ".xsl": {
+    "language": "xml",
+    "displayName": "XML",
+    "canEditorRender": true,
+    "extension": ".xsl"
+  },
+  ".yaml": {
+    "language": "yaml",
+    "displayName": "YAML",
+    "canEditorRender": true,
+    "extension": ".yaml"
+  },
+  ".yml": {
+    "language": "yaml",
+    "displayName": "YAML",
+    "canEditorRender": true,
+    "extension": ".yml"
+  },
+
+  ".pm": {
+    "language": "perl",
+    "displayName": "Perl",
+    "canEditorRender": true,
+    "extension": ".pm"
+  },
+  ".prettierrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "canEditorRender": true,
+    "extension": ".prettierrc"
+  },
+  ".vue": {
+    "language": "html",
+    "displayName": "HTML",
+    "canEditorRender": true,
+    "extension": ".vue"
+  },
+  ".gitignore": {
+    "language": "ini",
+    "displayName": ".gitignore",
+    "canEditorRender": true,
+    "extension": ".gitignore"
+  },
+  ".stylelintrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "canEditorRender": true,
+    "extension": ".stylelintrc"
+  },
+  ".png": {
+    "language": "image",
+    "displayName": "Image",
+    "canEditorRender": false,
+    "extension": ".png"
+  },
+  ".jpg": {
+    "language": "image",
+    "displayName": "Image",
+    "canEditorRender": false,
+    "extension": ".jpg"
+  },
+  ".jpeg": {
+    "language": "image",
+    "displayName": "Image",
+    "canEditorRender": false,
+    "extension": ".jpeg"
+  },
+  ".ico": {
+    "language": "image",
+    "displayName": "image",
+    "canEditorRender": false,
+    "extension": ".ico"
+  },
+  ".gif": {
+    "language": "gif",
+    "displayName": "GIF",
+    "canEditorRender": false,
+    "extension": ".gif"
+  },
+  ".pdf": {
+    "language": "pdf",
+    "displayName": "pdf",
+    "canEditorRender": false,
+    "extension": ".pdf"
+  },
+  ".cfg": {
+    "language": "ini",
+    "displayName": "Ini",
+    "canEditorRender": true,
+    "extension": ".cfg"
+  }
 }

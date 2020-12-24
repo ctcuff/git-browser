@@ -16,12 +16,6 @@ const setCSSVar = (key, value, element = document.documentElement) => {
 }
 
 const getLanguageFromFileName = fileName => {
-  // This is an extension-less file. Usually, rendering the
-  // file as a shell file also handles rendering plaintext
-  if (!fileName.includes('.')) {
-    return 'shell'
-  }
-
   if (languageData[fileName]) {
     return languageData[fileName]
   }
@@ -42,10 +36,50 @@ const getLanguageFromFileName = fileName => {
 
   extension = extension.split('').reverse().join('')
 
-  return languageData[extension] || 'plaintext'
+  const registeredLanguage = getRegisteredLanguage(extension)
+
+  if (registeredLanguage) {
+    return JSON.parse(registeredLanguage)
+  }
+
+  // We've found the extension but it isn't supported by monaco
+  if (!languageData[extension]) {
+    return {
+      language: '',
+      displayName: '',
+      canEditorRender: false,
+      extension
+    }
+  }
+
+  return languageData[extension]
+}
+
+const registerLanguage = extension => {
+  // Saves this extension to local storage so we don't have
+  // to display a warning every time this file type is opened
+  localStorage.setItem(
+    extension,
+    JSON.stringify({
+      language: 'plaintext',
+      displayName: 'Plain Text',
+      canEditorRender: true,
+      extension
+    })
+  )
+}
+
+const getRegisteredLanguage = extension => {
+  return localStorage.getItem(extension)
 }
 
 /* istanbul ignore next */
 const noop = () => {}
 
-export { parseCSSVar, setCSSVar, getLanguageFromFileName, noop }
+export {
+  parseCSSVar,
+  setCSSVar,
+  getLanguageFromFileName,
+  noop,
+  registerLanguage
+}

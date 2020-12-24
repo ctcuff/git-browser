@@ -2,18 +2,14 @@ import './style/index.scss'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './components/App'
-import { Provider } from 'react-redux'
-import store from './store'
 
 if (module.hot) {
   module.hot.accept()
 }
 
 ReactDOM.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </Provider>,
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
   document.getElementById('app')
 )

@@ -15,6 +15,7 @@ import { AiOutlineLeft, AiOutlineMenu } from 'react-icons/ai'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import debounce from 'lodash/debounce'
 import LoadingOverlay from './LoadingOverlay'
+import FileRenderer from './FileRenderer'
 
 const clamp = (min, value, max) => Math.max(min, Math.min(value, max))
 
@@ -175,39 +176,37 @@ class App extends React.Component {
   }
 
   renderTab(tab, index) {
-    if (tab.isLoading) {
+    const { title, path, content, isLoading } = tab
+
+    if (isLoading) {
       return (
-        <Tab title={tab.title} key={tab.index} hint={`Loading ${tab.title}`}>
-          <LoadingOverlay text={`Loading ${tab.title}...`} />
+        <Tab title={title} key={tab.index} hint={`Loading ${title}`}>
+          <LoadingOverlay text={`Loading ${title}...`} />
         </Tab>
       )
     }
 
-    let component
-    const language = getLanguageFromFileName(tab.title)
-
-    switch (language) {
-      case 'png':
-      case 'jpg':
-        component = (
-          <div className="image-wrapper">
-            <img src={'data:image/png;base64,' + tab.content} alt={tab.title} />
-          </div>
-        )
-        break
-      default:
-        component = (
-          <Editor
-            fileName={tab.title}
-            content={atob(tab.content)}
-            colorScheme={this.props.mode}
-          />
-        )
-    }
+    const { language, canEditorRender, extension } = getLanguageFromFileName(
+      title
+    )
 
     return (
-      <Tab title={tab.title} key={index} hint={tab.path}>
-        {component}
+      <Tab title={title} key={index} hint={path}>
+        {canEditorRender ? (
+          <Editor
+            fileName={title}
+            content={atob(content)}
+            colorScheme={this.props.mode}
+          />
+        ) : (
+          <FileRenderer
+            language={language}
+            content={content}
+            title={title}
+            extension={extension}
+            editorColorScheme={this.props.mode}
+          />
+        )}
       </Tab>
     )
   }
