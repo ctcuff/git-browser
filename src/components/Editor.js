@@ -3,6 +3,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { getLanguageFromFileName, parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
+import { AiOutlineEye } from 'react-icons/ai'
+import { connect } from 'react-redux'
+import { showModal } from '../store/actions/modal'
+import FileRenderer from './FileRenderer'
 
 class Editor extends React.Component {
   constructor(props) {
@@ -15,6 +19,8 @@ class Editor extends React.Component {
     this.editorRef = React.createRef()
     this.getTheme = this.getTheme.bind(this)
     this.initEditor = this.initEditor.bind(this)
+    this.renderPreviewButton = this.renderPreviewButton.bind(this)
+    this.showPreview = this.showPreview.bind(this)
   }
 
   getTheme(colorScheme) {
@@ -95,10 +101,42 @@ class Editor extends React.Component {
     this.editor.dispose()
   }
 
+  renderPreviewButton() {
+    const { extension } = getLanguageFromFileName(this.props.fileName)
+    const validExtensions = ['.svg', '.md']
+
+    if (!validExtensions.includes(extension) || this.state.isLoading) {
+      return null
+    }
+
+    return (
+      <button
+        className="file-preview-btn"
+        title="Preview file"
+        onClick={this.showPreview.bind(this, extension)}
+      >
+        <AiOutlineEye />
+      </button>
+    )
+  }
+
+  showPreview(extension) {
+    this.props.showPreviewModal(
+      <FileRenderer
+        language="image"
+        extension={extension}
+        title={this.props.fileName}
+        content={btoa(this.props.content)}
+        editorColorScheme={this.props.colorScheme}
+      />
+    )
+  }
+
   render() {
     return (
       <div className="monaco-editor-container" ref={this.editorRef}>
         {this.state.isLoading && <LoadingOverlay text="Loading editor..." />}
+        {this.renderPreviewButton()}
       </div>
     )
   }
@@ -107,7 +145,12 @@ class Editor extends React.Component {
 Editor.propTypes = {
   fileName: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
-  colorScheme: PropTypes.string.isRequired
+  colorScheme: PropTypes.string.isRequired,
+  showPreviewModal: PropTypes.func
 }
 
-export default Editor
+const mapDispatchToProps = {
+  showPreviewModal: showModal
+}
+
+export default connect(null, mapDispatchToProps)(Editor)

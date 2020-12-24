@@ -121,6 +121,10 @@ class ExplorerPanel extends React.Component {
   }
 
   getBranch(branch) {
+    if (this.state.currentBranch === branch.name) {
+      return
+    }
+
     this.props.onSearchStarted()
     this.getTree(branch.repoUrl, branch.name).finally(() => {
       this.props.onSearchFinished()
