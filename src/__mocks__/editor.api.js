@@ -14,11 +14,29 @@ const editor = {
   createModel: noop,
   dispose: noop,
   setModelLanguage: noop,
-  setTheme: noop
+  setTheme: noop,
+  changeViewZones: noop
 }
 
-const monaco = {
-  editor
+const languages = {
+  typescript: {
+    typescriptDefaults: {
+      setDiagnosticsOptions: noop
+    },
+    javascriptDefaults: {
+      setDiagnosticsOptions: noop
+    }
+  },
+  css: {
+    cssDefaults: {
+      setDiagnosticsOptions: noop
+    }
+  },
+  json: {
+    jsonDefaults: {
+      setDiagnosticsOptions: noop
+    }
+  }
 }
 
-module.exports = monaco
+module.exports = { editor, languages }

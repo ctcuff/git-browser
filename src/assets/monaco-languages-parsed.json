@@ -902,17 +902,17 @@
   },
   ".ico": {
     "language": "image",
-    "displayName": "image",
+    "displayName": "Image",
     "extension": ".ico"
   },
   ".gif": {
-    "language": "gif",
+    "language": "image",
     "displayName": "GIF",
     "extension": ".gif"
   },
   ".pdf": {
     "language": "pdf",
-    "displayName": "pdf",
+    "displayName": "PDF",
     "extension": ".pdf"
   },
   ".cfg": {
