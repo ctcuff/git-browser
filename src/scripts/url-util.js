@@ -1,4 +1,5 @@
 import { OAUTH_TOKEN } from '../config'
+import URI from 'urijs'
 
 const BASE_API_URL = 'https://api.github.com'
 const BASE_REPO_URL = BASE_API_URL + '/repos'
@@ -30,8 +31,9 @@ const URLUtil = {
       return false
     }
 
-    const { hostname } = new URL(this.addScheme(url))
-    return hostname.toLowerCase() === 'github.com'
+    const uri = new URI(this.addScheme(url))
+
+    return uri.hostname().toLowerCase() === 'github.com'
   },
 
   addScheme(url) {
@@ -50,34 +52,14 @@ const URLUtil = {
       throw new Error(`Invalid URL: ${url}`)
     }
 
-    const parsedUrl = new URL(this.addScheme(url))
+    const uri = new URI(this.addScheme(url))
+    const segments = uri.segment().filter(str => !!str.trim())
 
-    if (!parsedUrl.pathname || parsedUrl.pathname === '/') {
+    if (segments.length < 2) {
       return null
     }
 
-    let path = parsedUrl.pathname
-
-    // Removes all leading `/`
-    while (path.startsWith('/')) {
-      path = path.slice(1)
-    }
-
-    // Removes all trailing `/`
-    while (path.endsWith('/')) {
-      path = path.slice(0, path.length - 1)
-    }
-
-    // Replaces any repeating `/` between the path
-    path = path.replace(/\/+/g, '/')
-
-    // This happens if the url was originally github.com/user,
-    // there was no repo specified
-    if (!path.includes('/')) {
-      return null
-    }
-
-    return path
+    return `${segments[0]}/${segments[1]}`
   },
 
   buildBranchUrl(repoPath, branchName) {

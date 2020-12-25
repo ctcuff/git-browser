@@ -11,6 +11,7 @@ import BranchList from './BranchList'
 import sampleBranchData from '../assets/sample-branch-data.json'
 import sampleTreeData from '../assets/sample-tree-data.json'
 import SimpleBar from 'simplebar-react'
+import URLUtil from '../scripts/url-util'
 
 const debugState = {
   treeData: sampleTreeData,
@@ -19,8 +20,10 @@ const debugState = {
   currentRepoUrl: 'github.com/ctcuff/ctcuff.github.io',
   isBranchPanelOpen: true,
   isCodePanelOpen: true,
-  inputValue: 'github.com/ctcuff/ctcuff.github.io'
+  inputValue: 'github.com/ctcuff/ctcuff.github.io',
+  currentRepoPath: 'ctcuff/ctcuff.github.io'
 }
+
 class ExplorerPanel extends React.Component {
   constructor(props) {
     super(props)
@@ -30,6 +33,7 @@ class ExplorerPanel extends React.Component {
       inputValue: '',
       currentRepoUrl: '',
       currentBranch: '',
+      currentRepoPath: '',
       isCodePanelOpen: false,
       isBranchPanelOpen: false,
       searchErrorMessage: null,
@@ -51,7 +55,10 @@ class ExplorerPanel extends React.Component {
   }
 
   onInputChange(inputValue) {
-    this.setState({ inputValue })
+    this.setState({
+      inputValue,
+      searchErrorMessage: null
+    })
   }
 
   toggleLoading() {
@@ -59,7 +66,11 @@ class ExplorerPanel extends React.Component {
   }
 
   async getRepo(url) {
-    if (!url || this.state.currentRepoUrl === url) {
+    if (
+      !url ||
+      this.state.currentRepoUrl === url ||
+      this.state.currentRepoPath === URLUtil.extractRepoPath(url)
+    ) {
       return
     }
 
@@ -98,7 +109,6 @@ class ExplorerPanel extends React.Component {
         this.setState({
           treeData: Tree.treeify(res.tree),
           currentBranch: res.branch,
-          currentRepoUrl: repoUrl,
           isCodePanelOpen: true
         })
       })
@@ -107,6 +117,12 @@ class ExplorerPanel extends React.Component {
         return Promise.reject(searchErrorMessage)
       })
       .finally(() => {
+        const currentRepoPath = this.state.currentRepoPath
+
+        this.setState({
+          currentRepoUrl: repoUrl,
+          currentRepoPath: URLUtil.extractRepoPath(repoUrl) || currentRepoPath
+        })
         this.toggleLoading()
       })
   }

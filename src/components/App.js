@@ -4,7 +4,8 @@ import Editor from './Editor'
 import {
   parseCSSVar,
   setCSSVar,
-  getLanguageFromFileName
+  getLanguageFromFileName,
+  base64DecodeUnicode
 } from '../scripts/util'
 import PropTypes from 'prop-types'
 import ExplorerPanel from './ExplorerPanel'
@@ -17,6 +18,11 @@ import debounce from 'lodash/debounce'
 import LoadingOverlay from './LoadingOverlay'
 import FileRenderer from './FileRenderer'
 
+// Don't allow API requests to files the meet/exceed this size
+// to avoid network strain and long render times
+const MAX_FILE_SIZE = 10_000_000 // 10 MB
+
+// Used to ensure the editor panel stays within a certain size
 const clamp = (min, value, max) => Math.max(min, Math.min(value, max))
 
 class App extends React.Component {
@@ -93,7 +99,8 @@ class App extends React.Component {
             isLoading: true,
             index: openedTabs.length,
             title: node.name,
-            path: node.path
+            path: node.path,
+            isTooLarge: false
           }
         ]
       },
@@ -101,21 +108,35 @@ class App extends React.Component {
     )
   }
 
-  loadFile(node) {
-    GitHubAPI.getFile(node.url).then(content => {
-      const tabs = this.state.openedTabs
-      const tabIndex = this.findTabIndex(node.path)
+  loadFile(file) {
+    const openedTabs = this.state.openedTabs
+    const activeTabIndex = this.state.activeTabIndex
+    let tabIndex = this.findTabIndex(file.path)
 
+    if (file.size >= MAX_FILE_SIZE) {
+      openedTabs[tabIndex].isLoading = false
+      openedTabs[tabIndex].isTooLarge = true
+      this.setState({
+        activeTabIndex,
+        openedTabs
+      })
+      return
+    }
+
+    GitHubAPI.getFile(file.url).then(content => {
+      // Need to find this tab again to make sure it wasn't closed.
       // The index will be -1 if the tab was closed
       // before the request finished loading
+      tabIndex = this.findTabIndex(file.path)
+
       if (tabIndex >= 0) {
         // Replace the loading tab with the loaded file content
-        tabs[tabIndex].content = content
-        tabs[tabIndex].isLoading = false
+        openedTabs[tabIndex].content = content
+        openedTabs[tabIndex].isLoading = false
 
         this.setState({
-          activeTabIndex: this.state.activeTabIndex,
-          openedTabs: tabs
+          activeTabIndex,
+          openedTabs
         })
       }
     })
@@ -176,7 +197,7 @@ class App extends React.Component {
   }
 
   renderTab(tab, index) {
-    const { title, path, content, isLoading } = tab
+    const { title, path, content, isLoading, isTooLarge } = tab
 
     if (isLoading) {
       return (
@@ -186,25 +207,42 @@ class App extends React.Component {
       )
     }
 
-    const { language, canEditorRender, extension } = getLanguageFromFileName(
-      title
-    )
+    if (isTooLarge) {
+      return (
+        <Tab title={title} key={tab.index} hint={title}>
+          <div className="file-size-warning">
+            <p>Sorry, but this file is too large to display.</p>
+          </div>
+        </Tab>
+      )
+    }
+
+    const { language, extension } = getLanguageFromFileName(title)
+    let canEditorRender = true
+    let encodedContent = ''
+
+    // Try to decode this file to see if it can
+    // be rendered by the editor as plaintext
+    try {
+      encodedContent = base64DecodeUnicode(content)
+    } catch (e) {
+      canEditorRender = false
+    }
 
     return (
       <Tab title={title} key={index} hint={path}>
         {canEditorRender ? (
           <Editor
             fileName={title}
-            content={atob(content)}
+            content={encodedContent}
             colorScheme={this.props.mode}
           />
         ) : (
           <FileRenderer
-            language={language}
+            fileType={language}
             content={content}
             title={title}
             extension={extension}
-            editorColorScheme={this.props.mode}
           />
         )}
       </Tab>

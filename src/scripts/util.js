@@ -15,6 +15,19 @@ const setCSSVar = (key, value, element = document.documentElement) => {
   element.style.setProperty(key, value)
 }
 
+/**
+ * Takes the name of a file, extracts the extension, and tries to
+ * see if that file extension can be loaded my monaco. If the extension
+ * isn't found, plaintext will be returned instead.
+ * Ex: `main.js => .js`
+ * ```
+ * {
+ *    "language": "javascript",
+ *    "displayName": "JavaScript",
+ *    "extension": ".js"
+ * }
+ * ```
+ */
 const getLanguageFromFileName = fileName => {
   if (languageData[fileName]) {
     return languageData[fileName]
@@ -36,18 +49,10 @@ const getLanguageFromFileName = fileName => {
 
   extension = extension.split('').reverse().join('')
 
-  const registeredLanguage = getRegisteredLanguage(extension)
-
-  if (registeredLanguage) {
-    return JSON.parse(registeredLanguage)
-  }
-
-  // We've found the extension but it isn't supported by monaco
   if (!languageData[extension]) {
     return {
-      language: '',
-      displayName: '',
-      canEditorRender: false,
+      language: 'plaintext',
+      displayName: 'Plain Text',
       extension
     }
   }
@@ -55,22 +60,20 @@ const getLanguageFromFileName = fileName => {
   return languageData[extension]
 }
 
-const registerLanguage = extension => {
-  // Saves this extension to local storage so we don't have
-  // to display a warning every time this file type is opened
-  localStorage.setItem(
-    extension,
-    JSON.stringify({
-      language: 'plaintext',
-      displayName: 'Plain Text',
-      canEditorRender: true,
-      extension
-    })
+// Used to properly decode a base64 string since some non-english
+// characters may not decode properly using atob. Note that this
+// throws an error if the string can't be decoded. In that case,
+// it may be an image, PDF, or some other file type that
+// FileRenderer might be able to display
+// https://stackoverflow.com/a/30106551/9124220
+const base64DecodeUnicode = str => {
+  // Going backwards: from byte stream, to percent-encoding, to original string.
+  return decodeURIComponent(
+    atob(str)
+      .split('')
+      .map(chr => '%' + ('00' + chr.charCodeAt(0).toString(16)).slice(-2))
+      .join('')
   )
-}
-
-const getRegisteredLanguage = extension => {
-  return localStorage.getItem(extension)
 }
 
 /* istanbul ignore next */
@@ -81,5 +84,5 @@ export {
   setCSSVar,
   getLanguageFromFileName,
   noop,
-  registerLanguage
+  base64DecodeUnicode
 }
