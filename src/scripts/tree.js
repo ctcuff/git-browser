@@ -24,6 +24,7 @@ class Tree {
       "src/App.vue": {
         "type": "file",
         "name": "App.vue",
+        "size": 2487,
         "path": "src/App.vue",
         "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/2e6719d25b30a897967c849672ccee435f5c6ae9"
       },
@@ -39,7 +40,7 @@ class Tree {
     const tree = {}
 
     for (const item of data) {
-      const { path, url, type } = item
+      const { path, url, type, size } = item
 
       if (type !== 'blob' && type !== 'tree') {
         // The GitHub API has 3 types: blobs, trees, and commits.
@@ -50,7 +51,7 @@ class Tree {
       }
 
       // If this file/folder is contained in a folder, split the path
-      // to try and find the name of the parent folder. Frr example:
+      // to try and find the name of the parent folder. For example:
       // `src/components/App.js` => `components`
       const parts = path.split('/')
       const parent = parts.splice(0, parts.length - 1).join('/')
@@ -60,6 +61,7 @@ class Tree {
           tree[path] = {
             type: 'file',
             name: parts[parts.length - 1],
+            size,
             path,
             url
           }
