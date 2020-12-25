@@ -912,7 +912,7 @@
   },
   ".pdf": {
     "language": "pdf",
-    "displayName": "pdf",
+    "displayName": "PDF",
     "extension": ".pdf"
   },
   ".cfg": {
