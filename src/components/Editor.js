@@ -15,6 +15,7 @@ class Editor extends React.Component {
     this.editorRef = React.createRef()
     this.getTheme = this.getTheme.bind(this)
     this.initEditor = this.initEditor.bind(this)
+    this.viewZoneCallback = this.viewZoneCallback.bind(this)
   }
 
   getTheme(colorScheme) {
@@ -78,16 +79,18 @@ class Editor extends React.Component {
 
     // Gives the editor a small amount of space before the first line
     // to account for the size of the horizontal tab scrollbar
-    this.editor.changeViewZones(changeAccessor => {
-      changeAccessor.addZone({
-        afterLineNumber: 0,
-        heightInPx: parseCSSVar('--scrollbar-height'),
-        domNode: document.createElement('div')
-      })
-    })
+    this.editor.changeViewZones(this.viewZoneCallback)
 
     this.monaco = monaco
     this.setState({ isLoading: false })
+  }
+
+  viewZoneCallback(changeAccessor) {
+    changeAccessor.addZone({
+      afterLineNumber: 0,
+      heightInPx: parseCSSVar('--scrollbar-height'),
+      domNode: document.createElement('div')
+    })
   }
 
   componentWillUnmount() {
