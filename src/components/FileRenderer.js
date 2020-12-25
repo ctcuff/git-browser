@@ -16,11 +16,13 @@ class FileRenderer extends React.Component {
   }
 
   getComponent() {
-    const { fileType, content, title } = this.props
+    const { fileType, content, title, extension } = this.props
 
     switch (fileType) {
       case 'image':
-        return <ImageRenderer content={content} alt={title} />
+        return (
+          <ImageRenderer content={content} alt={title} extension={extension} />
+        )
       case 'pdf':
         return <PDFRenderer content={content} />
       default:

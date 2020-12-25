@@ -123,7 +123,7 @@ class Editor extends React.Component {
   showPreview(extension) {
     this.props.showPreviewModal(
       <FileRenderer
-        language="image"
+        fileType="image"
         extension={extension}
         title={this.props.fileName}
         content={btoa(this.props.content)}
