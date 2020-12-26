@@ -46,7 +46,7 @@ class App extends React.Component {
     this.resizePanel = this.resizePanel.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
     this.onTabClosed = this.onTabClosed.bind(this)
-    this.onSearchFinished = this.onSearchFinished.bind(this)
+    this.closeAllTabs = this.closeAllTabs.bind(this)
     this.renderTab = this.renderTab.bind(this)
     this.resize = this.resize.bind(this)
     this.findTabIndex = this.findTabIndex.bind(this)
@@ -276,7 +276,7 @@ class App extends React.Component {
     })
   }
 
-  onSearchFinished() {
+  closeAllTabs() {
     this.setState({
       openedFilePaths: new Set(),
       openedTabs: [],
@@ -315,7 +315,7 @@ class App extends React.Component {
           {isExplorerOpen ? null : <div className="mobile-panel-overlay" />}
           <ExplorerPanel
             onSelectFile={this.onSelectFile}
-            onSearchFinished={this.onSearchFinished}
+            onSearchFinished={this.closeAllTabs}
             onSearchStarted={this.toggleLoadingOverlay}
           />
         </div>
@@ -330,6 +330,7 @@ class App extends React.Component {
               onTabClosed={this.onTabClosed}
               activeTabIndex={activeTabIndex}
               onSelectTab={this.setActiveTabIndex}
+              onCloseAllClick={this.closeAllTabs}
             >
               {openedTabs.map(this.renderTab)}
             </TabView>

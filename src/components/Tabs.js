@@ -4,6 +4,7 @@ import React from 'react'
 import { Tabs, TabList, TabPanel, Tab as ReactTab } from 'react-tabs'
 import PropTypes from 'prop-types'
 import SimpleBar from 'simplebar-react'
+import { VscCloseAll } from 'react-icons/vsc'
 
 const Tab = props => <React.Fragment>{props.children}</React.Fragment>
 
@@ -28,9 +29,16 @@ const TabView = props => {
 
   return (
     <Tabs className="tabs" onSelect={onSelect} selectedIndex={activeTabIndex}>
-      <SimpleBar>
+      <SimpleBar className="tab-simplebar">
         <div className="scroll-container">
           <TabList className="tab-list">
+            <button
+              className="close-all-button"
+              title="Close all tabs"
+              onClick={props.onCloseAllClick}
+            >
+              <VscCloseAll />
+            </button>
             {tabs.map((tab, index) => (
               <ReactTab
                 className="tab"
@@ -82,7 +90,8 @@ TabView.propTypes = {
   ]),
   onTabClosed: PropTypes.func.isRequired,
   activeTabIndex: PropTypes.number.isRequired,
-  onSelectTab: PropTypes.func.isRequired
+  onSelectTab: PropTypes.func.isRequired,
+  onCloseAllClick: PropTypes.func.isRequired
 }
 
 export { TabView, Tab }

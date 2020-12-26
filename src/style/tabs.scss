@@ -4,27 +4,59 @@
   width: 100%;
   overflow: hidden;
 
+  .tab-simplebar {
+    z-index: 1;
+    display: flex;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      height: 1px;
+      left: 0;
+      right: 0;
+      width: 100%;
+      top: 31px;
+      background-color: var(--color-border);
+    }
+  }
+
   .scroll-container {
+    width: 100%;
     height: var(--tab-bar-height);
-    left: 0;
-    right: 0;
-    z-index: 999;
-    top: 0;
   }
 
   .tab-list {
     display: flex;
     list-style: none;
-    padding: 0;
-    margin: 0;
-    border-bottom: 1px solid var(--color-border);
-    color: var(--color-text-secondary);
-    height: 31px;
-    top: 0;
     left: 0;
     right: 0;
+    padding: 0;
+    margin: 0;
+    color: var(--color-text-secondary);
+    height: 31px;
     background-color: var(--color-primary);
     z-index: 1;
+  }
+
+  .close-all-button {
+    position: sticky;
+    left: 0;
+    background-color: var(--color-primary);
+    color: var(--color-text-primary);
+    z-index: 2;
+    border: none;
+    font-size: 1.3em;
+    border-right: 1px solid var(--color-border);
+    padding: 0 0.5em;
+
+    &:hover {
+      background-color: var(--color-list-item-hover);
+    }
+
+    svg {
+      color: var(--color-text-primary);
+    }
   }
 
   .tab {
@@ -71,8 +103,13 @@
     }
   }
 
+  .tab-panel {
+    display: none;
+  }
+
   .tab-panel--selected {
     display: block;
+    // Allows the scroll bar to show on top of the panel's content
     height: calc(100% - var(--tab-bar-height) + var(--scrollbar-height));
     transform: translateY(calc(-1 * var(--scrollbar-height)));
   }
@@ -87,7 +124,7 @@
       content: '';
       position: absolute;
       height: 3px;
-      bottom: -3px;
+      bottom: -2px;
       left: 0;
       right: 0;
       background-color: var(--color-tab-border-bottom-active);
