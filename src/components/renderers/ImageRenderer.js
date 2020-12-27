@@ -1,13 +1,45 @@
 import '../../style/image-renderer.scss'
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 
+const getMimeType = extension => {
+  let type = ''
+
+  switch (extension) {
+    case '.apng':
+    case '.avif':
+    case '.gif':
+    case '.png':
+    case '.webp':
+      type = extension.slice(1)
+      break
+    case '.jpg':
+    case '.jpeg':
+    case '.jfif':
+    case '.pjpeg':
+    case '.pjp':
+      type = 'jpeg'
+      break
+    case '.svg':
+      type = 'svg+xml'
+      break
+    case '.ico':
+      type = 'x-icon'
+      break
+    default:
+      // eslint-disable-next-line no-console
+      console.warn('Invalid extension', extension)
+  }
+
+  return 'image/' + type
+}
+
 const ImageRenderer = props => {
-  const imageRef = useRef(null)
   const [isLoading, setLoading] = useState(true)
   const [hasError, setError] = useState(false)
+  const mimeType = getMimeType(props.extension)
 
   const onImageLoaded = () => {
     setLoading(false)
@@ -23,32 +55,55 @@ const ImageRenderer = props => {
     setError(false)
   }
 
+  if (hasError) {
+    return (
+      <ErrorOverlay
+        message="Error loading image."
+        retryMessage="Retry"
+        onRetryClick={retry}
+      />
+    )
+  }
+
   return (
-    <div className={`image-renderer ${isLoading ? 'is-loading' : null}`}>
+    <div className="image-renderer">
       {isLoading && <LoadingOverlay text="Rendering image..." />}
-      {hasError && (
-        <ErrorOverlay
-          message="Error loading image."
-          retryMessage="Retry"
-          onRetryClick={retry}
-        />
-      )}
-      {!hasError && (
-        <img
-          src={'data:image/png;base64,' + props.content}
-          ref={imageRef}
-          alt={props.alt}
-          onLoad={onImageLoaded}
-          onError={onLoadError}
-        />
-      )}
+      <img
+        src={`data:${mimeType};base64,${props.content}`}
+        className={isLoading ? 'img--loading' : ''}
+        alt={props.alt}
+        onLoad={onImageLoaded}
+        onError={onLoadError}
+      />
     </div>
   )
 }
 
 ImageRenderer.propTypes = {
   alt: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired
+  content: PropTypes.string.isRequired,
+  extension: PropTypes.oneOf([
+    // MIME Type: image/apng
+    '.apng',
+    // MIME Type: image/avif
+    '.avif',
+    // MIME Type: image/gif
+    '.gif',
+    // MIME Type: image/jpeg
+    '.jpg',
+    '.jpeg',
+    '.jfif',
+    '.pjpeg',
+    '.pjp',
+    // MIME Type: image/png
+    '.png',
+    // MIME Type: image/svg+xml
+    '.svg',
+    // MIME Type: image/webp
+    '.webp',
+    // MIME Type: image/x-icon
+    '.ico'
+  ]).isRequired
 }
 
 export default ImageRenderer

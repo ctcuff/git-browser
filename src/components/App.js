@@ -18,9 +18,9 @@ import debounce from 'lodash/debounce'
 import LoadingOverlay from './LoadingOverlay'
 import FileRenderer from './FileRenderer'
 
-// Don't allow API requests to files the meet/exceed this size
-// to avoid network strain and long render times
-const MAX_FILE_SIZE = 10_000_000 // 10 MB
+// Don't allow API requests to files that meet/exceed this size
+// (in bytes) to avoid network strain and long render times
+const MAX_FILE_SIZE = 30_000_000 // 30 MB
 
 // Used to ensure the editor panel stays within a certain size
 const clamp = (min, value, max) => Math.max(min, Math.min(value, max))
@@ -55,6 +55,7 @@ class App extends React.Component {
     this.updateViewport = debounce(this.updateViewport.bind(this), 250)
     this.loadFile = this.loadFile.bind(this)
     this.toggleLoadingOverlay = this.toggleLoadingOverlay.bind(this)
+    this.onForceRenderEditor = this.onForceRenderEditor.bind(this)
   }
 
   componentDidMount() {
@@ -110,16 +111,12 @@ class App extends React.Component {
 
   loadFile(file) {
     const openedTabs = this.state.openedTabs
-    const activeTabIndex = this.state.activeTabIndex
     let tabIndex = this.findTabIndex(file.path)
 
     if (file.size >= MAX_FILE_SIZE) {
       openedTabs[tabIndex].isLoading = false
       openedTabs[tabIndex].isTooLarge = true
-      this.setState({
-        activeTabIndex,
-        openedTabs
-      })
+      this.setState({ openedTabs })
       return
     }
 
@@ -133,22 +130,21 @@ class App extends React.Component {
         return
       }
 
-      // Try to decode this file to see if it can
-      // be rendered by the editor as plaintext
       try {
+        // Try to decode this file to see if it can
+        // be rendered by the editor as plaintext
         openedTabs[tabIndex].content = base64DecodeUnicode(content)
         openedTabs[tabIndex].canEditorRender = true
       } catch (e) {
+        // If decoding fails, let the FileRenderer render try
+        // to render the content
         openedTabs[tabIndex].canEditorRender = false
         openedTabs[tabIndex].content = content
       }
 
       openedTabs[tabIndex].isLoading = false
 
-      this.setState({
-        activeTabIndex,
-        openedTabs
-      })
+      this.setState({ openedTabs: this.state.openedTabs })
     })
   }
 
@@ -231,7 +227,7 @@ class App extends React.Component {
       )
     }
 
-    const { language, extension } = getLanguageFromFileName(title)
+    const { extension } = getLanguageFromFileName(title)
 
     return (
       <Tab title={title} key={index} hint={path}>
@@ -243,14 +239,26 @@ class App extends React.Component {
           />
         ) : (
           <FileRenderer
-            fileType={language}
             content={content}
             title={title}
             extension={extension}
+            onForceRender={this.onForceRenderEditor}
           />
         )}
       </Tab>
     )
+  }
+
+  onForceRenderEditor(editorContent) {
+    // Mark this tab as renderable by the editor so we
+    // don't get the "unknown text encoding" every time this
+    // tab is clicked on
+    const { activeTabIndex, openedTabs } = this.state
+
+    openedTabs[activeTabIndex].canEditorRender = true
+    openedTabs[activeTabIndex].content = editorContent
+
+    this.setState({ openedTabs })
   }
 
   onTabClosed(tabIndex) {

@@ -9,11 +9,8 @@
     border: 1px solid var(--color-border);
   }
 
-  &.is-loading {
+  .img--loading {
     border: none;
-
-    img {
-      display: none;
-    }
+    display: none;
   }
 }

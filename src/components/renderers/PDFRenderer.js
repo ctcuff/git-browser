@@ -24,7 +24,7 @@ const PDFPage = props => {
     })
   }, [])
 
-  return <canvas ref={canvasRef}></canvas>
+  return <canvas ref={canvasRef} />
 }
 
 class PDFRenderer extends React.Component {
@@ -99,11 +99,7 @@ class PDFRenderer extends React.Component {
 
   render() {
     if (this.state.isLoading) {
-      return (
-        <div className="pdf-renderer">
-          <LoadingOverlay text="Loading PDF..." />
-        </div>
-      )
+      return <LoadingOverlay text="Loading PDF..." />
     }
 
     if (this.state.hasError) {
