@@ -1,7 +1,6 @@
 import '../../style/pdf-renderer.scss'
 import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { pdfjs } from 'react-pdf/dist/esm/entry.webpack'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import SimpleBar from 'simplebar-react'
@@ -28,6 +27,10 @@ const PDFPage = props => {
   return <canvas ref={canvasRef} />
 }
 
+// Note: pdfjs is used from react-pdf because it includes a web worker
+// but the <Document /> and <Pages /> components aren't used because of
+// a bug causing documents not to display after unmount and re-mount.
+// https://github.com/wojtekmaj/react-pdf/issues/679
 class PDFRenderer extends React.Component {
   constructor(props) {
     super(props)
@@ -44,15 +47,24 @@ class PDFRenderer extends React.Component {
   }
 
   componentDidMount() {
-    this.loadPDF()
+    // Dynamic import to reduce bundle size
+    import('react-pdf/dist/esm/entry.webpack')
+      .then(({ pdfjs }) => {
+        this.pdfjs = pdfjs
+        this.loadPDF()
+      })
+      .catch(err => {
+        Logger.error(err)
+        this.setState({ hasError: true })
+      })
   }
 
   loadPDF() {
     const content = this.props.content
 
-    pdfjs.getDocument({ data: atob(content) }).promise.then(
+    this.pdfjs.getDocument({ data: atob(content) }).promise.then(
       pdfDocument => {
-        this.setState({ isLoading: false }, () => this.renderPages(pdfDocument))
+        this.renderPages(pdfDocument)
       },
       err => {
         Logger.error(err)
@@ -84,7 +96,10 @@ class PDFRenderer extends React.Component {
       )
     }
 
-    this.setState({ pages })
+    this.setState({
+      isLoading: false,
+      pages
+    })
   }
 
   reload() {
