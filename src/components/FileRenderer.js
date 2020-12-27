@@ -3,35 +3,68 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import PDFRenderer from './renderers/PDFRenderer'
 import ImageRenderer from './renderers/ImageRenderer'
+import VideoRenderer from './renderers/VideoRenderer'
+import AudioRenderer from './renderers/AudioRenderer'
+import { noop } from '../scripts/util'
 
 class FileRenderer extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      isLoading: false
-    }
-
     this.getComponent = this.getComponent.bind(this)
+    this.forceRenderEditor = this.forceRenderEditor.bind(this)
+    this.renderUnsupported = this.renderUnsupported.bind(this)
   }
 
   getComponent() {
-    const { fileType, content, title, extension } = this.props
+    const { content, title, extension } = this.props
 
-    switch (fileType) {
-      case 'image':
+    switch (extension) {
+      case '.apng':
+      case '.avif':
+      case '.gif':
+      case '.png':
+      case '.webp':
+      case '.jpg':
+      case '.jpeg':
+      case '.jfif':
+      case '.pjpeg':
+      case '.pjp':
+      case '.svg':
+      case '.ico':
         return (
-          <ImageRenderer content={content} alt={title} extension={extension} />
+          <ImageRenderer content={content} extension={extension} alt={title} />
         )
-      case 'pdf':
+      case '.pdf':
         return <PDFRenderer content={content} />
+      case '.mp4':
+      case '.webm':
+        return <VideoRenderer content={content} extension={extension} />
+      case '.mp3':
+      case '.wav':
+      case '.ogg':
+        return <AudioRenderer content={content} extension={extension} />
       default:
-        return (
-          <div className="unsupported">
-            <p>Unsupported file type.</p>
-          </div>
-        )
+        return this.renderUnsupported()
     }
+  }
+
+  renderUnsupported() {
+    return (
+      <div className="unsupported">
+        <p>
+          This file is not displayed because it&apos;s either binary or uses an
+          unknown text encoding.
+        </p>
+        <button className="render-editor-btn" onClick={this.forceRenderEditor}>
+          Do you want to load it anyway?
+        </button>
+      </div>
+    )
+  }
+
+  forceRenderEditor() {
+    this.props.onForceRender(atob(this.props.content))
   }
 
   render() {
@@ -40,10 +73,14 @@ class FileRenderer extends React.Component {
 }
 
 FileRenderer.propTypes = {
-  fileType: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  extension: PropTypes.string.isRequired
+  extension: PropTypes.string.isRequired,
+  onForceRender: PropTypes.func
+}
+
+FileRenderer.defaultProps = {
+  onForceRender: noop
 }
 
 export default FileRenderer

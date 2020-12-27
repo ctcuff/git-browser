@@ -18,9 +18,9 @@ import debounce from 'lodash/debounce'
 import LoadingOverlay from './LoadingOverlay'
 import FileRenderer from './FileRenderer'
 
-// Don't allow API requests to files the meet/exceed this size
-// to avoid network strain and long render times
-const MAX_FILE_SIZE = 10_000_000 // 10 MB
+// Don't allow API requests to files that meet/exceed this size
+// (in bytes) to avoid network strain and long render times
+const MAX_FILE_SIZE = 30_000_000 // 30 MB
 
 // Used to ensure the editor panel stays within a certain size
 const clamp = (min, value, max) => Math.max(min, Math.min(value, max))
@@ -46,7 +46,7 @@ class App extends React.Component {
     this.resizePanel = this.resizePanel.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
     this.onTabClosed = this.onTabClosed.bind(this)
-    this.onSearchFinished = this.onSearchFinished.bind(this)
+    this.closeAllTabs = this.closeAllTabs.bind(this)
     this.renderTab = this.renderTab.bind(this)
     this.resize = this.resize.bind(this)
     this.findTabIndex = this.findTabIndex.bind(this)
@@ -55,12 +55,17 @@ class App extends React.Component {
     this.updateViewport = debounce(this.updateViewport.bind(this), 250)
     this.loadFile = this.loadFile.bind(this)
     this.toggleLoadingOverlay = this.toggleLoadingOverlay.bind(this)
+    this.onForceRenderEditor = this.onForceRenderEditor.bind(this)
   }
 
   componentDidMount() {
     this.updateViewport()
+
     document.addEventListener('mouseup', this.onMouseUp)
     window.addEventListener('resize', this.updateViewport)
+
+    // Lazy load the editor so the Editor component can render quicker
+    import('monaco-editor/esm/vs/editor/editor.api.js')
   }
 
   componentWillUnmount() {
@@ -70,21 +75,26 @@ class App extends React.Component {
 
   updateViewport() {
     // Updates the --vh variable used in the height mixin
-    const vh = window.innerHeight * 0.01
-    setCSSVar('--vh', vh + 'px')
+    setCSSVar('--vh', window.innerHeight * 0.01 + 'px')
   }
 
   onSelectFile(node) {
     const { openedFilePaths, openedTabs } = this.state
 
-    if (node.type === 'folder') {
-      return
-    }
-
     // Don't open this file in a new tab since it's already open
     if (openedFilePaths.has(node.path)) {
       this.setActiveTabIndex(this.findTabIndex(node.path))
       return
+    }
+
+    const initialTabState = {
+      isLoading: true,
+      index: openedTabs.length,
+      title: node.name,
+      path: node.path,
+      isTooLarge: false,
+      canEditorRender: false,
+      content: ''
     }
 
     // Render a temporary loading tab while we wait for the
@@ -93,16 +103,7 @@ class App extends React.Component {
       {
         openedFilePaths: new Set(openedFilePaths.add(node.path)),
         activeTabIndex: openedTabs.length,
-        openedTabs: [
-          ...openedTabs,
-          {
-            isLoading: true,
-            index: openedTabs.length,
-            title: node.name,
-            path: node.path,
-            isTooLarge: false
-          }
-        ]
+        openedTabs: [...openedTabs, initialTabState]
       },
       () => this.loadFile(node)
     )
@@ -110,16 +111,12 @@ class App extends React.Component {
 
   loadFile(file) {
     const openedTabs = this.state.openedTabs
-    const activeTabIndex = this.state.activeTabIndex
     let tabIndex = this.findTabIndex(file.path)
 
     if (file.size >= MAX_FILE_SIZE) {
       openedTabs[tabIndex].isLoading = false
       openedTabs[tabIndex].isTooLarge = true
-      this.setState({
-        activeTabIndex,
-        openedTabs
-      })
+      this.setState({ openedTabs })
       return
     }
 
@@ -129,16 +126,25 @@ class App extends React.Component {
       // before the request finished loading
       tabIndex = this.findTabIndex(file.path)
 
-      if (tabIndex >= 0) {
-        // Replace the loading tab with the loaded file content
-        openedTabs[tabIndex].content = content
-        openedTabs[tabIndex].isLoading = false
-
-        this.setState({
-          activeTabIndex,
-          openedTabs
-        })
+      if (tabIndex === -1) {
+        return
       }
+
+      try {
+        // Try to decode this file to see if it can
+        // be rendered by the editor as plaintext
+        openedTabs[tabIndex].content = base64DecodeUnicode(content)
+        openedTabs[tabIndex].canEditorRender = true
+      } catch (e) {
+        // If decoding fails, let the FileRenderer render try
+        // to render the content
+        openedTabs[tabIndex].canEditorRender = false
+        openedTabs[tabIndex].content = content
+      }
+
+      openedTabs[tabIndex].isLoading = false
+
+      this.setState({ openedTabs: this.state.openedTabs })
     })
   }
 
@@ -197,7 +203,11 @@ class App extends React.Component {
   }
 
   renderTab(tab, index) {
-    const { title, path, content, isLoading, isTooLarge } = tab
+    const { title, path, content, isLoading, isTooLarge, canEditorRender } = tab
+
+    if (index !== this.state.activeTabIndex) {
+      return <Tab title={title} key={tab.index} hint={title} />
+    }
 
     if (isLoading) {
       return (
@@ -217,36 +227,38 @@ class App extends React.Component {
       )
     }
 
-    const { language, extension } = getLanguageFromFileName(title)
-    let canEditorRender = true
-    let encodedContent = ''
-
-    // Try to decode this file to see if it can
-    // be rendered by the editor as plaintext
-    try {
-      encodedContent = base64DecodeUnicode(content)
-    } catch (e) {
-      canEditorRender = false
-    }
+    const { extension } = getLanguageFromFileName(title)
 
     return (
       <Tab title={title} key={index} hint={path}>
         {canEditorRender ? (
           <Editor
             fileName={title}
-            content={encodedContent}
+            content={content}
             colorScheme={this.props.mode}
           />
         ) : (
           <FileRenderer
-            fileType={language}
             content={content}
             title={title}
             extension={extension}
+            onForceRender={this.onForceRenderEditor}
           />
         )}
       </Tab>
     )
+  }
+
+  onForceRenderEditor(editorContent) {
+    // Mark this tab as renderable by the editor so we
+    // don't get the "unknown text encoding" every time this
+    // tab is clicked on
+    const { activeTabIndex, openedTabs } = this.state
+
+    openedTabs[activeTabIndex].canEditorRender = true
+    openedTabs[activeTabIndex].content = editorContent
+
+    this.setState({ openedTabs })
   }
 
   onTabClosed(tabIndex) {
@@ -276,7 +288,7 @@ class App extends React.Component {
     })
   }
 
-  onSearchFinished() {
+  closeAllTabs() {
     this.setState({
       openedFilePaths: new Set(),
       openedTabs: [],
@@ -315,7 +327,7 @@ class App extends React.Component {
           {isExplorerOpen ? null : <div className="mobile-panel-overlay" />}
           <ExplorerPanel
             onSelectFile={this.onSelectFile}
-            onSearchFinished={this.onSearchFinished}
+            onSearchFinished={this.closeAllTabs}
             onSearchStarted={this.toggleLoadingOverlay}
           />
         </div>
@@ -330,6 +342,7 @@ class App extends React.Component {
               onTabClosed={this.onTabClosed}
               activeTabIndex={activeTabIndex}
               onSelectTab={this.setActiveTabIndex}
+              onCloseAllClick={this.closeAllTabs}
             >
               {openedTabs.map(this.renderTab)}
             </TabView>
