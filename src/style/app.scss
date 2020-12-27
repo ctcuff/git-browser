@@ -1,81 +1,10 @@
 @import '../style/mixins/media';
 
 .app {
-  $toggle-button-height: 32px;
-
   overflow: hidden;
   height: calc((var(--vh, 1vh) * 100) - var(--gutter-height));
   display: flex;
   background-color: var(--color-app-bg);
-
-  .left {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 0;
-    flex-shrink: 0;
-    color: var(--color-panel-text);
-    border-right: 1px solid var(--color-border);
-    position: relative;
-
-    @include desktop() {
-      flex-basis: var(--file-explorer-width);
-    }
-
-    &.panel-open {
-      @include mobile() {
-        flex-basis: 90%;
-      }
-    }
-
-    &.panel-closed {
-      @include mobile() {
-        flex-basis: 32px;
-      }
-    }
-  }
-
-  .panel-toggle {
-    width: 100%;
-    height: $toggle-button-height;
-    border: none;
-    background-color: var(--color-collapse-header);
-    font-size: 0.9em;
-    padding: 0.5em;
-    font-size: 1em;
-
-    &:focus {
-      outline: none;
-    }
-
-    @include desktop() {
-      display: none;
-    }
-
-    @include mobile() {
-      display: block;
-    }
-  }
-
-  .panel-toggle-icon {
-    color: var(--color-text-primary);
-  }
-
-  // Covers the explorer panel on mobile devices
-  // when the explorer is closed. This prevents x overflow
-  // and hides the panel's squished content
-  .mobile-panel-overlay {
-    position: absolute;
-    z-index: 100;
-    width: 100%;
-    background-color: var(--color-collapse-header);
-    top: $toggle-button-height;
-    bottom: 0;
-    border-top: 1px solid var(--color-border);
-
-    @include desktop() {
-      display: none;
-    }
-  }
 
   .right {
     display: flex;
@@ -83,44 +12,6 @@
     height: 100%;
     overflow: hidden;
     position: relative;
-  }
-
-  .resize-panel {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    left: 0;
-    width: 12px;
-    opacity: 0;
-    height: 100%;
-    cursor: col-resize;
-    z-index: 2;
-    background-color: var(--color-scrollbar);
-    transition: opacity 0.2s ease-in-out;
-
-    &:hover {
-      opacity: 0.5;
-    }
-
-    &:active {
-      // The state when the mouse is down on the resize panel
-      opacity: 1;
-    }
-
-    @include mobile() {
-      display: none;
-    }
-  }
-
-  .resize-icon {
-    color: #ffffff;
-    font-size: 2em;
-    transform: scale(2);
-  }
-
-  .resize-overlay {
-    display: none;
   }
 
   .loading-icon {
@@ -145,26 +36,6 @@
 
     100% {
       transform: rotate((360deg));
-    }
-  }
-}
-
-.is-resizing {
-  // Adds an overlay to the app so that content won't get selected
-  // when the user is dragging the resize panel
-  .resize-overlay {
-    display: block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: transparent;
-    z-index: 3;
-    cursor: col-resize;
-
-    @include mobile() {
-      display: none;
     }
   }
 }

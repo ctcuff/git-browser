@@ -1,0 +1,61 @@
+@import '../style/mixins/media';
+
+.resize-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  width: 12px;
+  opacity: 0;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 2;
+  background-color: var(--color-scrollbar);
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.5;
+  }
+
+  &:active {
+    // The state when the mouse is down on the resize panel
+    opacity: 1;
+  }
+
+  @include mobile() {
+    display: none;
+  }
+
+  .resize-icon {
+    color: #ffffff;
+    font-size: 2em;
+    transform: scale(2);
+  }
+
+  .resize-overlay {
+    display: none;
+    z-index: 3;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: transparent;
+    cursor: col-resize;
+    transition: all 0s;
+    user-select: none;
+  }
+}
+
+// Adds an overlay to the app so that content won't get selected
+// when the user is dragging the resize panel
+.is-resizing {
+  .resize-overlay {
+    display: block;
+
+    @include mobile() {
+      display: none;
+    }
+  }
+}

@@ -1,7 +1,76 @@
 @import './mixins/media';
 
 .explorer-panel {
+  $toggle-button-height: 32px;
+
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+  flex-shrink: 0;
+  color: var(--color-panel-text);
+  border-right: 1px solid var(--color-border);
+  position: relative;
+  align-items: unset !important;
+  align-content: unset !important;
+
+  @include desktop() {
+    flex-basis: var(--file-explorer-width);
+  }
+
+  &.is-open {
+    @include mobile() {
+      flex-basis: 100%;
+    }
+  }
+
+  &.is-closed {
+    @include mobile() {
+      flex-basis: 32px;
+    }
+  }
+
+  .panel-toggle {
+    width: 100%;
+    height: $toggle-button-height;
+    border: none;
+    background-color: var(--color-collapse-header);
+    font-size: 0.9em;
+    padding: 0.5em;
+    font-size: 1em;
+
+    &:focus {
+      outline: none;
+    }
+
+    @include desktop() {
+      display: none;
+    }
+
+    @include mobile() {
+      display: block;
+    }
+  }
+
+  .panel-toggle-icon {
+    color: var(--color-text-primary);
+  }
+
+  // Covers the explorer panel on mobile devices
+  // when the explorer is closed. This prevents x overflow
+  // and hides the panel's squished content
+  .mobile-panel-overlay {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    background-color: var(--color-collapse-header);
+    top: $toggle-button-height;
+    bottom: 0;
+
+    @include desktop() {
+      display: none;
+    }
+  }
 
   .search-panel {
     padding: 1em 0.5em;

@@ -101,7 +101,7 @@ class Editor extends React.Component {
   render() {
     return (
       <div className="monaco-editor-container" ref={this.editorRef}>
-        {this.state.isLoading && <LoadingOverlay text="Loading editor..." />}
+        {this.state.isLoading && <LoadingOverlay text="Loading viewer..." />}
       </div>
     )
   }
