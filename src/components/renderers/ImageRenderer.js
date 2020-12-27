@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
+import Logger from '../../scripts/logger'
 
 const getMimeType = extension => {
   let type = ''
@@ -29,8 +30,7 @@ const getMimeType = extension => {
       type = 'x-icon'
       break
     default:
-      // eslint-disable-next-line no-console
-      console.warn('Invalid extension', extension)
+      Logger.warn('Invalid extension', extension)
   }
 
   return 'image/' + type

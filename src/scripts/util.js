@@ -1,10 +1,11 @@
 import languageData from '../assets/monaco-languages-parsed.json'
+import Logger from './logger'
 
 const parseCSSVar = (cssVar, element = document.documentElement) => {
   const property = getComputedStyle(element).getPropertyValue(cssVar)
 
   if (!property) {
-    console.warn(`Property ${cssVar} not found`)
+    Logger.warn(`Property ${cssVar} not found`)
     return 0
   }
 

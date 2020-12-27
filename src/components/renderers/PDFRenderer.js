@@ -5,6 +5,7 @@ import { pdfjs } from 'react-pdf/dist/esm/entry.webpack'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import SimpleBar from 'simplebar-react'
+import Logger from '../../scripts/logger'
 
 const PDFPage = props => {
   const canvasRef = useRef(null)
@@ -54,8 +55,8 @@ class PDFRenderer extends React.Component {
         this.setState({ isLoading: false }, () => this.renderPages(pdfDocument))
       },
       err => {
-        // eslint-disable-next-line no-console
-        console.error(err)
+        Logger.error(err)
+
         this.setState({
           isLoading: false,
           hasError: true
@@ -73,8 +74,8 @@ class PDFRenderer extends React.Component {
           pages.push(<PDFPage page={page} key={i} />)
         },
         err => {
-          // eslint-disable-next-line no-console
-          console.error(err)
+          Logger.error(err)
+
           this.setState({
             isLoading: false,
             hasError: true

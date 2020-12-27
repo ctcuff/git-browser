@@ -7,8 +7,8 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "build": "webpack --config webpack.config.js --mode='production'",
-    "dev": "webpack-dev-server",
+    "build": "webpack --config webpack.config.js --mode='production' --env.debug='false'",
+    "dev": "webpack-dev-server --env.debug='true'",
     "test": "jest",
     "test:ci": "yarn test --bail --passWithNoTests --coverage",
     "lint": "eslint './src/**/*.js'",

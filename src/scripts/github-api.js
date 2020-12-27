@@ -1,4 +1,5 @@
 import URLUtil, { BASE_REPO_URL } from './url-util'
+import Logger from './logger'
 
 const ERROR_INVALID_GITHUB_URL = 'Invalid GitHub URL'
 const ERROR_REPO_NOT_FOUND = "Couldn't find repository"
@@ -45,8 +46,7 @@ class GitHubAPI {
         return default_branch
       })
       .catch(err => {
-        // eslint-disable-next-line no-console
-        console.error(err)
+        Logger.error(err)
         return Promise.reject(err)
       })
   }
@@ -62,8 +62,7 @@ class GitHubAPI {
       return GitHubAPI.getDefaultBranch(repoUrl)
         .then(branchName => this.getBranch(repoUrl, branchName))
         .catch(err => {
-          // eslint-disable-next-line no-console
-          console.error(err)
+          Logger.error(err)
           return Promise.reject(err)
         })
     }
@@ -90,8 +89,7 @@ class GitHubAPI {
         return res
       })
       .catch(err => {
-        // eslint-disable-next-line no-console
-        console.error(err)
+        Logger.error(err)
         return Promise.reject(UNKNOWN_REQUEST_ERROR)
       })
   }
@@ -107,8 +105,7 @@ class GitHubAPI {
       .then(res => res.json())
       .then(res => res.content)
       .catch(err => {
-        // eslint-disable-next-line no-console
-        console.error(err)
+        Logger.error(err)
         return Promise.reject(UNKNOWN_REQUEST_ERROR)
       })
   }
@@ -151,8 +148,7 @@ class GitHubAPI {
         })
       })
       .catch(err => {
-        // eslint-disable-next-line no-console
-        console.error(err)
+        Logger.error(err)
         return Promise.reject(UNKNOWN_REQUEST_ERROR)
       })
   }
