@@ -12,6 +12,7 @@ import sampleBranchData from '../assets/sample-branch-data.json'
 import sampleTreeData from '../assets/sample-tree-data.json'
 import SimpleBar from 'simplebar-react'
 import URLUtil from '../scripts/url-util'
+import { AiOutlineLeft, AiOutlineMenu } from 'react-icons/ai'
 
 const debugState = {
   treeData: sampleTreeData,
@@ -38,6 +39,7 @@ class ExplorerPanel extends React.Component {
       isBranchPanelOpen: false,
       searchErrorMessage: null,
       isLoading: false,
+      isExplorerOpen: false,
       branches: [],
       ...debugState
     }
@@ -52,6 +54,7 @@ class ExplorerPanel extends React.Component {
     this.onCodePanelToggle = this.onCodePanelToggle.bind(this)
     this.onBranchPanelToggle = this.onBranchPanelToggle.bind(this)
     this.toggleLoading = this.toggleLoading.bind(this)
+    this.toggleExplorer = this.toggleExplorer.bind(this)
   }
 
   onInputChange(inputValue) {
@@ -155,6 +158,10 @@ class ExplorerPanel extends React.Component {
     this.setState({ isBranchPanelOpen })
   }
 
+  toggleExplorer() {
+    this.setState({ isExplorerOpen: !this.state.isExplorerOpen })
+  }
+
   render() {
     const {
       currentRepoUrl,
@@ -165,8 +172,11 @@ class ExplorerPanel extends React.Component {
       isCodePanelOpen,
       isBranchPanelOpen,
       treeData,
-      branches
+      branches,
+      isExplorerOpen
     } = this.state
+
+    const openClass = isExplorerOpen ? 'is-open' : 'is-closed'
 
     // Pass a key to the FileExplorer component so that it knows
     // to only render when either the current repository has changed,
@@ -174,7 +184,15 @@ class ExplorerPanel extends React.Component {
     const key = currentRepoUrl + '/' + currentBranch
 
     return (
-      <SimpleBar className="explorer-panel">
+      <SimpleBar className={`explorer-panel ${openClass}`}>
+        <button className="panel-toggle" onClick={this.toggleExplorer}>
+          {isExplorerOpen ? (
+            <AiOutlineLeft className="panel-toggle-icon" />
+          ) : (
+            <AiOutlineMenu className="panel-toggle-icon" />
+          )}
+        </button>
+        {isExplorerOpen ? null : <div className="mobile-panel-overlay" />}
         <Collapse title="search" open>
           <SearchInput
             className="search-panel"

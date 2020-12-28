@@ -47,10 +47,6 @@ body {
     Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
 }
 
-.is-resizing {
-  user-select: none;
-}
-
 // Overrides the box shadow at the bottom of the tab view
 // that monaco adds when scrolling down in the editor
 .monaco-editor .scroll-decoration {
