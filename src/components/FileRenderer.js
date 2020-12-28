@@ -6,6 +6,7 @@ import ImageRenderer from './renderers/ImageRenderer'
 import VideoRenderer from './renderers/VideoRenderer'
 import AudioRenderer from './renderers/AudioRenderer'
 import { noop } from '../scripts/util'
+import { VscCode } from 'react-icons/vsc'
 
 class FileRenderer extends React.Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class FileRenderer extends React.Component {
     this.getComponent = this.getComponent.bind(this)
     this.forceRenderEditor = this.forceRenderEditor.bind(this)
     this.renderUnsupported = this.renderUnsupported.bind(this)
+    this.renderPreviewButton = this.renderPreviewButton.bind(this)
   }
 
   getComponent() {
@@ -63,12 +65,37 @@ class FileRenderer extends React.Component {
     )
   }
 
+  renderPreviewButton() {
+    const validExtensions = ['.svg', '.md']
+
+    if (!validExtensions.includes(this.props.extension)) {
+      return null
+    }
+
+    return (
+      <button
+        className="editor-preview-btn"
+        title="View as code"
+        onClick={this.forceRenderEditor}
+      >
+        <VscCode />
+      </button>
+    )
+  }
+
   forceRenderEditor() {
-    this.props.onForceRender(atob(this.props.content))
+    // Let the App component know that ths file should
+    // be rendered by the editor
+    this.props.onForceRender(atob(this.props.content), true)
   }
 
   render() {
-    return <div className="file-renderer">{this.getComponent()}</div>
+    return (
+      <div className="file-renderer">
+        {this.getComponent()}
+        {this.renderPreviewButton()}
+      </div>
+    )
   }
 }
 

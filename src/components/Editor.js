@@ -1,12 +1,9 @@
 import '../style/editor.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { getLanguageFromFileName, parseCSSVar } from '../scripts/util'
+import { noop, parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
 import { AiOutlineEye } from 'react-icons/ai'
-import { connect } from 'react-redux'
-import { showModal } from '../store/actions/modal'
-import FileRenderer from './FileRenderer'
 
 class Editor extends React.Component {
   constructor(props) {
@@ -20,8 +17,8 @@ class Editor extends React.Component {
     this.getTheme = this.getTheme.bind(this)
     this.initEditor = this.initEditor.bind(this)
     this.renderPreviewButton = this.renderPreviewButton.bind(this)
-    this.showPreview = this.showPreview.bind(this)
     this.viewZoneCallback = this.viewZoneCallback.bind(this)
+    this.forceRenderPreview = this.forceRenderPreview.bind(this)
   }
 
   getTheme(colorScheme) {
@@ -55,6 +52,8 @@ class Editor extends React.Component {
       noSuggestionDiagnostics: true
     }
 
+    const { content, colorScheme, language } = this.props
+
     // Disables lint warnings and syntax errors for languages
     languages.typescript.typescriptDefaults.setDiagnosticsOptions(languageOpts)
     languages.typescript.javascriptDefaults.setDiagnosticsOptions(languageOpts)
@@ -65,10 +64,7 @@ class Editor extends React.Component {
       validate: false
     })
 
-    const model = monaco.createModel(
-      this.props.content,
-      getLanguageFromFileName(this.props.fileName).language
-    )
+    const model = monaco.createModel(content, language)
 
     this.editor = monaco.create(this.editorRef.current, {
       model,
@@ -79,7 +75,7 @@ class Editor extends React.Component {
       },
       automaticLayout: true,
       fontSize: 14,
-      theme: this.getTheme(this.props.colorScheme),
+      theme: this.getTheme(colorScheme),
       renderIndentGuides: false
     })
 
@@ -105,10 +101,12 @@ class Editor extends React.Component {
   }
 
   renderPreviewButton() {
-    const { extension } = getLanguageFromFileName(this.props.fileName)
     const validExtensions = ['.svg', '.md']
 
-    if (!validExtensions.includes(extension) || this.state.isLoading) {
+    if (
+      !validExtensions.includes(this.props.extension) ||
+      this.state.isLoading
+    ) {
       return null
     }
 
@@ -116,22 +114,17 @@ class Editor extends React.Component {
       <button
         className="file-preview-btn"
         title="Preview file"
-        onClick={this.showPreview.bind(this, extension)}
+        onClick={this.forceRenderPreview}
       >
         <AiOutlineEye />
       </button>
     )
   }
 
-  showPreview(extension) {
-    this.props.showPreviewModal(
-      <FileRenderer
-        extension={extension}
-        title={this.props.fileName}
-        content={btoa(this.props.content)}
-        editorColorScheme={this.props.colorScheme}
-      />
-    )
+  forceRenderPreview() {
+    // Let the App component know that ths file should not
+    // be rendered by the editor
+    this.props.onForceRender(btoa(this.props.content), false)
   }
 
   render() {
@@ -145,14 +138,16 @@ class Editor extends React.Component {
 }
 
 Editor.propTypes = {
+  extension: PropTypes.string.isRequired,
+  language: PropTypes.string.isRequired,
   fileName: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   colorScheme: PropTypes.string.isRequired,
-  showPreviewModal: PropTypes.func
+  onForceRender: PropTypes.func
 }
 
-const mapDispatchToProps = {
-  showPreviewModal: showModal
+Editor.defaultProps = {
+  onForceRender: noop
 }
 
-export default connect(null, mapDispatchToProps)(Editor)
+export default Editor

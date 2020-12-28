@@ -43,7 +43,7 @@ class App extends React.Component {
     this.updateViewport = debounce(this.updateViewport.bind(this), 250)
     this.loadFile = this.loadFile.bind(this)
     this.toggleLoadingOverlay = this.toggleLoadingOverlay.bind(this)
-    this.onForceRenderEditor = this.onForceRenderEditor.bind(this)
+    this.onToggleRenderable = this.onToggleRenderable.bind(this)
   }
 
   componentDidMount() {
@@ -170,36 +170,38 @@ class App extends React.Component {
       )
     }
 
-    const { extension } = getLanguageFromFileName(title)
+    const { extension, language } = getLanguageFromFileName(title)
 
     return (
       <Tab title={title} key={index} hint={path}>
         {canEditorRender ? (
           <Editor
             fileName={title}
+            extension={extension}
             content={content}
+            language={language}
             colorScheme={this.props.mode}
+            onForceRender={this.onToggleRenderable}
           />
         ) : (
           <FileRenderer
             content={content}
             title={title}
             extension={extension}
-            onForceRender={this.onForceRenderEditor}
+            onForceRender={this.onToggleRenderable}
           />
         )}
       </Tab>
     )
   }
 
-  onForceRenderEditor(editorContent) {
-    // Mark this tab as renderable by the editor so we
-    // don't get the "unknown text encoding" every time this
-    // tab is clicked on
+  onToggleRenderable(content, canEditorRender) {
+    // Marks a tab as either renderable by the file preview
+    // component, or by the Editor component
     const { activeTabIndex, openedTabs } = this.state
 
-    openedTabs[activeTabIndex].canEditorRender = true
-    openedTabs[activeTabIndex].content = editorContent
+    openedTabs[activeTabIndex].canEditorRender = canEditorRender
+    openedTabs[activeTabIndex].content = content
 
     this.setState({ openedTabs })
   }
