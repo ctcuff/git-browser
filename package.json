@@ -23,6 +23,8 @@
     "highlight.js": "^10.5.0",
     "lodash": "^4.17.20",
     "markdown-it": "^12.0.4",
+    "markdown-it-checkbox": "^1.1.0",
+    "markdown-it-front-matter": "^0.2.3",
     "monaco-editor": "^0.21.2",
     "prop-types": "^15.7.2",
     "react": "16.14.0",

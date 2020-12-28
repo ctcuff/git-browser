@@ -80,7 +80,11 @@ const base64DecodeUnicode = str => {
 // Properly encodes a base 64 string since it may contain non UTF
 // or Latin characters
 const base64EncodeUnicode = str => {
-  return btoa(unescape(encodeURIComponent(str)))
+  return btoa(
+    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, value) => {
+      return String.fromCharCode(parseInt(value, 16))
+    })
+  )
 }
 
 /* istanbul ignore next */

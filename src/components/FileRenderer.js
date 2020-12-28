@@ -90,7 +90,17 @@ class FileRenderer extends React.Component {
   forceRenderEditor() {
     // Let the App component know that ths file should
     // be rendered by the editor
-    this.props.onForceRender(atob(this.props.content), true)
+    let content
+
+    // The content may not be able to be properly decoded. If it
+    // can't, we'll "force" decoding with atob
+    try {
+      content = base64DecodeUnicode(this.props.content)
+    } catch (e) {
+      content = atob(this.props.content)
+    }
+
+    this.props.onForceRender(content, true)
   }
 
   render() {
