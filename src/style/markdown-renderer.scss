@@ -1,0 +1,92 @@
+.markdown-renderer {
+  color: var(--color-text-primary);
+  overflow-y: auto;
+  height: 100%;
+  width: 100%;
+  line-height: 1.5;
+
+  .markdown-content {
+    max-width: 80%;
+    margin: 1em auto 2em auto;
+    overflow-x: hidden;
+    font-size: 1em;
+
+    * {
+      box-sizing: border-box;
+    }
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  table,
+  td,
+  th {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  td,
+  th {
+    border: 1px solid var(--color-border);
+  }
+
+  table {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: block;
+    overflow: auto;
+  }
+
+  td {
+    padding: 0.5em;
+  }
+
+  th {
+    padding: 0.5em 1em;
+  }
+
+  tr:nth-child(even) {
+    background-color: var(--color-markdown-table-bg);
+  }
+
+  pre,
+  code {
+    background-color: var(--color-markdown-code-bg);
+  }
+
+  code {
+    padding: 0.2em 0.4em;
+  }
+
+  pre {
+    padding: 2em;
+    display: block;
+    overflow: auto;
+    font-size: 1.12em;
+
+    code {
+      background-color: transparent;
+      padding: 0;
+    }
+  }
+
+  h1,
+  h2 {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.3em;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  blockquote {
+    margin-left: 0;
+    padding: 0 1em;
+    color: var(--color-markdown-blockquote);
+    border-left: 0.25em solid #dfe2e5;
+  }
+}

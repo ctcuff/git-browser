@@ -10,13 +10,13 @@
     bottom: 0;
     right: 1.5em;
     bottom: 1em;
-    background-color: var(--color-primary);
+    background-color: transparent;
     z-index: 1;
     border: none;
     cursor: pointer;
 
     @include desktop() {
-      opacity: 0.2;
+      opacity: 0.5;
       transition: opacity 0.3s ease-in;
 
       &:hover {
@@ -27,6 +27,7 @@
     svg {
       width: 3em;
       height: 3em;
+      color: var(--color-text-primary);
     }
   }
 }

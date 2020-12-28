@@ -19,7 +19,10 @@
   "dependencies": {
     "enzyme-adapter-react-16": "^1.15.5",
     "eslint-plugin-react": "^7.21.5",
+    "github-markdown-css": "^4.0.0",
+    "highlight.js": "^10.5.0",
     "lodash": "^4.17.20",
+    "markdown-it": "^12.0.4",
     "monaco-editor": "^0.21.2",
     "prop-types": "^15.7.2",
     "react": "16.14.0",
