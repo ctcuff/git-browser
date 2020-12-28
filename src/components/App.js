@@ -14,6 +14,8 @@ import debounce from 'lodash/debounce'
 import LoadingOverlay from './LoadingOverlay'
 import FileRenderer from './FileRenderer'
 import ResizePanel from './ResizePanel'
+import gitBrowserIconDark from '../assets/img/git-browser-icon-dark.svg'
+import gitBrowserIconLight from '../assets/img/git-browser-icon-light.svg'
 
 // Don't allow API requests to files that meet/exceed this size
 // (in bytes) to avoid network strain and long render times
@@ -248,6 +250,8 @@ class App extends React.Component {
   render() {
     const colorClass = `${this.props.mode}-mode`
     const { activeTabIndex, openedTabs, isLoading } = this.state
+    const icon =
+      this.props.mode === 'light' ? gitBrowserIconLight : gitBrowserIconDark
 
     return (
       <div className={`app ${colorClass}`}>
@@ -261,14 +265,25 @@ class App extends React.Component {
           {isLoading ? (
             <LoadingOverlay text="Loading repository..." />
           ) : (
-            <TabView
-              onTabClosed={this.onTabClosed}
-              activeTabIndex={activeTabIndex}
-              onSelectTab={this.setActiveTabIndex}
-              onCloseAllClick={this.closeAllTabs}
-            >
-              {openedTabs.map(this.renderTab)}
-            </TabView>
+            <React.Fragment>
+              {openedTabs.length === 0 && (
+                <div className="landing">
+                  <img src={icon} alt="Git Browser icon" />
+                  <h2 className="heading">Welcome to Git Browser</h2>
+                  <div className="description">
+                    <p>To get started, enter a GitHub URL in the search bar.</p>
+                  </div>
+                </div>
+              )}
+              <TabView
+                onTabClosed={this.onTabClosed}
+                activeTabIndex={activeTabIndex}
+                onSelectTab={this.setActiveTabIndex}
+                onCloseAllClick={this.closeAllTabs}
+              >
+                {openedTabs.map(this.renderTab)}
+              </TabView>
+            </React.Fragment>
           )}
         </div>
       </div>
