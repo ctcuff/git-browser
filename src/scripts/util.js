@@ -35,7 +35,7 @@ const getLanguageFromFileName = fileName => {
   }
 
   let extension = ''
-  fileName = fileName.trim()
+  fileName = fileName.trim().toLowerCase()
 
   // Read through the file name backwards to try to read
   // the extension of the file, stopping when we see a `.`
