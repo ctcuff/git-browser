@@ -1,11 +1,7 @@
 import '../style/app.scss'
 import React from 'react'
 import Editor from './Editor'
-import {
-  setCSSVar,
-  getLanguageFromFileName,
-  base64DecodeUnicode
-} from '../scripts/util'
+import { setCSSVar, getLanguageFromFileName } from '../scripts/util'
 import PropTypes from 'prop-types'
 import ExplorerPanel from './ExplorerPanel'
 import GitHubAPI from '../scripts/github-api'
@@ -16,6 +12,7 @@ import FileRenderer from './FileRenderer'
 import ResizePanel from './ResizePanel'
 import gitBrowserIconDark from '../assets/img/git-browser-icon-dark.svg'
 import gitBrowserIconLight from '../assets/img/git-browser-icon-light.svg'
+import Logger from '../scripts/logger'
 
 // Don't allow API requests to files that meet/exceed this size
 // (in bytes) to avoid network strain and long render times
@@ -79,6 +76,7 @@ class App extends React.Component {
       path: node.path,
       isTooLarge: false,
       canEditorRender: false,
+      hasError: false,
       content: ''
     }
 
@@ -105,32 +103,57 @@ class App extends React.Component {
       return
     }
 
-    GitHubAPI.getFile(file.url).then(content => {
-      // Need to find this tab again to make sure it wasn't closed.
-      // The index will be -1 if the tab was closed
-      // before the request finished loading
-      tabIndex = this.findTabIndex(file.path)
+    GitHubAPI.getFile(file.url)
+      .then(content => {
+        // Need to find this tab again to make sure it wasn't closed.
+        // The index will be -1 if the tab was closed
+        // before the request finished loading
+        tabIndex = this.findTabIndex(file.path)
 
-      if (tabIndex === -1) {
-        return
-      }
+        if (tabIndex === -1) {
+          return
+        }
 
-      try {
-        // Try to decode this file to see if it can
-        // be rendered by the editor as plaintext
-        openedTabs[tabIndex].content = base64DecodeUnicode(content)
-        openedTabs[tabIndex].canEditorRender = true
-      } catch (e) {
-        // If decoding fails, let the FileRenderer render try
-        // to render the content
-        openedTabs[tabIndex].canEditorRender = false
-        openedTabs[tabIndex].content = content
-      }
+        // Try to decode the file to see if it can be rendered by the
+        // editor. If it can't, pass it to the FileRenderer
+        const worker = new Worker('../scripts/decode-worker.js', {
+          type: 'module'
+        })
 
-      openedTabs[tabIndex].isLoading = false
+        worker.postMessage(content)
 
-      this.setState({ openedTabs: this.state.openedTabs })
-    })
+        worker.onerror = event => {
+          openedTabs[tabIndex].hasError = true
+          openedTabs[tabIndex].isLoading = false
+
+          this.setState({ openedTabs: this.state.openedTabs })
+
+          Logger.error(event)
+          worker.terminate()
+        }
+
+        worker.onmessage = event => {
+          openedTabs[tabIndex].content = event.data || content
+          openedTabs[tabIndex].canEditorRender = event.data !== null
+          openedTabs[tabIndex].isLoading = false
+
+          this.setState({ openedTabs: this.state.openedTabs })
+
+          worker.terminate()
+        }
+      })
+      .catch(err => {
+        tabIndex = this.findTabIndex(file.path)
+
+        if (tabIndex === -1) {
+          return
+        }
+
+        openedTabs[tabIndex].hasError = true
+        openedTabs[tabIndex].isLoading = false
+
+        Logger.error(err)
+      })
   }
 
   findTabIndex(path) {
@@ -146,7 +169,15 @@ class App extends React.Component {
   }
 
   renderTab(tab, index) {
-    const { title, path, content, isLoading, isTooLarge, canEditorRender } = tab
+    const {
+      title,
+      path,
+      content,
+      isLoading,
+      isTooLarge,
+      canEditorRender,
+      hasError
+    } = tab
 
     if (index !== this.state.activeTabIndex) {
       return <Tab title={title} key={tab.index} hint={title} />
@@ -163,8 +194,18 @@ class App extends React.Component {
     if (isTooLarge) {
       return (
         <Tab title={title} key={tab.index} hint={title}>
-          <div className="file-size-warning">
+          <div className="tab-error-container">
             <p>Sorry, but this file is too large to display.</p>
+          </div>
+        </Tab>
+      )
+    }
+
+    if (hasError) {
+      return (
+        <Tab title={title} key={tab.index} hint={title}>
+          <div className="tab-error-container">
+            <p>Error loading file.</p>
           </div>
         </Tab>
       )

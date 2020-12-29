@@ -2,7 +2,7 @@
 const DEBUG = process.env.DEBUG
 
 const Logger = {
-  log(...args) {
+  info(...args) {
     if (DEBUG) {
       console.log(...args)
     }
