@@ -184,7 +184,7 @@ class ExplorerPanel extends React.Component {
     const key = currentRepoUrl + '/' + currentBranch
 
     return (
-      <SimpleBar className={`explorer-panel ${openClass}`}>
+      <div className={`explorer-panel ${openClass}`}>
         <button className="panel-toggle" onClick={this.toggleExplorer}>
           {isExplorerOpen ? (
             <AiOutlineLeft className="panel-toggle-icon" />
@@ -193,41 +193,43 @@ class ExplorerPanel extends React.Component {
           )}
         </button>
         {isExplorerOpen ? null : <div className="mobile-panel-overlay" />}
-        <Collapse title="search" open>
-          <SearchInput
-            className="search-panel"
-            onChange={this.onInputChange}
-            onSearch={this.getRepo}
-            placeholder="GitHub repo URL"
-            hasError={!!searchErrorMessage}
-            errorMessage={searchErrorMessage}
-            isLoading={isLoading}
-            value={inputValue}
-          />
-        </Collapse>
-        <Collapse
-          title="code"
-          open={isCodePanelOpen}
-          onToggle={this.onCodePanelToggle}
-        >
-          <FileExplorer
-            onSelectFile={this.props.onSelectFile}
-            nodes={treeData}
-            key={key}
-          />
-        </Collapse>
-        <Collapse
-          title="branches"
-          open={isBranchPanelOpen}
-          onToggle={this.onBranchPanelToggle}
-        >
-          <BranchList
-            branches={branches}
-            onBranchClick={this.getBranch}
-            currentBranch={currentBranch}
-          />
-        </Collapse>
-      </SimpleBar>
+        <SimpleBar className="explorer-panel-content">
+          <Collapse title="search" open>
+            <SearchInput
+              className="search-panel"
+              onChange={this.onInputChange}
+              onSearch={this.getRepo}
+              placeholder="GitHub repo URL"
+              hasError={!!searchErrorMessage}
+              errorMessage={searchErrorMessage}
+              isLoading={isLoading}
+              value={inputValue}
+            />
+          </Collapse>
+          <Collapse
+            title="code"
+            open={isCodePanelOpen}
+            onToggle={this.onCodePanelToggle}
+          >
+            <FileExplorer
+              onSelectFile={this.props.onSelectFile}
+              nodes={treeData}
+              key={key}
+            />
+          </Collapse>
+          <Collapse
+            title="branches"
+            open={isBranchPanelOpen}
+            onToggle={this.onBranchPanelToggle}
+          >
+            <BranchList
+              branches={branches}
+              onBranchClick={this.getBranch}
+              currentBranch={currentBranch}
+            />
+          </Collapse>
+        </SimpleBar>
+      </div>
     )
   }
 }

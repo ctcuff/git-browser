@@ -3,16 +3,14 @@
 .explorer-panel {
   $toggle-button-height: 32px;
 
-  height: 100%;
   display: flex;
-  flex-direction: column;
   flex-grow: 0;
   flex-shrink: 0;
-  color: var(--color-panel-text);
-  border-right: 1px solid var(--color-border);
   position: relative;
-  align-items: unset !important;
-  align-content: unset !important;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  border-collapse: collapse;
+  border-right: 1px solid var(--color-border);
 
   @include desktop() {
     flex-basis: var(--file-explorer-width);
@@ -30,14 +28,26 @@
     }
   }
 
+  .explorer-panel-content {
+    height: 100%;
+    width: 100%;
+
+    @include mobile() {
+      margin-top: -1px;
+      height: calc(100% + 1px);
+    }
+  }
+
   .panel-toggle {
     width: 100%;
     height: $toggle-button-height;
     border: none;
     background-color: var(--color-collapse-header);
+    border-bottom: 1px solid var(--color-border);
     font-size: 0.9em;
     padding: 0.5em;
     font-size: 1em;
+    z-index: 1;
 
     &:focus {
       outline: none;
@@ -74,13 +84,6 @@
 
   .search-panel {
     padding: 1em 0.5em;
-  }
-
-  .simplebar-placeholder {
-    // Overriding this property allows the explorer panel
-    // to not overflow the page.
-    // https://github.com/Grsmto/simplebar/issues/487
-    height: 100% !important;
   }
 
   // Need to use !important here to override some

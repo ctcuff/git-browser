@@ -8,6 +8,7 @@
   padding: 0;
   padding-left: 0;
   flex-shrink: 0;
+  color: var(--color-text-primary);
 
   li {
     display: flex;
@@ -17,7 +18,6 @@
     align-items: center;
 
     &.branch--current {
-      color: var(--color-text-primary);
       background-color: var(--color-list-item-hover);
     }
 
@@ -27,14 +27,12 @@
 
     @include desktop() {
       &:hover {
-        color: var(--color-text-primary);
         background-color: var(--color-list-item-hover);
       }
     }
 
     @include mobile() {
       &:active {
-        color: var(--color-text-primary);
         background-color: var(--color-list-item-hover);
       }
     }
