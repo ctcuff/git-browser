@@ -8,6 +8,7 @@ import GitHubAPI from '../scripts/github-api'
 import { Tab, TabView } from './Tabs'
 import debounce from 'lodash/debounce'
 import LoadingOverlay from './LoadingOverlay'
+import ErrorOverlay from './ErrorOverlay'
 import FileRenderer from './FileRenderer'
 import ResizePanel from './ResizePanel'
 import gitBrowserIconDark from '../assets/img/git-browser-icon-dark.svg'
@@ -31,10 +32,14 @@ class App extends React.Component {
       isLoading: false
     }
 
+    this.decodeWorker = new Worker('../scripts/decode-worker.js', {
+      type: 'module'
+    })
+
     this.onSelectFile = this.onSelectFile.bind(this)
     this.onTabClosed = this.onTabClosed.bind(this)
     this.closeAllTabs = this.closeAllTabs.bind(this)
-    this.renderTab = this.renderTab.bind(this)
+    this.renderTabContent = this.renderTabContent.bind(this)
     this.findTabIndex = this.findTabIndex.bind(this)
     this.setActiveTabIndex = this.setActiveTabIndex.bind(this)
     this.updateViewport = debounce(this.updateViewport.bind(this), 250)
@@ -52,6 +57,7 @@ class App extends React.Component {
   }
 
   componentWillUnmount() {
+    this.decodeWorker.terminate()
     window.removeEventListener('resize', this.updateViewport)
   }
 
@@ -116,30 +122,23 @@ class App extends React.Component {
 
         // Try to decode the file to see if it can be rendered by the
         // editor. If it can't, pass it to the FileRenderer
-        const worker = new Worker('../scripts/decode-worker.js', {
-          type: 'module'
-        })
+        this.decodeWorker.postMessage(content)
 
-        worker.postMessage(content)
-
-        worker.onerror = event => {
+        this.decodeWorker.onerror = event => {
           openedTabs[tabIndex].hasError = true
           openedTabs[tabIndex].isLoading = false
 
           this.setState({ openedTabs: this.state.openedTabs })
 
           Logger.error(event)
-          worker.terminate()
         }
 
-        worker.onmessage = event => {
+        this.decodeWorker.onmessage = event => {
           openedTabs[tabIndex].content = event.data || content
           openedTabs[tabIndex].canEditorRender = event.data !== null
           openedTabs[tabIndex].isLoading = false
 
           this.setState({ openedTabs: this.state.openedTabs })
-
-          worker.terminate()
         }
       })
       .catch(err => {
@@ -151,6 +150,8 @@ class App extends React.Component {
 
         openedTabs[tabIndex].hasError = true
         openedTabs[tabIndex].isLoading = false
+
+        this.setState({ openedTabs: this.state.openedTabs })
 
         Logger.error(err)
       })
@@ -168,10 +169,9 @@ class App extends React.Component {
     return -1
   }
 
-  renderTab(tab, index) {
+  renderTabContent(tab, index) {
     const {
       title,
-      path,
       content,
       isLoading,
       isTooLarge,
@@ -180,59 +180,41 @@ class App extends React.Component {
     } = tab
 
     if (index !== this.state.activeTabIndex) {
-      return <Tab title={title} key={tab.index} hint={title} />
+      return null
     }
 
     if (isLoading) {
-      return (
-        <Tab title={title} key={tab.index} hint={`Loading ${title}`}>
-          <LoadingOverlay text={`Loading ${title}...`} />
-        </Tab>
-      )
+      return <LoadingOverlay text={`Loading ${title}...`} />
     }
 
     if (isTooLarge) {
       return (
-        <Tab title={title} key={tab.index} hint={title}>
-          <div className="tab-error-container">
-            <p>Sorry, but this file is too large to display.</p>
-          </div>
-        </Tab>
+        <ErrorOverlay message="Sorry, but this file is too large to display." />
       )
     }
 
     if (hasError) {
-      return (
-        <Tab title={title} key={tab.index} hint={title}>
-          <div className="tab-error-container">
-            <p>Error loading file.</p>
-          </div>
-        </Tab>
-      )
+      return <ErrorOverlay message="Error loading file." />
     }
 
     const { extension, language } = getLanguageFromFileName(title)
 
-    return (
-      <Tab title={title} key={index} hint={path}>
-        {canEditorRender ? (
-          <Editor
-            fileName={title}
-            extension={extension}
-            content={content}
-            language={language}
-            colorScheme={this.props.mode}
-            onForceRender={this.onToggleRenderable}
-          />
-        ) : (
-          <FileRenderer
-            content={content}
-            title={title}
-            extension={extension}
-            onForceRender={this.onToggleRenderable}
-          />
-        )}
-      </Tab>
+    return canEditorRender ? (
+      <Editor
+        fileName={title}
+        extension={extension}
+        content={content}
+        language={language}
+        colorScheme={this.props.mode}
+        onForceRender={this.onToggleRenderable}
+      />
+    ) : (
+      <FileRenderer
+        content={content}
+        title={title}
+        extension={extension}
+        onForceRender={this.onToggleRenderable}
+      />
     )
   }
 
@@ -311,7 +293,7 @@ class App extends React.Component {
             <React.Fragment>
               {openedTabs.length === 0 && (
                 <div className="landing">
-                  <img src={icon} alt="Git Browser icon" />
+                  <img src={icon} alt="Git Browser icon" className="logo" />
                   <h2 className="heading">Welcome to Git Browser</h2>
                   <div className="description">
                     <p>To get started, enter a GitHub URL in the search bar.</p>
@@ -324,7 +306,11 @@ class App extends React.Component {
                 onSelectTab={this.setActiveTabIndex}
                 onCloseAllClick={this.closeAllTabs}
               >
-                {openedTabs.map(this.renderTab)}
+                {openedTabs.map((tab, index) => (
+                  <Tab title={tab.title} key={tab.path} hint={tab.title}>
+                    {this.renderTabContent(tab, index)}
+                  </Tab>
+                ))}
               </TabView>
             </React.Fragment>
           )}
