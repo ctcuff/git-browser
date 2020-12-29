@@ -37,13 +37,6 @@ md.use(markdownPluginCheckbox, {
   divClass: 'markdown-checkbox'
 })
 
-// Opens all links in a new tab when clicked
-md.renderer.rules.link_open = (tokens, index, options, env, self) => {
-  tokens[index].attrPush(['target', '_blank'])
-  tokens[index].attrPush(['rel', 'noopener noreferrer'])
-  return self.renderToken(tokens, index, options, env, self)
-}
-
 DOMPurify.addHook('afterSanitizeElements', node => {
   const { nodeName, type, parentNode, innerHTML } = node
 
@@ -63,6 +56,14 @@ DOMPurify.addHook('afterSanitizeElements', node => {
 
     parentNode.removeChild(node)
     parentNode.appendChild(textNode)
+  }
+})
+
+DOMPurify.addHook('afterSanitizeAttributes', node => {
+  // Opens all links in a new tab when clicked
+  if ('target' in node) {
+    node.setAttribute('target', '_blank')
+    node.setAttribute('rel', 'noopener noreferrer')
   }
 })
 
