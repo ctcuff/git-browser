@@ -8,6 +8,7 @@
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
+  color: var(--color-text-primary);
 
   @include desktop() {
     &:hover {
