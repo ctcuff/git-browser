@@ -15,4 +15,8 @@ LoadingOverlay.propTypes = {
   className: PropTypes.string
 }
 
+LoadingOverlay.defaultProps = {
+  className: ''
+}
+
 export default LoadingOverlay

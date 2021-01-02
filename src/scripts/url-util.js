@@ -1,17 +1,21 @@
-import { OAUTH_TOKEN } from '../config'
 import URI from 'urijs'
+import store from '../store'
 
 const BASE_API_URL = 'https://api.github.com'
 const BASE_REPO_URL = BASE_API_URL + '/repos'
 
 const URLUtil = {
   request(url) {
+    const oauthToken = store.getState().user.accessToken
+    const debugToken = process.env.OAUTH_TOKEN
     const config = {
       headers: {}
     }
 
-    if (OAUTH_TOKEN) {
-      config.headers.Authorization = `token ${OAUTH_TOKEN}`
+    if (process.env.DEBUG && debugToken) {
+      config.headers.Authorization = `token ${debugToken}`
+    } else if (oauthToken) {
+      config.headers.Authorization = `token ${oauthToken}`
     }
 
     return fetch(url, config)

@@ -7,7 +7,7 @@
   // --gutter-height: 20px;
 }
 
-.light-mode {
+.theme-light {
   --color-primary: #ffffff;
   --color-panel-background: #ffffff;
   --color-panel-text: #000000;
@@ -23,7 +23,7 @@
   --color-scrollbar: rgba(0, 0, 0, 0.45);
 }
 
-.dark-mode {
+.theme-dark {
   --color-primary: #212122;
   --color-panel-background: #212122;
   --color-panel-text: #bdbdbd;
@@ -45,10 +45,21 @@ body {
   font-family: Avenir, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
     Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji,
     Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  background-color: var(--color-app-bg);
 }
 
 // Overrides the box shadow at the bottom of the tab view
 // that monaco adds when scrolling down in the editor
 .monaco-editor .scroll-decoration {
   box-shadow: none !important;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate((360deg));
+  }
 }

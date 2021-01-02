@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import { noop, parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
 import { AiOutlineEye } from 'react-icons/ai'
+import { connect } from 'react-redux'
 
 class Editor extends React.Component {
   constructor(props) {
@@ -22,13 +23,13 @@ class Editor extends React.Component {
   }
 
   getTheme(colorScheme) {
-    return colorScheme === 'dark' ? 'vs-dark' : 'vs-light'
+    return colorScheme === 'theme-dark' ? 'vs-dark' : 'vs-light'
   }
 
   componentDidUpdate(prevProps) {
-    const colorScheme = this.props.colorScheme
+    const colorScheme = this.props.theme
 
-    if (prevProps.colorScheme !== colorScheme) {
+    if (prevProps.theme !== colorScheme) {
       this.monaco.setTheme(this.getTheme(colorScheme))
     }
   }
@@ -52,7 +53,7 @@ class Editor extends React.Component {
       noSuggestionDiagnostics: true
     }
 
-    const { content, colorScheme, language } = this.props
+    const { content, theme, language } = this.props
 
     // Disables lint warnings and syntax errors for languages
     languages.typescript.typescriptDefaults.setDiagnosticsOptions(languageOpts)
@@ -75,7 +76,7 @@ class Editor extends React.Component {
       },
       automaticLayout: true,
       fontSize: 14,
-      theme: this.getTheme(colorScheme),
+      theme: this.getTheme(theme),
       renderIndentGuides: false
     })
 
@@ -142,7 +143,7 @@ Editor.propTypes = {
   language: PropTypes.string.isRequired,
   fileName: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
-  colorScheme: PropTypes.string.isRequired,
+  theme: PropTypes.string.isRequired,
   onForceRender: PropTypes.func
 }
 
@@ -150,4 +151,8 @@ Editor.defaultProps = {
   onForceRender: noop
 }
 
-export default Editor
+const mapStateToProps = state => ({
+  theme: state.settings.theme
+})
+
+export default connect(mapStateToProps)(Editor)

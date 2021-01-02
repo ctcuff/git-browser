@@ -14,6 +14,7 @@ import ResizePanel from './ResizePanel'
 import gitBrowserIconDark from '../assets/img/git-browser-icon-dark.svg'
 import gitBrowserIconLight from '../assets/img/git-browser-icon-light.svg'
 import Logger from '../scripts/logger'
+import { connect } from 'react-redux'
 
 // Don't allow API requests to files that meet/exceed this size
 // (in bytes) to avoid network strain and long render times
@@ -205,7 +206,6 @@ class App extends React.Component {
         extension={extension}
         content={content}
         language={language}
-        colorScheme={this.props.mode}
         onForceRender={this.onToggleRenderable}
       />
     ) : (
@@ -273,13 +273,14 @@ class App extends React.Component {
   }
 
   render() {
-    const colorClass = `${this.props.mode}-mode`
     const { activeTabIndex, openedTabs, isLoading } = this.state
     const icon =
-      this.props.mode === 'light' ? gitBrowserIconLight : gitBrowserIconDark
+      this.props.theme === 'theme-light'
+        ? gitBrowserIconLight
+        : gitBrowserIconDark
 
     return (
-      <div className={`app ${colorClass}`}>
+      <div className="app">
         <ExplorerPanel
           onSelectFile={this.onSelectFile}
           onSearchFinished={this.closeAllTabs}
@@ -297,6 +298,17 @@ class App extends React.Component {
                   <h2 className="heading">Welcome to Git Browser</h2>
                   <div className="description">
                     <p>To get started, enter a GitHub URL in the search bar.</p>
+                    <p>
+                      If you haven&apos;t already, log in to get access to a
+                      higher{' '}
+                      <a
+                        href="https://docs.github.com/en/free-pro-team@latest/rest/reference/rate-limit"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        rate limit.
+                      </a>
+                    </p>
                   </div>
                 </div>
               )}
@@ -321,11 +333,15 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-  mode: PropTypes.oneOf(['dark', 'light'])
+  theme: PropTypes.oneOf(['theme-dark', 'theme-light'])
 }
 
 App.defaultProps = {
-  mode: 'light'
+  theme: 'theme-light'
 }
 
-export default App
+const mapStateToProps = state => ({
+  theme: state.settings.theme
+})
+
+export default connect(mapStateToProps)(App)

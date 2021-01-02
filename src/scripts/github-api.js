@@ -1,5 +1,7 @@
-import URLUtil, { BASE_REPO_URL } from './url-util'
+import URLUtil, { BASE_API_URL, BASE_REPO_URL } from './url-util'
 import Logger from './logger'
+import store from '../store'
+import { updateRateLimit } from '../store/actions/user'
 
 const ERROR_INVALID_GITHUB_URL = 'Invalid GitHub URL'
 const ERROR_REPO_NOT_FOUND = "Couldn't find repository"
@@ -49,6 +51,7 @@ class GitHubAPI {
         Logger.error(err)
         return Promise.reject(err)
       })
+      .finally(() => store.dispatch(updateRateLimit()))
   }
 
   /**
@@ -65,6 +68,7 @@ class GitHubAPI {
           Logger.error(err)
           return Promise.reject(err)
         })
+        .finally(() => store.dispatch(updateRateLimit()))
     }
 
     return this.getBranch(repoUrl, branch)
@@ -92,6 +96,7 @@ class GitHubAPI {
         Logger.error(err)
         return Promise.reject(UNKNOWN_REQUEST_ERROR)
       })
+      .finally(() => store.dispatch(updateRateLimit()))
   }
 
   /**
@@ -108,6 +113,7 @@ class GitHubAPI {
         Logger.error(err)
         return Promise.reject(UNKNOWN_REQUEST_ERROR)
       })
+      .finally(() => store.dispatch(updateRateLimit()))
   }
 
   /**
@@ -146,6 +152,28 @@ class GitHubAPI {
           branch.repoUrl = repoUrl
           return branch
         })
+      })
+      .catch(err => {
+        Logger.error(err)
+        return Promise.reject(UNKNOWN_REQUEST_ERROR)
+      })
+      .finally(() => store.dispatch(updateRateLimit()))
+  }
+
+  /**
+   * @see https://docs.github.com/en/free-pro-team/rest/reference/rate-limit
+   */
+  static checkRateLimit() {
+    return URLUtil.request(BASE_API_URL + '/rate_limit')
+      .then(res => res.json())
+      .then(res => {
+        const { limit, used, remaining, reset } = res.resources.core
+        return {
+          limit,
+          used,
+          remaining,
+          reset: reset * 1000
+        }
       })
       .catch(err => {
         Logger.error(err)

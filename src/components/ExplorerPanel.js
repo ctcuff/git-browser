@@ -13,14 +13,15 @@ import sampleTreeData from '../assets/sample-tree-data.json'
 import SimpleBar from 'simplebar-react'
 import URLUtil from '../scripts/url-util'
 import { AiOutlineLeft, AiOutlineMenu } from 'react-icons/ai'
+import Settings from './Settings'
 
 const debugState = {
   treeData: sampleTreeData,
   branches: sampleBranchData,
   currentBranch: 'dev/2020',
   currentRepoUrl: 'github.com/ctcuff/ctcuff.github.io',
-  isBranchPanelOpen: true,
-  isCodePanelOpen: true,
+  isBranchPanelOpen: false,
+  isCodePanelOpen: false,
   inputValue: 'github.com/ctcuff/ctcuff.github.io',
   currentRepoPath: 'ctcuff/ctcuff.github.io'
 }
@@ -227,6 +228,9 @@ class ExplorerPanel extends React.Component {
               onBranchClick={this.getBranch}
               currentBranch={currentBranch}
             />
+          </Collapse>
+          <Collapse title="Settings" open>
+            <Settings />
           </Collapse>
         </SimpleBar>
       </div>

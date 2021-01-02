@@ -17,6 +17,7 @@
     "format:scss": "prettier --write './src/**/*.scss'"
   },
   "dependencies": {
+    "firebase": "^8.2.1",
     "lodash": "^4.17.20",
     "monaco-editor": "^0.21.2",
     "prop-types": "^15.7.2",
@@ -28,6 +29,7 @@
     "react-redux": "^7.2.2",
     "react-tabs": "^3.1.2",
     "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
     "redux-watch": "^1.2.0",
     "simplebar-react": "^2.3.0",
     "urijs": "^1.19.4"
@@ -44,6 +46,7 @@
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^5.0.1",
+    "dotenv-webpack": "^6.0.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.5",
     "eslint": "^7.16.0",

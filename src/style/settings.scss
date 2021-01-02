@@ -1,0 +1,74 @@
+@import './mixins/media.scss';
+
+.settings {
+  padding: 0.5em;
+  color: var(--color-text-primary);
+
+  @include desktop() {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .profile-info {
+    font-size: 0.87em;
+    margin-bottom: 0.5em;
+
+    * {
+      margin: 0.2em;
+    }
+  }
+
+  button {
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    width: 100%;
+    background-color: var(--color-app-bg);
+    cursor: pointer;
+    padding: 0.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.85em;
+    color: var(--color-text-primary);
+    margin-bottom: 0.8em;
+    transition: background-color 0.2s ease-in-out;
+
+    &:focus {
+      outline: none;
+    }
+
+    @include desktop() {
+      &:hover {
+        background-color: var(--color-list-item-hover);
+      }
+    }
+  }
+
+  .theme-toggle-btn {
+    padding: 0.6em;
+  }
+
+  .is-loading {
+    cursor: not-allowed;
+  }
+
+  .github-icon,
+  .loading-icon {
+    font-size: 1.3em;
+    color: inherit;
+  }
+
+  .github-icon {
+    margin-right: 8px;
+  }
+
+  .loading-icon {
+    animation: spin 1s linear infinite;
+    margin-left: 8px;
+  }
+
+  .profile-username {
+    width: 100%;
+    font-size: 0.87em;
+  }
+}

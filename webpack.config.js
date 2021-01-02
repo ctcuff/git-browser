@@ -4,6 +4,7 @@ const HTMLWebpackPlugin = require('html-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const WorkerPlugin = require('worker-plugin')
+const Dotenv = require('dotenv-webpack')
 
 module.exports = env => {
   return {
@@ -28,6 +29,7 @@ module.exports = env => {
       new EnvironmentPlugin({
         DEBUG: JSON.parse(env.debug)
       }),
+      new Dotenv(),
       new WorkerPlugin({
         // Use "self" as the global object when receiving hot updates
         // during debug but disable warnings about hot module reload
