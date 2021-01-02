@@ -35,7 +35,7 @@ const getLanguageFromFileName = fileName => {
   }
 
   let extension = ''
-  fileName = fileName.trim()
+  fileName = fileName.trim().toLowerCase()
 
   // Read through the file name backwards to try to read
   // the extension of the file, stopping when we see a `.`
@@ -61,7 +61,7 @@ const getLanguageFromFileName = fileName => {
   return languageData[extension]
 }
 
-// Used to properly decode a base64 string since some non-english
+// Properly decodes a base64 string since some non-english
 // characters may not decode properly using atob. Note that this
 // throws an error if the string can't be decoded. In that case,
 // it may be an image, PDF, or some other file type that
@@ -77,6 +77,16 @@ const base64DecodeUnicode = str => {
   )
 }
 
+// Properly encodes a base 64 string since it may contain non UTF
+// or Latin characters
+const base64EncodeUnicode = str => {
+  return btoa(
+    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, value) => {
+      return String.fromCharCode(parseInt(value, 16))
+    })
+  )
+}
+
 /* istanbul ignore next */
 const noop = () => {}
 
@@ -85,5 +95,6 @@ export {
   setCSSVar,
   getLanguageFromFileName,
   noop,
-  base64DecodeUnicode
+  base64DecodeUnicode,
+  base64EncodeUnicode
 }

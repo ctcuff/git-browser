@@ -1,10 +1,11 @@
 import '../style/editor.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { noop, parseCSSVar } from '../scripts/util'
+import { base64EncodeUnicode, noop, parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
 import { AiOutlineEye } from 'react-icons/ai'
 import { connect } from 'react-redux'
+import FileRenderer from './FileRenderer'
 
 class Editor extends React.Component {
   constructor(props) {
@@ -102,10 +103,8 @@ class Editor extends React.Component {
   }
 
   renderPreviewButton() {
-    const validExtensions = ['.svg', '.md']
-
     if (
-      !validExtensions.includes(this.props.extension) ||
+      !FileRenderer.validEditorExtensions.includes(this.props.extension) ||
       this.state.isLoading
     ) {
       return null
@@ -125,7 +124,7 @@ class Editor extends React.Component {
   forceRenderPreview() {
     // Let the App component know that ths file should not
     // be rendered by the editor
-    this.props.onForceRender(btoa(this.props.content), false)
+    this.props.onForceRender(base64EncodeUnicode(this.props.content), false)
   }
 
   render() {

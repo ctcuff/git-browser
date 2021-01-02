@@ -5,10 +5,13 @@ import PDFRenderer from './renderers/PDFRenderer'
 import ImageRenderer from './renderers/ImageRenderer'
 import VideoRenderer from './renderers/VideoRenderer'
 import AudioRenderer from './renderers/AudioRenderer'
-import { noop } from '../scripts/util'
+import MarkdownRenderer from './renderers/MarkdownRenderer'
+import { noop, base64DecodeUnicode } from '../scripts/util'
 import { VscCode } from 'react-icons/vsc'
 
 class FileRenderer extends React.Component {
+  static validEditorExtensions = ['.svg', '.md', '.mdx']
+
   constructor(props) {
     super(props)
 
@@ -46,6 +49,9 @@ class FileRenderer extends React.Component {
       case '.wav':
       case '.ogg':
         return <AudioRenderer content={content} extension={extension} />
+      case '.md':
+      case '.mdx':
+        return <MarkdownRenderer content={base64DecodeUnicode(content)} />
       default:
         return this.renderUnsupported()
     }
@@ -66,9 +72,7 @@ class FileRenderer extends React.Component {
   }
 
   renderPreviewButton() {
-    const validExtensions = ['.svg', '.md']
-
-    if (!validExtensions.includes(this.props.extension)) {
+    if (!FileRenderer.validEditorExtensions.includes(this.props.extension)) {
       return null
     }
 
@@ -86,7 +90,17 @@ class FileRenderer extends React.Component {
   forceRenderEditor() {
     // Let the App component know that ths file should
     // be rendered by the editor
-    this.props.onForceRender(atob(this.props.content), true)
+    let content
+
+    // The content may not be able to be properly decoded. If it
+    // can't, we'll "force" decoding with atob
+    try {
+      content = base64DecodeUnicode(this.props.content)
+    } catch (e) {
+      content = atob(this.props.content)
+    }
+
+    this.props.onForceRender(content, true)
   }
 
   render() {

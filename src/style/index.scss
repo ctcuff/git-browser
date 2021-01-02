@@ -9,34 +9,44 @@
 
 .theme-light {
   --color-primary: #ffffff;
+  --color-secondary: #f6f8fa;
   --color-panel-background: #ffffff;
   --color-panel-text: #000000;
   --color-panel-border: #dfe3e6;
   --color-list-item-hover: #e3eeff;
   --color-text-primary: #000000;
   --color-text-secondary: #353535;
+  --color-text-link: #0366d6;
   --color-border: #dfe3e6;
   --color-tab-border-bottom-active: #001799;
   --color-collapse-header: #fafbfc;
   --color-app-bg: #ffffff;
   --color-gutter: #007acc;
   --color-scrollbar: rgba(0, 0, 0, 0.45);
+  --color-markdown-table-bg: #eff7ff;
+  --color-markdown-code-bg: rgba(27, 31, 35, 5%);
+  --color-markdown-blockquote: #6a737d;
 }
 
 .theme-dark {
   --color-primary: #212122;
+  --color-secondary: #161b22;
   --color-panel-background: #212122;
   --color-panel-text: #bdbdbd;
   --color-panel-border: transparent;
   --color-list-item-hover: #303036;
   --color-text-primary: #ffffff;
   --color-text-secondary: #bdbdbd;
+  --color-text-link: #58a6ff;
   --color-border: #424242;
   --color-tab-border-bottom-active: #006fcc;
   --color-collapse-header: #2d2d2d;
   --color-app-bg: #1e1e1e;
   --color-gutter: #007acc;
   --color-scrollbar: rgb(146, 146, 146);
+  --color-markdown-table-bg: #171a20;
+  --color-markdown-code-bg: rgb(45, 45, 45, 45%);
+  --color-markdown-blockquote: #b6bbc0;
 }
 
 body {
@@ -46,6 +56,10 @@ body {
     Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji,
     Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
   background-color: var(--color-app-bg);
+}
+
+a {
+  color: var(--color-text-link);
 }
 
 // Overrides the box shadow at the bottom of the tab view

@@ -919,5 +919,10 @@
     "language": "ini",
     "displayName": "Ini",
     "extension": ".cfg"
+  },
+  "readme": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "extension": ".md"
   }
 }
