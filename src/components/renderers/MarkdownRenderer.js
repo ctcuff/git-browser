@@ -1,6 +1,5 @@
 import '../../style/markdown-renderer.scss'
-import 'highlight.js/styles/stackoverflow-light.css'
-import React from 'react'
+import React, { useEffect } from 'react'
 import MarkdownIt from 'markdown-it'
 import markdownPluginCheckbox from 'markdown-it-checkbox'
 import markdownPluginFrontMatter from 'markdown-it-front-matter'
@@ -8,6 +7,7 @@ import PropTypes from 'prop-types'
 import hljs from 'highlight.js'
 import { noop } from '../../scripts/util'
 import DOMPurify from 'dompurify'
+import { connect } from 'react-redux'
 
 const md = new MarkdownIt({
   html: true,
@@ -67,9 +67,22 @@ DOMPurify.addHook('afterSanitizeAttributes', node => {
   }
 })
 
+const lightStyle = document.querySelector('link[title="theme-light"]')
+const darkStyle = document.querySelector('link[title="theme-dark"]')
+
 const MarkdownRenderer = props => {
   const unsafe = md.render(props.content)
   const sanitized = DOMPurify.sanitize(unsafe, domConfig)
+
+  useEffect(() => {
+    if (props.theme === 'theme-dark') {
+      lightStyle.setAttribute('disabled', 'disabled')
+      darkStyle.removeAttribute('disabled')
+    } else {
+      darkStyle.setAttribute('disabled', 'disabled')
+      lightStyle.removeAttribute('disabled')
+    }
+  }, [props.theme])
 
   return (
     <div className="markdown-renderer">
@@ -82,7 +95,12 @@ const MarkdownRenderer = props => {
 }
 
 MarkdownRenderer.propTypes = {
-  content: PropTypes.string.isRequired
+  content: PropTypes.string.isRequired,
+  theme: PropTypes.oneOf(['theme-dark', 'theme-light']).isRequired
 }
 
-export default MarkdownRenderer
+const mapStateToProps = state => ({
+  theme: state.settings.theme
+})
+
+export default connect(mapStateToProps)(MarkdownRenderer)

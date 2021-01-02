@@ -62,7 +62,7 @@ const Settings = props => {
         )}
       </button>
       <button className="theme-toggle-btn" onClick={toggleTheme}>
-        Toggle theme
+        {props.theme === 'theme-dark' ? 'Light mode' : 'Dark mode'}
       </button>
     </div>
   )
@@ -80,7 +80,8 @@ const mapStateToProps = state => ({
   isLoggedIn: state.user.isLoggedIn,
   username: state.user.username,
   isLoading: state.user.isLoading,
-  rateLimit: state.user.rateLimit
+  rateLimit: state.user.rateLimit,
+  theme: state.settings.theme
 })
 
 Settings.propTypes = {
@@ -92,6 +93,7 @@ Settings.propTypes = {
   updateRateLimit: PropTypes.func.isRequired,
   authenticate: PropTypes.func.isRequired,
   setTheme: PropTypes.func.isRequired,
+  theme: PropTypes.oneOf(['theme-dark', 'theme-light']).isRequired,
   rateLimit: PropTypes.shape({
     remaining: PropTypes.number,
     limit: PropTypes.number,

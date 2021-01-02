@@ -94,7 +94,7 @@
     border-radius: 0;
     opacity: 0 !important;
     // The exit transition (mouseleave)
-    transition: opacity 0.2s ease-in-out 1s !important;
+    transition: opacity 0.2s ease-in-out 0.2s !important;
 
     @include mobile() {
       display: none;
