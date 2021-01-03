@@ -31,7 +31,7 @@ class FileRenderer extends React.Component {
     this.renderUnsupported = this.renderUnsupported.bind(this)
     this.renderPreviewButton = this.renderPreviewButton.bind(this)
 
-    this.decodeWorker = new Worker('../workers/decode-worker.js', {
+    this.decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
       type: 'module'
     })
   }
@@ -46,16 +46,21 @@ class FileRenderer extends React.Component {
     }
 
     // Decode base64 content on a separate thread to avoid UI freezes
-    this.decodeWorker.postMessage(content)
+    this.decodeWorker.postMessage({
+      message: content,
+      type: 'decode'
+    })
+
     this.decodeWorker.onmessage = event => {
       this.setState({
         isLoading: false,
         decodedContent: event.data || null
       })
     }
+
     this.decodeWorker.onerror = event => {
       this.setState({ isLoading: false })
-      Logger.error('Error decoding file', event)
+      Logger.error('Error decoding file', event.message)
     }
   }
 

@@ -32,7 +32,7 @@ class App extends React.Component {
       isLoading: false
     }
 
-    this.decodeWorker = new Worker('../workers/decode-worker.js', {
+    this.decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
       type: 'module'
     })
 
@@ -122,7 +122,10 @@ class App extends React.Component {
 
         // Try to decode the file to see if it can be rendered by the
         // editor. If it can't, pass it to the FileRenderer
-        this.decodeWorker.postMessage(content)
+        this.decodeWorker.postMessage({
+          message: content,
+          type: 'decode'
+        })
 
         this.decodeWorker.onerror = event => {
           openedTabs[tabIndex].hasError = true
@@ -130,7 +133,7 @@ class App extends React.Component {
 
           this.setState({ openedTabs: this.state.openedTabs })
 
-          Logger.error(event)
+          Logger.error(event.message)
         }
 
         this.decodeWorker.onmessage = event => {
@@ -269,7 +272,9 @@ class App extends React.Component {
   }
 
   setActiveTabIndex(activeTabIndex) {
-    this.setState({ activeTabIndex })
+    if (this.state.activeTabIndex !== activeTabIndex) {
+      this.setState({ activeTabIndex })
+    }
   }
 
   render() {

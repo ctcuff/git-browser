@@ -26,10 +26,6 @@ const PDFPage = props => {
   return <canvas ref={canvasRef} />
 }
 
-// Note: pdfjs is used from react-pdf because it includes a web worker
-// but the <Document /> and <Pages /> components aren't used because of
-// a bug causing documents not to display after unmount and re-mount.
-// https://github.com/wojtekmaj/react-pdf/issues/679
 class PDFRenderer extends React.Component {
   constructor(props) {
     super(props)
@@ -47,16 +43,17 @@ class PDFRenderer extends React.Component {
     this.decodeContent = this.decodeContent.bind(this)
     this.setErrorState = this.setErrorState.bind(this)
 
-    this.rawDecodeWorker = new Worker('../../workers/raw-decode-worker.js', {
+    this.rawDecodeWorker = new Worker('../../scripts/encode-decode-worker.js', {
       type: 'module'
     })
   }
 
   componentDidMount() {
     // Dynamic import to reduce bundle size
-    import('react-pdf/dist/esm/entry.webpack')
-      .then(({ pdfjs }) => {
+    import('pdfjs-dist')
+      .then(pdfjs => {
         this.pdfjs = pdfjs
+        this.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
         this.decodeContent()
       })
       .catch(err => {
@@ -70,13 +67,18 @@ class PDFRenderer extends React.Component {
   }
 
   decodeContent() {
-    this.rawDecodeWorker.postMessage(this.props.content)
+    this.rawDecodeWorker.postMessage({
+      message: this.props.content,
+      type: 'decode',
+      raw: true
+    })
+
     this.rawDecodeWorker.onmessage = event => {
       this.setState({ decodedContent: event.data }, () => this.loadPDF())
     }
 
     this.rawDecodeWorker.onerror = event => {
-      Logger.error('Error decoding PDF content', event)
+      Logger.error('Error decoding PDF content', event.message)
       this.setErrorState()
     }
   }

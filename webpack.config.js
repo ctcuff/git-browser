@@ -4,37 +4,44 @@ const HTMLWebpackPlugin = require('html-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const WorkerPlugin = require('worker-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 module.exports = env => {
+  const plugins = [
+    new HotModuleReplacementPlugin(),
+    new MonacoWebpackPlugin({
+      features: [
+        '!contextmenu',
+        '!codeAction',
+        '!codelens',
+        '!gotoError',
+        '!indentation',
+        '!parameterHints',
+        '!rename',
+        '!suggest'
+      ]
+    }),
+    new CleanWebpackPlugin(),
+    new HTMLWebpackPlugin({
+      template: path.resolve(__dirname, 'public', 'index.html')
+    }),
+    new EnvironmentPlugin({
+      DEBUG: JSON.parse(env.debug)
+    }),
+    new WorkerPlugin({
+      // Use "self" as the global object when receiving hot updates
+      // during debug but disable warnings about hot module reload
+      // when building for production
+      globalObject: env.debug ? 'self' : false
+    })
+  ]
+
+  if (env.analyze) {
+    plugins.push(new BundleAnalyzerPlugin())
+  }
+
   return {
-    plugins: [
-      new HotModuleReplacementPlugin(),
-      new MonacoWebpackPlugin({
-        features: [
-          '!contextmenu',
-          '!codeAction',
-          '!codelens',
-          '!gotoError',
-          '!indentation',
-          '!parameterHints',
-          '!rename',
-          '!suggest'
-        ]
-      }),
-      new CleanWebpackPlugin(),
-      new HTMLWebpackPlugin({
-        template: path.resolve(__dirname, 'public', 'index.html')
-      }),
-      new EnvironmentPlugin({
-        DEBUG: JSON.parse(env.debug)
-      }),
-      new WorkerPlugin({
-        // Use "self" as the global object when receiving hot updates
-        // during debug but disable warnings about hot module reload
-        // when building for production
-        globalObject: env.debug ? 'self' : false
-      })
-    ],
+    plugins: plugins,
     mode: 'development',
     entry: path.resolve(__dirname, 'src', 'index.js'),
     output: {

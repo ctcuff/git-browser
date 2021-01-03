@@ -17,7 +17,7 @@ class Editor extends React.Component {
       decodedContent: null
     }
 
-    this.encodeWorker = new Worker('../workers/encode-worker.js', {
+    this.encodeWorker = new Worker('../scripts/encode-decode-worker.js', {
       type: 'module'
     })
 
@@ -141,14 +141,17 @@ class Editor extends React.Component {
       isLoading: true
     })
 
-    this.encodeWorker.postMessage(content)
+    this.encodeWorker.postMessage({
+      message: content,
+      type: 'encode'
+    })
 
     this.encodeWorker.onmessage = event => {
       onForceRender(event.data, false)
     }
 
     this.encodeWorker.onerror = event => {
-      Logger.error('Error encoding file', event)
+      Logger.error('Error encoding file', event.message)
       this.setState({
         isLoading: false,
         isEncoding: false
