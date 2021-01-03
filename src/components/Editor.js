@@ -1,18 +1,25 @@
 import '../style/editor.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { base64EncodeUnicode, noop, parseCSSVar } from '../scripts/util'
+import { noop, parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
 import { AiOutlineEye } from 'react-icons/ai'
 import FileRenderer from './FileRenderer'
+import Logger from '../scripts/logger'
 
 class Editor extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      isLoading: false
+      isLoading: false,
+      isEncoding: false,
+      decodedContent: null
     }
+
+    this.encodeWorker = new Worker('../workers/encode-worker.js', {
+      type: 'module'
+    })
 
     this.editorRef = React.createRef()
     this.getTheme = this.getTheme.bind(this)
@@ -99,6 +106,7 @@ class Editor extends React.Component {
   componentWillUnmount() {
     this.editor.getModel().dispose()
     this.editor.dispose()
+    this.encodeWorker.terminate()
   }
 
   renderPreviewButton() {
@@ -120,16 +128,43 @@ class Editor extends React.Component {
     )
   }
 
+  // Let the App component know that ths file should not
+  // be rendered by the editor
   forceRenderPreview() {
-    // Let the App component know that ths file should not
-    // be rendered by the editor
-    this.props.onForceRender(base64EncodeUnicode(this.props.content), false)
+    if (this.state.isEncoding) {
+      return
+    }
+    const { content, onForceRender } = this.props
+
+    this.setState({
+      isEncoding: true,
+      isLoading: true
+    })
+
+    this.encodeWorker.postMessage(content)
+
+    this.encodeWorker.onmessage = event => {
+      onForceRender(event.data, false)
+    }
+
+    this.encodeWorker.onerror = event => {
+      Logger.error('Error encoding file', event)
+      this.setState({
+        isLoading: false,
+        isEncoding: false
+      })
+    }
   }
 
   render() {
     return (
       <div className="monaco-editor-container" ref={this.editorRef}>
-        {this.state.isLoading && <LoadingOverlay text="Loading viewer..." />}
+        {this.state.isLoading && (
+          <LoadingOverlay
+            text="Loading viewer..."
+            className="editor-loading-overlay"
+          />
+        )}
         {this.renderPreviewButton()}
       </div>
     )

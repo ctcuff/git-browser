@@ -9,7 +9,7 @@ const ErrorOverlay = props => (
     <p className="error-message">{props.message}</p>
     {props.retryMessage && (
       <button onClick={props.onRetryClick} className="reload-btn">
-        Retry
+        {props.retryMessage}
       </button>
     )}
   </div>

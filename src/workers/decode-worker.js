@@ -1,5 +1,5 @@
-/* eslint-disable  no-var */
-import { base64DecodeUnicode } from './util'
+/* eslint-disable no-var, semi */
+import { base64DecodeUnicode } from '../scripts/util'
 
 // Decoding a large file can take time and it blocks the main thread.
 // Because of this, we have to decode the file using a worker and post

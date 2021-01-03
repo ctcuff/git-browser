@@ -17,7 +17,7 @@ import Logger from '../scripts/logger'
 
 // Don't allow API requests to files that meet/exceed this size
 // (in bytes) to avoid network strain and long render times
-const MAX_FILE_SIZE = 30_000_000 // 30 MB
+const MAX_FILE_SIZE = 20_000_000 // 20 MB
 
 class App extends React.Component {
   constructor(props) {
@@ -32,7 +32,7 @@ class App extends React.Component {
       isLoading: false
     }
 
-    this.decodeWorker = new Worker('../scripts/decode-worker.js', {
+    this.decodeWorker = new Worker('../workers/decode-worker.js', {
       type: 'module'
     })
 

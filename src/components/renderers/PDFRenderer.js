@@ -3,7 +3,6 @@ import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
-import SimpleBar from 'simplebar-react'
 import Logger from '../../scripts/logger'
 
 const PDFPage = props => {
@@ -38,12 +37,19 @@ class PDFRenderer extends React.Component {
     this.state = {
       isLoading: true,
       hasError: false,
+      decodedContent: null,
       pages: []
     }
 
     this.loadPDF = this.loadPDF.bind(this)
     this.reload = this.reload.bind(this)
     this.renderPages = this.renderPages.bind(this)
+    this.decodeContent = this.decodeContent.bind(this)
+    this.setErrorState = this.setErrorState.bind(this)
+
+    this.rawDecodeWorker = new Worker('../../workers/raw-decode-worker.js', {
+      type: 'module'
+    })
   }
 
   componentDidMount() {
@@ -51,28 +57,40 @@ class PDFRenderer extends React.Component {
     import('react-pdf/dist/esm/entry.webpack')
       .then(({ pdfjs }) => {
         this.pdfjs = pdfjs
-        this.loadPDF()
+        this.decodeContent()
       })
       .catch(err => {
         Logger.error(err)
-        this.setState({ hasError: true })
+        this.setErrorState()
       })
   }
 
-  loadPDF() {
-    const content = this.props.content
+  componentWillUnmount() {
+    this.rawDecodeWorker.terminate()
+  }
 
-    this.pdfjs.getDocument({ data: atob(content) }).promise.then(
+  decodeContent() {
+    this.rawDecodeWorker.postMessage(this.props.content)
+    this.rawDecodeWorker.onmessage = event => {
+      this.setState({ decodedContent: event.data }, () => this.loadPDF())
+    }
+
+    this.rawDecodeWorker.onerror = event => {
+      Logger.error('Error decoding PDF content', event)
+      this.setErrorState()
+    }
+  }
+
+  loadPDF() {
+    const data = this.state.decodedContent
+
+    this.pdfjs.getDocument({ data }).promise.then(
       pdfDocument => {
         this.renderPages(pdfDocument)
       },
       err => {
-        Logger.error(err)
-
-        this.setState({
-          isLoading: false,
-          hasError: true
-        })
+        Logger.error('Error loading document', err)
+        this.setErrorState()
       }
     )
   }
@@ -86,12 +104,8 @@ class PDFRenderer extends React.Component {
           pages.push(<PDFPage page={page} key={i} />)
         },
         err => {
-          Logger.error(err)
-
-          this.setState({
-            isLoading: false,
-            hasError: true
-          })
+          Logger.error(`Error loading page at index ${i}`, err)
+          this.setErrorState()
         }
       )
     }
@@ -102,6 +116,13 @@ class PDFRenderer extends React.Component {
     })
   }
 
+  setErrorState() {
+    this.setState({
+      isLoading: false,
+      hasError: true
+    })
+  }
+
   reload() {
     this.setState(
       {
@@ -109,7 +130,7 @@ class PDFRenderer extends React.Component {
         hasError: false,
         pages: []
       },
-      () => this.loadPDF()
+      () => this.decodeContent()
     )
   }
 
@@ -133,7 +154,7 @@ class PDFRenderer extends React.Component {
         <div className="page-count">
           <p> Total pages: {this.state.pages.length}</p>
         </div>
-        <SimpleBar className="pdf">{this.state.pages}</SimpleBar>
+        <div className="pdf">{this.state.pages}</div>
       </div>
     )
   }
