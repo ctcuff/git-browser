@@ -53,7 +53,7 @@
 
     &::before {
       content: attr(data-line-number);
-      color: var(--color-text-secondary);
+      color: var(--color-text-muted);
       font-size: 0.85em;
     }
   }
@@ -78,7 +78,7 @@
       background-color: var(--color-primary);
 
       &::placeholder {
-        color: var(--color-text-secondary);
+        color: var(--color-text-muted);
       }
 
       &:focus {
