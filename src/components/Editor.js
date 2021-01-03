@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import '../style/editor.scss'
+import 'codemirror/addon/scroll/simplescrollbars.css'
 import 'codemirror/lib/codemirror.css'
 import '../style/github-theme.scss'
 import 'codemirror/addon/scroll/simplescrollbars'
@@ -61,7 +62,7 @@ class Editor extends React.Component {
       lineNumbers: true,
       readOnly: true,
       cursorBlinkRate: 0,
-      fixedGutter: false,
+      fixedGutter: true,
       theme: 'github',
       scrollbarStyle: 'overlay'
     })
