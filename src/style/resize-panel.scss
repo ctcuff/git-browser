@@ -1,16 +1,19 @@
 @import '../style/mixins/media';
 
 .resize-panel {
+  $width: 12px;
+  $panel-z-index: 100;
+
   display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
-  left: 0;
-  width: 12px;
+  right: -($width);
+  width: $width;
   opacity: 0;
   height: 100%;
   cursor: col-resize;
-  z-index: 2;
+  z-index: $panel-z-index;
   background-color: var(--color-scrollbar);
   transition: opacity 0.2s ease-in-out;
 
@@ -35,7 +38,7 @@
 
   .resize-overlay {
     display: none;
-    z-index: 3;
+    z-index: $panel-z-index - 1;
     position: fixed;
     top: 0;
     bottom: 0;
