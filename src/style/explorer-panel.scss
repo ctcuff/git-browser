@@ -23,18 +23,22 @@
   }
 
   &.is-closed {
-    @include mobile() {
-      flex-basis: 32px;
-    }
+    flex-basis: 32px;
   }
 
   .explorer-panel-content {
-    height: 100%;
     width: 100%;
+    // To account for the top border of the first collapse panel
+    margin-top: -2px;
+    height: calc(100% - #{$toggle-button-height});
 
-    @include mobile() {
-      margin-top: -1px;
-      height: calc(100% + 1px);
+    @include desktop() {
+      &:hover .simplebar-scrollbar::before,
+      &:active .simplebar-scrollbar::before {
+        opacity: 0.45 !important;
+        // The enter transition (mouseenter)
+        transition: opacity 0.2s ease-in-out 0s !important;
+      }
     }
   }
 
@@ -48,17 +52,10 @@
     padding: 0.5em;
     font-size: 1em;
     z-index: 1;
+    cursor: pointer;
 
     &:focus {
       outline: none;
-    }
-
-    @include desktop() {
-      display: none;
-    }
-
-    @include mobile() {
-      display: block;
     }
   }
 
@@ -66,20 +63,15 @@
     color: var(--color-text-primary);
   }
 
-  // Covers the explorer panel on mobile devices
-  // when the explorer is closed. This prevents x overflow
-  // and hides the panel's squished content
-  .mobile-panel-overlay {
+  // Covers the explorer panel when the explorer is closed.
+  // This prevents x overflow and hides the panel's squished content
+  .panel-overlay {
     position: absolute;
     z-index: 100;
     width: 100%;
     background-color: var(--color-collapse-header);
     top: $toggle-button-height;
     bottom: 0;
-
-    @include desktop() {
-      display: none;
-    }
   }
 
   .search-panel {
@@ -94,19 +86,10 @@
     border-radius: 0;
     opacity: 0 !important;
     // The exit transition (mouseleave)
-    transition: opacity 0.2s ease-in-out 1s !important;
+    transition: opacity 0.2s ease-in-out 0.2s !important;
 
     @include mobile() {
       display: none;
-    }
-  }
-
-  @include desktop() {
-    &:hover .simplebar-scrollbar::before,
-    &:active .simplebar-scrollbar::before {
-      opacity: 0.45 !important;
-      // The enter transition (mouseenter)
-      transition: opacity 0.2s ease-in-out 0s !important;
     }
   }
 }

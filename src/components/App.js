@@ -10,7 +10,6 @@ import debounce from 'lodash/debounce'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import FileRenderer from './FileRenderer'
-import ResizePanel from './ResizePanel'
 import gitBrowserIconDark from '../assets/img/git-browser-icon-dark.svg'
 import gitBrowserIconLight from '../assets/img/git-browser-icon-light.svg'
 import Logger from '../scripts/logger'
@@ -46,6 +45,7 @@ class App extends React.Component {
     this.loadFile = this.loadFile.bind(this)
     this.toggleLoadingOverlay = this.toggleLoadingOverlay.bind(this)
     this.onToggleRenderable = this.onToggleRenderable.bind(this)
+    this.onSearchFinished = this.onSearchFinished.bind(this)
   }
 
   componentDidMount() {
@@ -259,9 +259,16 @@ class App extends React.Component {
   closeAllTabs() {
     this.setState({
       openedFilePaths: new Set(),
-      openedTabs: [],
-      isLoading: false
+      openedTabs: []
     })
+  }
+
+  onSearchFinished(hasError) {
+    this.setState({ isLoading: false })
+
+    if (!hasError) {
+      this.closeAllTabs()
+    }
   }
 
   toggleLoadingOverlay() {
@@ -282,38 +289,37 @@ class App extends React.Component {
       <div className={`app ${colorClass}`}>
         <ExplorerPanel
           onSelectFile={this.onSelectFile}
-          onSearchFinished={this.closeAllTabs}
+          onSearchFinished={this.onSearchFinished}
           onSearchStarted={this.toggleLoadingOverlay}
         />
         <div className="right">
-          <ResizePanel />
-          {isLoading ? (
-            <LoadingOverlay text="Loading repository..." />
-          ) : (
-            <React.Fragment>
-              {openedTabs.length === 0 && (
-                <div className="landing">
-                  <img src={icon} alt="Git Browser icon" className="logo" />
-                  <h2 className="heading">Welcome to Git Browser</h2>
-                  <div className="description">
-                    <p>To get started, enter a GitHub URL in the search bar.</p>
-                  </div>
-                </div>
-              )}
-              <TabView
-                onTabClosed={this.onTabClosed}
-                activeTabIndex={activeTabIndex}
-                onSelectTab={this.setActiveTabIndex}
-                onCloseAllClick={this.closeAllTabs}
-              >
-                {openedTabs.map((tab, index) => (
-                  <Tab title={tab.title} key={tab.path} hint={tab.title}>
-                    {this.renderTabContent(tab, index)}
-                  </Tab>
-                ))}
-              </TabView>
-            </React.Fragment>
+          {isLoading && (
+            <LoadingOverlay
+              text="Loading repository..."
+              className="app-loading-overlay"
+            />
           )}
+          {openedTabs.length === 0 && (
+            <div className="landing">
+              <img src={icon} alt="Git Browser icon" className="logo" />
+              <h2 className="heading">Welcome to Git Browser</h2>
+              <div className="description">
+                <p>To get started, enter a GitHub URL in the search bar.</p>
+              </div>
+            </div>
+          )}
+          <TabView
+            onTabClosed={this.onTabClosed}
+            activeTabIndex={activeTabIndex}
+            onSelectTab={this.setActiveTabIndex}
+            onCloseAllClick={this.closeAllTabs}
+          >
+            {openedTabs.map((tab, index) => (
+              <Tab title={tab.title} key={tab.path} hint={tab.title}>
+                {this.renderTabContent(tab, index)}
+              </Tab>
+            ))}
+          </TabView>
         </div>
       </div>
     )

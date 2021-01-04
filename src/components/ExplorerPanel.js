@@ -13,6 +13,8 @@ import sampleTreeData from '../assets/sample-tree-data.json'
 import SimpleBar from 'simplebar-react'
 import URLUtil from '../scripts/url-util'
 import { AiOutlineLeft, AiOutlineMenu } from 'react-icons/ai'
+import ResizePanel from './ResizePanel'
+import Logger from '../scripts/logger'
 
 const debugState = {
   treeData: sampleTreeData,
@@ -39,7 +41,7 @@ class ExplorerPanel extends React.Component {
       isBranchPanelOpen: false,
       searchErrorMessage: null,
       isLoading: false,
-      isExplorerOpen: false,
+      isExplorerOpen: window.innerWidth >= 900,
       branches: [],
       ...debugState
     }
@@ -55,6 +57,8 @@ class ExplorerPanel extends React.Component {
     this.onBranchPanelToggle = this.onBranchPanelToggle.bind(this)
     this.toggleLoading = this.toggleLoading.bind(this)
     this.toggleExplorer = this.toggleExplorer.bind(this)
+    this.openExplorer = this.openExplorer.bind(this)
+    this.closeExplorer = this.closeExplorer.bind(this)
   }
 
   onInputChange(inputValue) {
@@ -86,11 +90,10 @@ class ExplorerPanel extends React.Component {
     try {
       await this.getTree(url, 'default')
       await this.getBranches(url)
+      this.props.onSearchFinished(false)
     } catch (err) {
-      // Ignored
+      this.props.onSearchFinished(true)
     }
-
-    this.props.onSearchFinished()
   }
 
   getTree(repoUrl, branch) {
@@ -145,9 +148,15 @@ class ExplorerPanel extends React.Component {
     }
 
     this.props.onSearchStarted()
-    this.getTree(branch.repoUrl, branch.name).finally(() => {
-      this.props.onSearchFinished()
-    })
+
+    this.getTree(branch.repoUrl, branch.name)
+      .then(() => {
+        this.props.onSearchFinished(false)
+      })
+      .catch(err => {
+        Logger.error(err)
+        this.props.onSearchFinished(true)
+      })
   }
 
   onCodePanelToggle(isCodePanelOpen) {
@@ -159,7 +168,16 @@ class ExplorerPanel extends React.Component {
   }
 
   toggleExplorer() {
-    this.setState({ isExplorerOpen: !this.state.isExplorerOpen })
+    const isExplorerOpen = !this.state.isExplorerOpen
+    this.setState({ isExplorerOpen })
+  }
+
+  openExplorer() {
+    this.setState({ isExplorerOpen: true })
+  }
+
+  closeExplorer() {
+    this.setState({ isExplorerOpen: false })
   }
 
   render() {
@@ -185,14 +203,23 @@ class ExplorerPanel extends React.Component {
 
     return (
       <div className={`explorer-panel ${openClass}`}>
-        <button className="panel-toggle" onClick={this.toggleExplorer}>
+        <ResizePanel
+          isExplorerOpen={isExplorerOpen}
+          onBreakPointClose={this.closeExplorer}
+          onBreakPointOpen={this.openExplorer}
+        />
+        <button
+          className="panel-toggle"
+          onClick={this.toggleExplorer}
+          title="Toggle Explorer"
+        >
           {isExplorerOpen ? (
             <AiOutlineLeft className="panel-toggle-icon" />
           ) : (
             <AiOutlineMenu className="panel-toggle-icon" />
           )}
         </button>
-        {isExplorerOpen ? null : <div className="mobile-panel-overlay" />}
+        {!isExplorerOpen && <div className="panel-overlay" />}
         <SimpleBar className="explorer-panel-content">
           <Collapse title="search" open>
             <SearchInput
