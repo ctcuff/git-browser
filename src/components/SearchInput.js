@@ -51,7 +51,9 @@ const SearchInput = props => {
     setErrorMessage(props.errorMessage)
   }, [props.hasError, props.errorMessage])
 
-  useEffect(() => setLoading(props.isLoading), [props.isLoading])
+  useEffect(() => {
+    setLoading(props.isLoading)
+  }, [props.isLoading])
 
   return (
     <div className={`search-input ${props.className}`}>

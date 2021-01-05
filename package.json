@@ -7,8 +7,9 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "build": "webpack --config webpack.config.js --mode='production'",
-    "dev": "webpack-dev-server",
+    "build": "webpack --config webpack.config.js --mode='production' --env.debug='false'",
+    "build:analyze": "yarn build --env.analyze",
+    "dev": "webpack-dev-server --env.debug='true'",
     "test": "jest",
     "test:ci": "yarn test --bail --passWithNoTests --coverage",
     "lint": "eslint './src/**/*.js'",
@@ -18,20 +19,29 @@
   },
   "dependencies": {
     "codemirror": "^5.59.0",
+    "dompurify": "^2.2.6",
     "enzyme-adapter-react-16": "^1.15.5",
     "eslint-plugin-react": "^7.21.5",
+    "highlight.js": "^10.5.0",
     "lodash": "^4.17.20",
+    "markdown-it": "^12.0.4",
+    "markdown-it-checkbox": "^1.1.0",
+    "markdown-it-front-matter": "^0.2.3",
     "monaco-editor": "^0.21.2",
+    "papaparse": "^5.3.0",
+    "pdfjs-dist": "^2.5.207",
     "prop-types": "^15.7.2",
     "react": "16.14.0",
     "react-codemirror2": "^7.2.1",
     "react-dom": "16.14.0",
     "react-icons": "^4.1.0",
+    "react-modal": "^3.12.1",
     "react-redux": "^7.2.2",
     "react-tabs": "^3.1.2",
     "redux": "^4.0.5",
     "redux-watch": "^1.2.0",
-    "simplebar-react": "^2.3.0"
+    "simplebar-react": "^2.3.0",
+    "urijs": "^1.19.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -39,14 +49,17 @@
     "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
+    "autoprefixer": "^10.1.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.3",
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^5.0.1",
     "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.5",
     "eslint": "^7.16.0",
     "eslint-loader": "^4.0.2",
+    "eslint-plugin-react": "^7.21.5",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",
     "husky": "^4.3.6",
@@ -55,13 +68,15 @@
     "lint-staged": "^10.5.3",
     "monaco-editor-webpack-plugin": "^2.0.0",
     "node-sass": "^5.0.0",
+    "postcss-loader": "^4.1.0",
     "prettier": "^2.2.1",
     "sass-loader": "^10.1.0",
     "style-loader": "^2.0.0",
     "webpack": "^4.44.2",
     "webpack-bundle-analyzer": "^4.3.0",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "worker-plugin": "^5.0.0"
   },
   "husky": {
     "hooks": {
@@ -70,11 +85,18 @@
   },
   "lint-staged": {
     "./src/**/*.js": [
-      "yarn lint",
-      "yarn test:ci"
+      "yarn lint"
     ],
     "./src/**/*{.scss,.js}": [
       "prettier --write"
     ]
-  }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "defaults"
+  ]
 }

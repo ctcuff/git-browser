@@ -1,8 +1,8 @@
 import { createStore, combineReducers } from 'redux'
-import editorReducer from './reducers/editor'
+import modalReducer from './reducers/modal'
 
 const reducer = combineReducers({
-  editor: editorReducer
+  modal: modalReducer
 })
 
 const store = createStore(

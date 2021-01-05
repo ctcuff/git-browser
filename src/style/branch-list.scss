@@ -1,3 +1,5 @@
+@import '../style/mixins/media';
+
 .branch-list {
   display: table;
   width: 100%;
@@ -6,6 +8,7 @@
   padding: 0;
   padding-left: 0;
   flex-shrink: 0;
+  color: var(--color-text-primary);
 
   li {
     display: flex;
@@ -14,14 +17,24 @@
     cursor: pointer;
     align-items: center;
 
-    &.branch--current,
-    &:hover {
-      color: var(--color-text-primary);
+    &.branch--current {
       background-color: var(--color-list-item-hover);
     }
 
     &:last-child {
       margin-bottom: 12px;
+    }
+
+    @include desktop() {
+      &:hover {
+        background-color: var(--color-list-item-hover);
+      }
+    }
+
+    @include mobile() {
+      &:active {
+        background-color: var(--color-list-item-hover);
+      }
     }
   }
 

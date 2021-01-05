@@ -2,51 +2,76 @@ import React from 'react'
 import Editor from 'src/components/Editor'
 import { mount } from 'enzyme'
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js'
-import { getLanguageFromFileName } from 'src/scripts/util'
+import { setCSSVar } from 'src/scripts/util'
+
+// Slight hack to "wait" for the editor to load our mock monaco file
+const waitForEditorImport = () => new Promise(resolve => setTimeout(resolve, 1))
 
 describe('Editor', () => {
-  test('updates only if necessary', () => {
+  test('mounts and inits editor', async () => {
+    const createModel = jest.spyOn(editor, 'createModel')
+    const create = jest.spyOn(editor, 'create')
+    const component = mount(
+      <Editor fileName="test.js" content="mockContent" colorScheme="mock" />
+    )
+
+    await waitForEditorImport()
+
+    expect(createModel).toHaveBeenCalledWith('mockContent', 'javascript')
+    expect(create).toHaveBeenCalled()
+    expect(component.instance().monaco).toEqual(editor)
+  })
+
+  test('adds scrollbar height to editor', async () => {
+    setCSSVar('--scrollbar-height', 100)
+    const changeAccessor = {
+      addZone: jest.fn()
+    }
+
+    const component = mount(
+      <Editor fileName="test.js" content="mockContent" colorScheme="mock" />
+    )
+
+    await waitForEditorImport()
+
+    component.instance().viewZoneCallback(changeAccessor)
+
+    expect(changeAccessor.addZone).toHaveBeenCalledWith(
+      expect.objectContaining({
+        afterLineNumber: 0,
+        heightInPx: 100,
+        domNode: document.createElement('div')
+      })
+    )
+  })
+
+  test('updates color scheme only if necessary', async () => {
     const setTheme = jest.spyOn(editor, 'setTheme')
-    const updateEditor = jest.spyOn(Editor.prototype, 'updateEditor')
     const component = mount(
       <Editor fileName="test.js" content="mockContent" colorScheme="light" />
     )
 
+    await waitForEditorImport()
+
     component.setProps({ colorScheme: 'dark' })
     component.setProps({ colorScheme: 'light' })
+    component.setProps({ colorScheme: 'light' })
+    component.setProps({ colorScheme: 'light' })
     component.setProps({ colorScheme: 'dark' })
-    component.setProps({ content: 'newContent' })
-    component.setProps({ content: 'newContent' })
-    component.setProps({ content: 'veryNewContent' })
+    component.setProps({ colorScheme: 'dark' })
+    component.setProps({ colorScheme: 'dark' })
 
-    // Need to make sure the component doesn't update
-    // if it's editor is null for whatever reason
-    component.instance().editor = null
-    component.setProps({ content: 'moreContent' })
-
-    expect(setTheme).toHaveBeenCalledWith('vs-dark')
-    expect(updateEditor).toHaveBeenCalledTimes(2)
+    expect(setTheme).toHaveBeenCalledTimes(3)
   })
 
-  test('mounts', () => {
-    const createModel = jest.spyOn(editor, 'createModel')
-    const create = jest.spyOn(editor, 'create')
-    const fileName = 'test.js'
-
-    mount(<Editor fileName={fileName} content="mockContent" />)
-
-    expect(createModel).toHaveBeenCalledWith(
-      'mockContent',
-      getLanguageFromFileName(fileName)
-    )
-
-    expect(create).toHaveBeenCalled()
-  })
-
-  test('cleans up  editor on unmount', () => {
+  test('cleans up editor on unmount', async () => {
     const getModel = jest.spyOn(editor, 'getModel')
     const dispose = jest.spyOn(editor, 'dispose')
-    const component = mount(<Editor fileName="test.js" content="mockContent" />)
+    const component = mount(
+      <Editor fileName="test.js" content="mockContent" colorScheme="mock" />
+    )
+
+    await waitForEditorImport()
 
     component.unmount()
 

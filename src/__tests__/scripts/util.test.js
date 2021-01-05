@@ -5,7 +5,7 @@ describe('util', () => {
   test('getLanguageFromFileName returns correct extension', () => {
     const extensions = Object.keys(monacoLanguages)
     const files = extensions.map(ext => ({
-      name: 'test-file' + ext,
+      name: ext,
       expected: monacoLanguages[ext]
     }))
 
@@ -13,23 +13,28 @@ describe('util', () => {
       expect(util.getLanguageFromFileName(file.name)).toBe(file.expected)
     })
 
-    // NEed to test the cases where we return early
-    expect(util.getLanguageFromFileName('extension-less-file')).toBe('shell')
-    expect(util.getLanguageFromFileName('.eslintrc')).toBe('json')
-    expect(util.getLanguageFromFileName('file.no-extension-for-this')).toBe(
-      'plaintext'
-    )
-  }),
-    test('parseCSSVar parses CSS variable to return number', () => {
-      const mockElement = document.createElement('div')
-
-      util.setCSSVar('--height', '100px')
-      util.setCSSVar('--height', '200px', mockElement)
-
-      expect(util.parseCSSVar('--does-not-exist')).toBe(0)
-      expect(util.parseCSSVar('--height')).toBe(100)
-      expect(util.parseCSSVar('--height', mockElement)).toBe(200)
+    expect(util.getLanguageFromFileName('test-file.pdf')).toEqual({
+      language: 'pdf',
+      displayName: 'PDF',
+      extension: '.pdf'
     })
+    expect(util.getLanguageFromFileName('test-file.does-not-exist')).toEqual({
+      language: 'plaintext',
+      displayName: 'Plain Text',
+      extension: '.does-not-exist'
+    })
+  })
+
+  test('parseCSSVar parses CSS variable to return number', () => {
+    const mockElement = document.createElement('div')
+
+    util.setCSSVar('--height', '100px')
+    util.setCSSVar('--height', '200px', mockElement)
+
+    expect(util.parseCSSVar('--does-not-exist')).toBe(0)
+    expect(util.parseCSSVar('--height')).toBe(100)
+    expect(util.parseCSSVar('--height', mockElement)).toBe(200)
+  })
 
   test('setCSSVar sets CSS variable', () => {
     const root = document.documentElement
@@ -48,5 +53,12 @@ describe('util', () => {
     expect(getComputedStyle(mockElement).getPropertyValue('--a-number')).toBe(
       '100'
     )
+  })
+
+  test('base64DecodeUnicode decodes correctly or throws error', () => {
+    expect(util.base64DecodeUnicode(btoa('message'))).toEqual('message')
+    expect(() => {
+      util.base64DecodeUnicode('not a base 64 string')
+    }).toThrowError()
   })
 })

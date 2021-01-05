@@ -1,0 +1,21 @@
+.image-renderer {
+  width: 90%;
+  height: 90%;
+  background-image: url('../assets/checker.svg');
+  background-repeat: repeat;
+  display: flex;
+  justify-self: center;
+  align-items: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    object-fit: contain;
+  }
+
+  .img--loading {
+    border: none;
+    display: none;
+  }
+}

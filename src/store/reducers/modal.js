@@ -1,14 +1,20 @@
 const initialState = {
-  content: 'Default starting value',
-  language: 'plaintext'
+  isOpen: false,
+  body: null
 }
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'UPDATE_CONTENT':
+    case 'SHOW_MODAL':
       return {
         ...state,
-        content: action.content
+        isOpen: true,
+        body: action.body
+      }
+    case 'HIDE_MODAL':
+      return {
+        ...state,
+        isOpen: false
       }
     default:
       return state

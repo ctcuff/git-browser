@@ -1,0 +1,30 @@
+.error-overlay {
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 1em;
+  height: 100%;
+  width: 100%;
+
+  .reload-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    color: blue;
+    margin: 0;
+  }
+
+  .error-message {
+    text-align: center;
+  }
+
+  .error-icon {
+    width: 100%;
+    font-size: 2em;
+    color: var(--color-text-primary);
+  }
+}

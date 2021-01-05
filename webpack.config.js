@@ -1,82 +1,93 @@
 const path = require('path')
-const { HotModuleReplacementPlugin } = require('webpack')
+const { HotModuleReplacementPlugin, EnvironmentPlugin } = require('webpack')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const WorkerPlugin = require('worker-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
-module.exports = {
-  plugins: [
+module.exports = env => {
+  const plugins = [
     new HotModuleReplacementPlugin(),
     new CleanWebpackPlugin(),
     new HTMLWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html')
+    }),
+    new EnvironmentPlugin({
+      DEBUG: JSON.parse(env.debug)
+    }),
+    new WorkerPlugin({
+      // Use "self" as the global object when receiving hot updates
+      // during debug but disable warnings about hot module reload
+      // when building for production
+      globalObject: env.debug ? 'self' : false
     })
-  ],
-  mode: 'development',
-  entry: path.resolve(__dirname, 'src', 'index.js'),
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
-  },
-  devServer: {
-    contentBase: path.resolve(__dirname, 'public'),
-    open: false,
-    clientLogLevel: 'silent',
-    port: 9000,
-    hot: true
-  },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        include: path.resolve(__dirname, 'src'),
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              presets: [
-                [
-                  '@babel/preset-env',
-                  {
-                    targets: 'defaults'
-                  }
-                ],
-                '@babel/preset-react'
-              ]
+  ]
+
+  if (env.analyze) {
+    plugins.push(new BundleAnalyzerPlugin())
+  }
+
+  return {
+    plugins: plugins,
+    mode: 'development',
+    entry: path.resolve(__dirname, 'src', 'index.js'),
+    output: {
+      path: path.resolve(__dirname, 'dist'),
+      filename: 'bundle.js'
+    },
+    devServer: {
+      contentBase: path.resolve(__dirname, 'public'),
+      open: false,
+      clientLogLevel: 'silent',
+      port: 9000,
+      hot: true
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          include: path.resolve(__dirname, 'src'),
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: 'babel-loader',
+              options: {
+                presets: [
+                  [
+                    '@babel/preset-env',
+                    {
+                      targets: 'defaults'
+                    }
+                  ],
+                  '@babel/preset-react'
+                ]
+              }
+            },
+            'eslint-loader'
+          ]
+        },
+        {
+          test: /\.(ttf|png|jpg|svg)$/,
+          use: ['file-loader']
+        },
+        {
+          test: /\.(css|scss)$/,
+          use: [
+            {
+              loader: 'style-loader'
+            },
+            {
+              loader: 'css-loader'
+            },
+            {
+              loader: 'postcss-loader'
+            },
+            {
+              loader: 'sass-loader'
             }
-          },
-          'eslint-loader'
-        ]
-      },
-      {
-        test: /\.(ttf|png|jpg)$/,
-        use: ['file-loader']
-      },
-      {
-        test: /\.css?$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader'
-          }
-        ]
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader'
-          },
-          {
-            loader: 'sass-loader'
-          }
-        ]
-      }
-    ]
+          ]
+        }
+      ]
+    }
   }
 }

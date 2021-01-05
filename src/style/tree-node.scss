@@ -1,3 +1,5 @@
+@import '../style/mixins/media';
+
 .tree-node {
   display: flex;
   flex-direction: row;
@@ -6,10 +8,20 @@
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
+  color: var(--color-text-primary);
 
-  &:hover {
-    color: var(--color-text-primary);
-    background: var(--color-list-item-hover);
+  @include desktop() {
+    &:hover {
+      color: var(--color-text-primary);
+      background: var(--color-list-item-hover);
+    }
+  }
+
+  @include mobile() {
+    &:active {
+      color: var(--color-text-primary);
+      background: var(--color-list-item-hover);
+    }
   }
 
   &:last-child {

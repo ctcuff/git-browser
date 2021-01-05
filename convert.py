@@ -1,50 +1,55 @@
 import json
 
-def convert_github_languages():
-    with open('./languages.json', 'r') as f:
-        all_langs = json.loads(f.read())
-        parsed = {}
-
-        for (key, val) in all_langs.items():
-            lang = all_langs[key]
-
-            if not lang.get('extensions'):
-                print(f'No extensions for language: {key}')
-                continue
-            parsed[key] = {
-                'extensions': lang['extensions']
-            }
-
-        with open('./languages-parsed.json', 'w') as f:
-            f.write(json.dumps(parsed, indent=3))
-
 
 def convert_monaco_languages():
-    with open('./monaco-languages.json', 'r') as f:
+    parsed = {}
+    seen = set()
+
+    with open('./src/assets/monaco-languages.json', 'r') as f:
         all_langs = json.loads(f.read())
-        parsed = {}
-        seen = set()
-        seen_id = set()
 
-        for lang_obj in all_langs:
-            _id = lang_obj['id']
+        for lang in all_langs:
+            _id = lang['id']
 
-            if not lang_obj.get('extensions'):
-                print(f'No extensions for language: {_id}')
+            if not lang.get('extensions'):
+                print(f'Warning: {_id} missing "extensions" key')
                 continue
 
-            for ext in lang_obj['extensions']:
+            if len(lang['extensions']) == 0:
+                print(f'Warning: {_id} has no extensions, skipping')
+                continue
+
+            for ext in lang['extensions']:
                 if ext in seen:
-                    print(f'Duplate extension: {ext}')
+                    print(f'Warning: duplicate extension: {ext}, skipping...')
                     continue
 
-                parsed[ext] = _id
+                parsed[ext] = {
+                    'language': _id,
+                    'displayName': lang['aliases'][0],
+                    'canEditorRender': True,
+                    'extension': ext
+                }
 
-                seen.add(ext)
+            # Use file names as extensions. These will allow us to detect
+            # files like Dockerfiles and config files and add syntax highlighting
+            if lang.get('filenames'):
+                for filename in lang['filenames']:
+                    if filename in seen:
+                        print(f'Warning: duplicate extension: {filename}, skipping...')
+                        continue
+
+                    parsed[filename] = {
+                        'language': _id,
+                        'displayName': lang['aliases'][0],
+                        'canEditorRender': True,
+                        'extension': ext
+                    }
+
+
 
     with open('./monaco-languages-parsed.json', 'w') as f:
         f.write(json.dumps(parsed, indent=3))
-
 
 if __name__ == "__main__":
     convert_monaco_languages()

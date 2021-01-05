@@ -15,10 +15,14 @@ class FileExplorer extends Component {
     this.getRootNodes = this.getRootNodes.bind(this)
     this.getChildren = this.getChildren.bind(this)
     this.onToggle = this.onToggle.bind(this)
+    this.onSelectNode = this.onSelectNode.bind(this)
   }
 
   getRootNodes() {
     const nodes = {}
+
+    // Partition the nodes into folders and files so that
+    // folders appear before files
     const [left, right] = partition(
       this.state.nodes,
       node => node.type === 'folder'
@@ -31,7 +35,7 @@ class FileExplorer extends Component {
   }
 
   getChildren(node) {
-    const { nodes } = this.state
+    const nodes = this.state.nodes
 
     if (!node.children) {
       return []
@@ -44,11 +48,17 @@ class FileExplorer extends Component {
   }
 
   onToggle(node) {
-    const { nodes } = this.state
+    const nodes = this.state.nodes
 
     nodes[node.path].isOpen = !node.isOpen
 
     this.setState({ nodes })
+  }
+
+  onSelectNode(node) {
+    if (node.type === 'file') {
+      this.props.onSelectFile(node)
+    }
   }
 
   render() {
@@ -67,7 +77,7 @@ class FileExplorer extends Component {
               key={node.path}
               getChildren={this.getChildren}
               onToggle={this.onToggle}
-              onSelectNode={this.props.onSelectFile}
+              onSelectNode={this.onSelectNode}
             />
           ))}
         </React.Fragment>

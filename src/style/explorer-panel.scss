@@ -1,21 +1,81 @@
+@import './mixins/media';
+
 .explorer-panel {
+  $toggle-button-height: 32px;
+
+  display: flex;
   flex-grow: 0;
   flex-shrink: 0;
-  flex-basis: var(--file-explorer-width);
-  background-color: var(--color-panel-background);
-  color: var(--color-panel-text);
+  position: relative;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  border-collapse: collapse;
   border-right: 1px solid var(--color-border);
+
+  @include desktop() {
+    flex-basis: var(--file-explorer-width);
+  }
+
+  &.is-open {
+    @include mobile() {
+      flex-basis: 100%;
+    }
+  }
+
+  &.is-closed {
+    flex-basis: 32px;
+  }
+
+  .explorer-panel-content {
+    width: 100%;
+    // To account for the top border of the first collapse panel
+    margin-top: -2px;
+    height: calc(100% - #{$toggle-button-height});
+
+    @include desktop() {
+      &:hover .simplebar-scrollbar::before,
+      &:active .simplebar-scrollbar::before {
+        opacity: 0.45 !important;
+        // The enter transition (mouseenter)
+        transition: opacity 0.2s ease-in-out 0s !important;
+      }
+    }
+  }
+
+  .panel-toggle {
+    width: 100%;
+    height: $toggle-button-height;
+    border: none;
+    background-color: var(--color-collapse-header);
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.9em;
+    padding: 0.5em;
+    font-size: 1em;
+    z-index: 1;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .panel-toggle-icon {
+    color: var(--color-text-primary);
+  }
+
+  // Covers the explorer panel when the explorer is closed.
+  // This prevents x overflow and hides the panel's squished content
+  .panel-overlay {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    background-color: var(--color-collapse-header);
+    top: $toggle-button-height;
+    bottom: 0;
+  }
 
   .search-panel {
     padding: 1em 0.5em;
-  }
-
-  .simplebar-placeholder {
-    // Overriding this property allows the explorer panel
-    // to not overflow the page. Without it, We'd have to
-    // set overflow: hidden in app.scss
-    // https://github.com/Grsmto/simplebar/issues/487
-    height: 100% !important;
   }
 
   // Need to use !important here to override some
@@ -26,13 +86,10 @@
     border-radius: 0;
     opacity: 0 !important;
     // The exit transition (mouseleave)
-    transition: opacity 0.2s ease-in-out 1s !important;
-  }
+    transition: opacity 0.2s ease-in-out 0.2s !important;
 
-  &:hover .simplebar-scrollbar::before,
-  &:active .simplebar-scrollbar::before {
-    opacity: 0.45 !important;
-    // The enter transition (mouseenter)
-    transition: opacity 0.2s ease-in-out 0s !important;
+    @include mobile() {
+      display: none;
+    }
   }
 }

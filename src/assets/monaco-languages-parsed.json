@@ -1,174 +1,928 @@
 {
-   ".txt": "plaintext",
-   ".abap": "abap",
-   ".cls": "apex",
-   ".azcli": "azcli",
-   ".bat": "bat",
-   ".cmd": "bat",
-   ".mligo": "cameligo",
-   ".clj": "clojure",
-   ".cljs": "clojure",
-   ".cljc": "clojure",
-   ".edn": "clojure",
-   ".coffee": "coffeescript",
-   ".c": "c",
-   ".h": "c",
-   ".cpp": "cpp",
-   ".cc": "cpp",
-   ".cxx": "cpp",
-   ".hpp": "cpp",
-   ".hh": "cpp",
-   ".hxx": "cpp",
-   ".cs": "csharp",
-   ".csx": "csharp",
-   ".cake": "csharp",
-   ".css": "css",
-   ".dart": "dart",
-   ".dockerfile": "dockerfile",
-   ".fs": "fsharp",
-   ".fsi": "fsharp",
-   ".ml": "fsharp",
-   ".mli": "fsharp",
-   ".fsx": "fsharp",
-   ".fsscript": "fsharp",
-   ".go": "go",
-   ".graphql": "graphql",
-   ".gql": "graphql",
-   ".handlebars": "handlebars",
-   ".hbs": "handlebars",
-   ".tf": "hcl",
-   ".tfvars": "hcl",
-   ".hcl": "hcl",
-   ".html": "html",
-   ".htm": "html",
-   ".shtml": "html",
-   ".xhtml": "html",
-   ".mdoc": "html",
-   ".jsp": "html",
-   ".asp": "html",
-   ".aspx": "html",
-   ".jshtm": "html",
-   ".ini": "ini",
-   ".properties": "ini",
-   ".gitconfig": "ini",
-   ".java": "java",
-   ".jav": "java",
-   ".js": "javascript",
-   ".es6": "javascript",
-   ".jsx": "javascript",
-   ".mjs": "javascript",
-   ".json": "json",
-   ".bowerrc": "json",
-   ".jshintrc": "json",
-   ".jscsrc": "json",
-   ".eslintrc": "json",
-   ".babelrc": "json",
-   ".har": "json",
-   ".jl": "julia",
-   ".kt": "kotlin",
-   ".less": "less",
-   ".lex": "lexon",
-   ".lua": "lua",
-   ".md": "markdown",
-   ".markdown": "markdown",
-   ".mdown": "markdown",
-   ".mkdn": "markdown",
-   ".mkd": "markdown",
-   ".mdwn": "markdown",
-   ".mdtxt": "markdown",
-   ".mdtext": "markdown",
-   ".s": "mips",
-   ".dax": "msdax",
-   ".msdax": "msdax",
-   ".m": "objective-c",
-   ".pas": "pascal",
-   ".p": "pascal",
-   ".pp": "pascal",
-   ".ligo": "pascaligo",
-   ".pl": "perl",
-   ".php": "php",
-   ".php4": "php",
-   ".php5": "php",
-   ".phtml": "php",
-   ".ctp": "php",
-   ".dats": "postiats",
-   ".sats": "postiats",
-   ".hats": "postiats",
-   ".pq": "powerquery",
-   ".pqm": "powerquery",
-   ".ps1": "powershell",
-   ".psm1": "powershell",
-   ".psd1": "powershell",
-   ".jade": "pug",
-   ".pug": "pug",
-   ".py": "python",
-   ".rpy": "python",
-   ".pyw": "python",
-   ".cpy": "python",
-   ".gyp": "python",
-   ".gypi": "python",
-   ".r": "r",
-   ".rhistory": "r",
-   ".rmd": "r",
-   ".rprofile": "r",
-   ".rt": "r",
-   ".cshtml": "razor",
-   ".redis": "redis",
-   ".rst": "restructuredtext",
-   ".rb": "ruby",
-   ".rbx": "ruby",
-   ".rjs": "ruby",
-   ".gemspec": "ruby",
-   ".rs": "rust",
-   ".rlib": "rust",
-   ".sb": "sb",
-   ".scala": "scala",
-   ".sc": "scala",
-   ".sbt": "scala",
-   ".scm": "scheme",
-   ".ss": "scheme",
-   ".sch": "scheme",
-   ".rkt": "scheme",
-   ".scss": "scss",
-   ".sh": "shell",
-   ".bash": "shell",
-   ".sol": "sol",
-   ".aes": "aes",
-   ".sql": "sql",
-   ".st": "st",
-   ".iecst": "st",
-   ".iecplc": "st",
-   ".lc3lib": "st",
-   ".swift": "swift",
-   ".sv": "systemverilog",
-   ".svh": "systemverilog",
-   ".v": "verilog",
-   ".vh": "verilog",
-   ".tcl": "tcl",
-   ".twig": "twig",
-   ".ts": "typescript",
-   ".tsx": "typescript",
-   ".vb": "vb",
-   ".xml": "xml",
-   ".dtd": "xml",
-   ".ascx": "xml",
-   ".csproj": "xml",
-   ".config": "xml",
-   ".wxi": "xml",
-   ".wxl": "xml",
-   ".wxs": "xml",
-   ".xaml": "xml",
-   ".svg": "xml",
-   ".svgz": "xml",
-   ".opf": "xml",
-   ".xsl": "xml",
-   ".yaml": "yaml",
-   ".yml": "yaml",
-   ".vue": "html",
-   ".pm": "perl",
-   ".perl": "perl",
-   ".prettierrc": "json",
-   ".png": "png",
-   ".jpg": "jpg",
-   ".jpeg": "jpg"
+  ".txt": {
+    "language": "plaintext",
+    "displayName": "Plain Text",
+    "extension": ".txt"
+  },
+  ".abap": {
+    "language": "abap",
+    "displayName": "abap",
+    "extension": ".abap"
+  },
+  ".cls": {
+    "language": "apex",
+    "displayName": "Apex",
+    "extension": ".cls"
+  },
+  ".azcli": {
+    "language": "azcli",
+    "displayName": "Azure CLI",
+    "extension": ".azcli"
+  },
+  ".bat": {
+    "language": "bat",
+    "displayName": "Batch",
+    "extension": ".bat"
+  },
+  ".cmd": {
+    "language": "bat",
+    "displayName": "Batch",
+    "extension": ".cmd"
+  },
+  ".mligo": {
+    "language": "cameligo",
+    "displayName": "Cameligo",
+    "extension": ".mligo"
+  },
+  ".clj": {
+    "language": "clojure",
+    "displayName": "clojure",
+    "extension": ".clj"
+  },
+  ".cljs": {
+    "language": "clojure",
+    "displayName": "clojure",
+    "extension": ".cljs"
+  },
+  ".cljc": {
+    "language": "clojure",
+    "displayName": "clojure",
+    "extension": ".cljc"
+  },
+  ".edn": {
+    "language": "clojure",
+    "displayName": "clojure",
+    "extension": ".edn"
+  },
+  ".coffee": {
+    "language": "coffeescript",
+    "displayName": "CoffeeScript",
+    "extension": ".coffee"
+  },
+  ".c": {
+    "language": "c",
+    "displayName": "C",
+    "extension": ".c"
+  },
+  ".h": {
+    "language": "c",
+    "displayName": "C",
+    "extension": ".h"
+  },
+  ".cpp": {
+    "language": "cpp",
+    "displayName": "C++",
+    "extension": ".cpp"
+  },
+  ".cc": {
+    "language": "cpp",
+    "displayName": "C++",
+    "extension": ".cc"
+  },
+  ".cxx": {
+    "language": "cpp",
+    "displayName": "C++",
+    "extension": ".cxx"
+  },
+  ".hpp": {
+    "language": "cpp",
+    "displayName": "C++",
+    "extension": ".hpp"
+  },
+  ".hh": {
+    "language": "cpp",
+    "displayName": "C++",
+    "extension": ".hh"
+  },
+  ".hxx": {
+    "language": "cpp",
+    "displayName": "C++",
+    "extension": ".hxx"
+  },
+  ".cs": {
+    "language": "csharp",
+    "displayName": "C#",
+    "extension": ".cs"
+  },
+  ".csx": {
+    "language": "csharp",
+    "displayName": "C#",
+    "extension": ".csx"
+  },
+  ".cake": {
+    "language": "csharp",
+    "displayName": "C#",
+    "extension": ".cake"
+  },
+  ".css": {
+    "language": "css",
+    "displayName": "CSS",
+    "extension": ".css"
+  },
+  ".dart": {
+    "language": "dart",
+    "displayName": "Dart",
+    "extension": ".dart"
+  },
+  ".dockerfile": {
+    "language": "dockerfile",
+    "displayName": "Dockerfile",
+    "extension": ".dockerfile"
+  },
+  "Dockerfile": {
+    "language": "dockerfile",
+    "displayName": "Dockerfile",
+    "extension": "Dockerfile"
+  },
+  ".fs": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "extension": ".fs"
+  },
+  ".fsi": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "extension": ".fsi"
+  },
+  ".ml": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "extension": ".ml"
+  },
+  ".mli": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "extension": ".mli"
+  },
+  ".fsx": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "extension": ".fsx"
+  },
+  ".fsscript": {
+    "language": "fsharp",
+    "displayName": "F#",
+    "extension": ".fsscript"
+  },
+  ".go": {
+    "language": "go",
+    "displayName": "Go",
+    "extension": ".go"
+  },
+  ".graphql": {
+    "language": "graphql",
+    "displayName": "GraphQL",
+    "extension": ".graphql"
+  },
+  ".gql": {
+    "language": "graphql",
+    "displayName": "GraphQL",
+    "extension": ".gql"
+  },
+  ".handlebars": {
+    "language": "handlebars",
+    "displayName": "Handlebars",
+    "extension": ".handlebars"
+  },
+  ".hbs": {
+    "language": "handlebars",
+    "displayName": "Handlebars",
+    "extension": ".hbs"
+  },
+  ".tf": {
+    "language": "hcl",
+    "displayName": "Terraform",
+    "extension": ".tf"
+  },
+  ".tfvars": {
+    "language": "hcl",
+    "displayName": "Terraform",
+    "extension": ".tfvars"
+  },
+  ".hcl": {
+    "language": "hcl",
+    "displayName": "Terraform",
+    "extension": ".hcl"
+  },
+  ".html": {
+    "language": "html",
+    "displayName": "HTML",
+    "extension": ".html"
+  },
+  ".htm": {
+    "language": "html",
+    "displayName": "HTML",
+    "extension": ".htm"
+  },
+  ".shtml": {
+    "language": "html",
+    "displayName": "HTML",
+    "extension": ".shtml"
+  },
+  ".xhtml": {
+    "language": "html",
+    "displayName": "HTML",
+    "extension": ".xhtml"
+  },
+  ".mdoc": {
+    "language": "html",
+    "displayName": "HTML",
+    "extension": ".mdoc"
+  },
+  ".jsp": {
+    "language": "html",
+    "displayName": "HTML",
+    "extension": ".jsp"
+  },
+  ".asp": {
+    "language": "html",
+    "displayName": "HTML",
+    "extension": ".asp"
+  },
+  ".aspx": {
+    "language": "html",
+    "displayName": "HTML",
+    "extension": ".aspx"
+  },
+  ".jshtm": {
+    "language": "html",
+    "displayName": "HTML",
+    "extension": ".jshtm"
+  },
+  ".ini": {
+    "language": "ini",
+    "displayName": "Ini",
+    "extension": ".ini"
+  },
+  ".properties": {
+    "language": "ini",
+    "displayName": "Ini",
+    "extension": ".properties"
+  },
+  ".gitconfig": {
+    "language": "ini",
+    "displayName": "Ini",
+    "extension": ".gitconfig"
+  },
+  "config": {
+    "language": "ini",
+    "displayName": "Ini",
+    "extension": "config"
+  },
+  ".gitattributes": {
+    "language": "ini",
+    "displayName": "Ini",
+    "extension": ".gitattributes"
+  },
+  ".editorconfig": {
+    "language": "ini",
+    "displayName": "Ini",
+    "extension": ".editorconfig"
+  },
+  ".java": {
+    "language": "java",
+    "displayName": "Java",
+    "extension": ".java"
+  },
+  ".jav": {
+    "language": "java",
+    "displayName": "Java",
+    "extension": ".jav"
+  },
+  ".js": {
+    "language": "javascript",
+    "displayName": "JavaScript",
+    "extension": ".js"
+  },
+  ".es6": {
+    "language": "javascript",
+    "displayName": "JavaScript",
+    "extension": ".es6"
+  },
+  ".jsx": {
+    "language": "javascript",
+    "displayName": "JavaScript",
+    "extension": ".jsx"
+  },
+  ".mjs": {
+    "language": "javascript",
+    "displayName": "JavaScript",
+    "extension": ".mjs"
+  },
+  "jakefile": {
+    "language": "javascript",
+    "displayName": "JavaScript",
+    "extension": "jakefile"
+  },
+  ".json": {
+    "language": "json",
+    "displayName": "JSON",
+    "extension": ".json"
+  },
+  ".bowerrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "extension": ".bowerrc"
+  },
+  ".jshintrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "extension": ".jshintrc"
+  },
+  ".jscsrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "extension": ".jscsrc"
+  },
+  ".eslintrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "extension": ".eslintrc"
+  },
+  ".babelrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "extension": ".babelrc"
+  },
+  ".har": {
+    "language": "json",
+    "displayName": "JSON",
+    "extension": ".har"
+  },
+  ".jl": {
+    "language": "julia",
+    "displayName": "julia",
+    "extension": ".jl"
+  },
+  ".kt": {
+    "language": "kotlin",
+    "displayName": "Kotlin",
+    "extension": ".kt"
+  },
+  ".less": {
+    "language": "less",
+    "displayName": "Less",
+    "extension": ".less"
+  },
+  ".lex": {
+    "language": "lexon",
+    "displayName": "Lexon",
+    "extension": ".lex"
+  },
+  ".lua": {
+    "language": "lua",
+    "displayName": "Lua",
+    "extension": ".lua"
+  },
+  ".md": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "extension": ".md"
+  },
+  ".markdown": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "extension": ".markdown"
+  },
+  ".mdown": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "extension": ".mdown"
+  },
+  ".mkdn": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "extension": ".mkdn"
+  },
+  ".mkd": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "extension": ".mkd"
+  },
+  ".mdwn": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "extension": ".mdwn"
+  },
+  ".mdtxt": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "extension": ".mdtxt"
+  },
+  ".mdtext": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "extension": ".mdtext"
+  },
+  ".s": {
+    "language": "mips",
+    "displayName": "MIPS",
+    "extension": ".s"
+  },
+  ".dax": {
+    "language": "msdax",
+    "displayName": "DAX",
+    "extension": ".dax"
+  },
+  ".msdax": {
+    "language": "msdax",
+    "displayName": "DAX",
+    "extension": ".msdax"
+  },
+  ".m": {
+    "language": "objective-c",
+    "displayName": "Objective-C",
+    "extension": ".m"
+  },
+  ".pas": {
+    "language": "pascal",
+    "displayName": "Pascal",
+    "extension": ".pas"
+  },
+  ".p": {
+    "language": "pascal",
+    "displayName": "Pascal",
+    "extension": ".p"
+  },
+  ".pp": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "extension": ".pp"
+  },
+  ".ligo": {
+    "language": "pascaligo",
+    "displayName": "Pascaligo",
+    "extension": ".ligo"
+  },
+  ".pl": {
+    "language": "perl",
+    "displayName": "Perl",
+    "extension": ".pl"
+  },
+  ".php": {
+    "language": "php",
+    "displayName": "PHP",
+    "extension": ".php"
+  },
+  ".php4": {
+    "language": "php",
+    "displayName": "PHP",
+    "extension": ".php4"
+  },
+  ".php5": {
+    "language": "php",
+    "displayName": "PHP",
+    "extension": ".php5"
+  },
+  ".phtml": {
+    "language": "php",
+    "displayName": "PHP",
+    "extension": ".phtml"
+  },
+  ".ctp": {
+    "language": "php",
+    "displayName": "PHP",
+    "extension": ".ctp"
+  },
+  ".dats": {
+    "language": "postiats",
+    "displayName": "ATS",
+    "extension": ".dats"
+  },
+  ".sats": {
+    "language": "postiats",
+    "displayName": "ATS",
+    "extension": ".sats"
+  },
+  ".hats": {
+    "language": "postiats",
+    "displayName": "ATS",
+    "extension": ".hats"
+  },
+  ".pq": {
+    "language": "powerquery",
+    "displayName": "PQ",
+    "extension": ".pq"
+  },
+  ".pqm": {
+    "language": "powerquery",
+    "displayName": "PQ",
+    "extension": ".pqm"
+  },
+  ".ps1": {
+    "language": "powershell",
+    "displayName": "PowerShell",
+    "extension": ".ps1"
+  },
+  ".psm1": {
+    "language": "powershell",
+    "displayName": "PowerShell",
+    "extension": ".psm1"
+  },
+  ".psd1": {
+    "language": "powershell",
+    "displayName": "PowerShell",
+    "extension": ".psd1"
+  },
+  ".jade": {
+    "language": "pug",
+    "displayName": "Pug",
+    "extension": ".jade"
+  },
+  ".pug": {
+    "language": "pug",
+    "displayName": "Pug",
+    "extension": ".pug"
+  },
+  ".py": {
+    "language": "python",
+    "displayName": "Python",
+    "extension": ".py"
+  },
+  ".rpy": {
+    "language": "python",
+    "displayName": "Python",
+    "extension": ".rpy"
+  },
+  ".pyw": {
+    "language": "python",
+    "displayName": "Python",
+    "extension": ".pyw"
+  },
+  ".cpy": {
+    "language": "python",
+    "displayName": "Python",
+    "extension": ".cpy"
+  },
+  ".gyp": {
+    "language": "python",
+    "displayName": "Python",
+    "extension": ".gyp"
+  },
+  ".gypi": {
+    "language": "python",
+    "displayName": "Python",
+    "extension": ".gypi"
+  },
+  ".r": {
+    "language": "r",
+    "displayName": "R",
+    "extension": ".r"
+  },
+  ".rhistory": {
+    "language": "r",
+    "displayName": "R",
+    "extension": ".rhistory"
+  },
+  ".rmd": {
+    "language": "r",
+    "displayName": "R",
+    "extension": ".rmd"
+  },
+  ".rprofile": {
+    "language": "r",
+    "displayName": "R",
+    "extension": ".rprofile"
+  },
+  ".rt": {
+    "language": "r",
+    "displayName": "R",
+    "extension": ".rt"
+  },
+  ".cshtml": {
+    "language": "razor",
+    "displayName": "Razor",
+    "extension": ".cshtml"
+  },
+  ".redis": {
+    "language": "redis",
+    "displayName": "redis",
+    "extension": ".redis"
+  },
+  ".rst": {
+    "language": "restructuredtext",
+    "displayName": "reStructuredText",
+    "extension": ".rst"
+  },
+  ".rb": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "extension": ".rb"
+  },
+  ".rbx": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "extension": ".rbx"
+  },
+  ".rjs": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "extension": ".rjs"
+  },
+  ".gemspec": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "extension": ".gemspec"
+  },
+  "rakefile": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "extension": "rakefile"
+  },
+  "Gemfile": {
+    "language": "ruby",
+    "displayName": "Ruby",
+    "extension": "Gemfile"
+  },
+  ".rs": {
+    "language": "rust",
+    "displayName": "Rust",
+    "extension": ".rs"
+  },
+  ".rlib": {
+    "language": "rust",
+    "displayName": "Rust",
+    "extension": ".rlib"
+  },
+  ".sb": {
+    "language": "sb",
+    "displayName": "Small Basic",
+    "extension": ".sb"
+  },
+  ".scala": {
+    "language": "scala",
+    "displayName": "Scala",
+    "extension": ".scala"
+  },
+  ".sc": {
+    "language": "scala",
+    "displayName": "Scala",
+    "extension": ".sc"
+  },
+  ".sbt": {
+    "language": "scala",
+    "displayName": "Scala",
+    "extension": ".sbt"
+  },
+  ".scm": {
+    "language": "scheme",
+    "displayName": "scheme",
+    "extension": ".scm"
+  },
+  ".ss": {
+    "language": "scheme",
+    "displayName": "scheme",
+    "extension": ".ss"
+  },
+  ".sch": {
+    "language": "scheme",
+    "displayName": "scheme",
+    "extension": ".sch"
+  },
+  ".rkt": {
+    "language": "scheme",
+    "displayName": "scheme",
+    "extension": ".rkt"
+  },
+  ".scss": {
+    "language": "scss",
+    "displayName": "Sass",
+    "extension": ".scss"
+  },
+  ".sh": {
+    "language": "shell",
+    "displayName": "Shell",
+    "extension": ".sh"
+  },
+  ".bash": {
+    "language": "shell",
+    "displayName": "Shell",
+    "extension": ".bash"
+  },
+  ".sol": {
+    "language": "sol",
+    "displayName": "sol",
+    "extension": ".sol"
+  },
+  ".aes": {
+    "language": "aes",
+    "displayName": "aes",
+    "extension": ".aes"
+  },
+  ".sql": {
+    "language": "sql",
+    "displayName": "SQL",
+    "extension": ".sql"
+  },
+  ".st": {
+    "language": "st",
+    "displayName": "StructuredText",
+    "extension": ".st"
+  },
+  ".iecst": {
+    "language": "st",
+    "displayName": "StructuredText",
+    "extension": ".iecst"
+  },
+  ".iecplc": {
+    "language": "st",
+    "displayName": "StructuredText",
+    "extension": ".iecplc"
+  },
+  ".lc3lib": {
+    "language": "st",
+    "displayName": "StructuredText",
+    "extension": ".lc3lib"
+  },
+  ".swift": {
+    "language": "swift",
+    "displayName": "Swift",
+    "extension": ".swift"
+  },
+  ".sv": {
+    "language": "systemverilog",
+    "displayName": "SV",
+    "extension": ".sv"
+  },
+  ".svh": {
+    "language": "systemverilog",
+    "displayName": "SV",
+    "extension": ".svh"
+  },
+  ".v": {
+    "language": "verilog",
+    "displayName": "V",
+    "extension": ".v"
+  },
+  ".vh": {
+    "language": "verilog",
+    "displayName": "V",
+    "extension": ".vh"
+  },
+  ".tcl": {
+    "language": "tcl",
+    "displayName": "tcl",
+    "extension": ".tcl"
+  },
+  ".twig": {
+    "language": "twig",
+    "displayName": "Twig",
+    "extension": ".twig"
+  },
+  ".ts": {
+    "language": "typescript",
+    "displayName": "TypeScript",
+    "extension": ".ts"
+  },
+  ".tsx": {
+    "language": "typescript",
+    "displayName": "TypeScript",
+    "extension": ".tsx"
+  },
+  ".vb": {
+    "language": "vb",
+    "displayName": "Visual Basic",
+    "extension": ".vb"
+  },
+  ".xml": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".xml"
+  },
+  ".dtd": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".dtd"
+  },
+  ".ascx": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".ascx"
+  },
+  ".csproj": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".csproj"
+  },
+  ".config": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".config"
+  },
+  ".wxi": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".wxi"
+  },
+  ".wxl": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".wxl"
+  },
+  ".wxs": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".wxs"
+  },
+  ".xaml": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".xaml"
+  },
+  ".svg": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".svg"
+  },
+  ".svgz": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".svgz"
+  },
+  ".opf": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".opf"
+  },
+  ".xsl": {
+    "language": "xml",
+    "displayName": "XML",
+    "extension": ".xsl"
+  },
+  ".yaml": {
+    "language": "yaml",
+    "displayName": "YAML",
+    "extension": ".yaml"
+  },
+  ".yml": {
+    "language": "yaml",
+    "displayName": "YAML",
+    "extension": ".yml"
+  },
+
+  ".pm": {
+    "language": "perl",
+    "displayName": "Perl",
+    "extension": ".pm"
+  },
+  ".prettierrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "extension": ".prettierrc"
+  },
+  ".vue": {
+    "language": "html",
+    "displayName": "HTML",
+    "extension": ".vue"
+  },
+  ".gitignore": {
+    "language": "ini",
+    "displayName": ".gitignore",
+    "extension": ".gitignore"
+  },
+  ".stylelintrc": {
+    "language": "json",
+    "displayName": "JSON",
+    "extension": ".stylelintrc"
+  },
+  ".png": {
+    "language": "image",
+    "displayName": "Image",
+    "extension": ".png"
+  },
+  ".jpg": {
+    "language": "image",
+    "displayName": "Image",
+    "extension": ".jpg"
+  },
+  ".jpeg": {
+    "language": "image",
+    "displayName": "Image",
+    "extension": ".jpeg"
+  },
+  ".ico": {
+    "language": "image",
+    "displayName": "Image",
+    "extension": ".ico"
+  },
+  ".gif": {
+    "language": "image",
+    "displayName": "GIF",
+    "extension": ".gif"
+  },
+  ".pdf": {
+    "language": "pdf",
+    "displayName": "PDF",
+    "extension": ".pdf"
+  },
+  ".cfg": {
+    "language": "ini",
+    "displayName": "Ini",
+    "extension": ".cfg"
+  },
+  "readme": {
+    "language": "markdown",
+    "displayName": "Markdown",
+    "extension": ".md"
+  }
 }

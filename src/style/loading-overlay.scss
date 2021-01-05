@@ -1,0 +1,31 @@
+.loading-overlay {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: var(--color-app-bg);
+
+  .loading-icon {
+    animation: spin 1s linear infinite;
+    color: var(--color-text-secondary);
+    width: 4em;
+    height: 4em;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate((360deg));
+    }
+  }
+
+  .loading-text {
+    margin-top: 2em;
+    color: var(--color-text-secondary);
+  }
+}

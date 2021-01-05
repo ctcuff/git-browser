@@ -9,14 +9,31 @@ import PropTypes from 'prop-types'
 import CodeMirror from 'codemirror'
 // import { UnControlled as CodeMirror } from 'react-codemirror2'
 import { getLanguageFromFileName } from '../scripts/util'
+import { noop } from '../scripts/util'
+import LoadingOverlay from './LoadingOverlay'
+import { AiOutlineEye } from 'react-icons/ai'
+import FileRenderer from './FileRenderer'
+import Logger from '../scripts/logger'
 
 class Editor extends React.Component {
   constructor(props) {
     super(props)
+
+    this.state = {
+      isLoading: false,
+      isEncoding: false,
+      decodedContent: null
+    }
+
+    this.encodeWorker = new Worker('../scripts/encode-decode-worker.js', {
+      type: 'module'
+    })
+
     this.editorRef = React.createRef()
-    this.updateEditor = this.updateEditor.bind(this)
     this.getTheme = this.getTheme.bind(this)
     this.initEditor = this.initEditor.bind(this)
+    this.renderPreviewButton = this.renderPreviewButton.bind(this)
+    this.forceRenderPreview = this.forceRenderPreview.bind(this)
   }
 
   getTheme(colorScheme) {
@@ -47,12 +64,12 @@ class Editor extends React.Component {
     const { content, fileName } = this.props
     let language = getLanguageFromFileName(fileName)
 
-    console.log({ language })
+    Logger.info({ language })
 
     try {
       await import(`codemirror/mode/${language}/${language}`)
     } catch (e) {
-      console.warn(e)
+      Logger.warn(e)
       language = ''
     }
 
@@ -66,9 +83,9 @@ class Editor extends React.Component {
       theme: 'github',
       scrollbarStyle: 'overlay'
     })
-  }
 
-  componentWillUnmount() {}
+    this.setState({ isLoading: false })
+  }
 
   updateEditor() {
     // const { fileName, content } = this.props
@@ -90,14 +107,81 @@ class Editor extends React.Component {
     //     }}
     //   />
     // )
-    return <div className="editor" ref={this.editorRef}></div>
+    return (
+      <div className="editor" ref={this.editorRef}>
+        {this.state.isLoading && (
+          <LoadingOverlay
+            text="Loading viewer..."
+            className="editor-loading-overlay"
+          />
+        )}
+        {this.renderPreviewButton()}
+      </div>
+    )
+  }
+
+  renderPreviewButton() {
+    if (
+      !FileRenderer.validEditorExtensions.includes(this.props.extension) ||
+      this.state.isLoading
+    ) {
+      return null
+    }
+
+    return (
+      <button
+        className="file-preview-btn"
+        title="Preview file"
+        onClick={this.forceRenderPreview}
+      >
+        <AiOutlineEye />
+      </button>
+    )
+  }
+
+  // Let the App component know that ths file should not
+  // be rendered by the editor
+  forceRenderPreview() {
+    if (this.state.isEncoding) {
+      return
+    }
+    const { content, onForceRender } = this.props
+
+    this.setState({
+      isEncoding: true,
+      isLoading: true
+    })
+
+    this.encodeWorker.postMessage({
+      message: content,
+      type: 'encode'
+    })
+
+    this.encodeWorker.onmessage = event => {
+      onForceRender(event.data, false)
+    }
+
+    this.encodeWorker.onerror = event => {
+      Logger.error('Error encoding file', event.message)
+      this.setState({
+        isLoading: false,
+        isEncoding: false
+      })
+    }
   }
 }
 
 Editor.propTypes = {
-  fileName: PropTypes.string,
-  content: PropTypes.string,
-  colorScheme: PropTypes.string
+  extension: PropTypes.string.isRequired,
+  language: PropTypes.string.isRequired,
+  fileName: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
+  colorScheme: PropTypes.string.isRequired,
+  onForceRender: PropTypes.func
+}
+
+Editor.defaultProps = {
+  onForceRender: noop
 }
 
 export default Editor

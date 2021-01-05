@@ -22,7 +22,7 @@
   "rules": {
     "semi": ["warn", "never"],
     "no-console": "warn",
-    "no-unused-vars": ["error", { "args": "after-used" }],
+    "no-unused-vars": ["warn", { "args": "after-used" }],
     "no-mixed-spaces-and-tabs": "error",
     "no-trailing-spaces": "error",
     "no-var": "error",

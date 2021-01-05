@@ -1,5 +1,8 @@
+@import '../style/mixins/media';
+
 .app {
-  height: calc(100vh - var(--gutter-height));
+  overflow: hidden;
+  height: calc((var(--vh, 1vh) * 100) - var(--gutter-height));
   display: flex;
   background-color: var(--color-app-bg);
 
@@ -9,64 +12,34 @@
     height: 100%;
     overflow: hidden;
     position: relative;
-
-    .resize-panel {
-      position: absolute;
-      left: 0;
-      width: 8px;
-      opacity: 0;
-      height: 100%;
-      cursor: col-resize;
-      z-index: 99999;
-      background-color: var(--color-scrollbar);
-      transition: opacity 0.2s ease-in-out;
-
-      &:hover {
-        opacity: 0.5;
-      }
-
-      &:active {
-        // The state when the mouse is down on the resize panel
-        opacity: 1;
-      }
-    }
-
-    h1 {
-      margin: 0;
-    }
   }
 
-  .image-wrapper {
-    height: 100%;
-    width: 100%;
+  .landing {
     display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
     justify-content: center;
     align-items: center;
+    padding: 0 2em;
+    color: var(--color-text-primary);
+    text-align: center;
 
-    img {
-      width: 90%;
-      height: 90%;
-      object-fit: contain;
+    .heading {
+      margin: 1em 0 0 0;
+    }
+
+    .logo {
+      width: 10em;
     }
   }
 
-  .resize-overlay {
-    display: none;
-  }
-}
-
-.is-resizing {
-  // Adds an overlay to the app so that content won't get selected
-  // when the user is dragging the resize panel
-  .resize-overlay {
-    display: block;
+  .app-loading-overlay {
     position: absolute;
+    z-index: 1;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: transparent;
-    z-index: 3;
-    cursor: col-resize;
   }
 }
