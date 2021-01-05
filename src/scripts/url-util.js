@@ -1,4 +1,3 @@
-import { OAUTH_TOKEN } from '../config'
 import URI from 'urijs'
 
 const BASE_API_URL = 'https://api.github.com'
@@ -6,6 +5,7 @@ const BASE_REPO_URL = BASE_API_URL + '/repos'
 
 const URLUtil = {
   request(url) {
+    const OAUTH_TOKEN = process.env.OAUTH_TOKEN
     const config = {
       headers: {}
     }

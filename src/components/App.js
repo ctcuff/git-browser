@@ -31,10 +31,6 @@ class App extends React.Component {
       isLoading: false
     }
 
-    this.decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
-      type: 'module'
-    })
-
     this.onSelectFile = this.onSelectFile.bind(this)
     this.onTabClosed = this.onTabClosed.bind(this)
     this.closeAllTabs = this.closeAllTabs.bind(this)
@@ -51,13 +47,9 @@ class App extends React.Component {
   componentDidMount() {
     this.updateViewport()
     window.addEventListener('resize', this.updateViewport)
-
-    // Lazy load the editor so the Editor component can render quicker
-    import('monaco-editor/esm/vs/editor/editor.api.js')
   }
 
   componentWillUnmount() {
-    this.decodeWorker.terminate()
     window.removeEventListener('resize', this.updateViewport)
   }
 
@@ -122,26 +114,33 @@ class App extends React.Component {
 
         // Try to decode the file to see if it can be rendered by the
         // editor. If it can't, pass it to the FileRenderer
-        this.decodeWorker.postMessage({
+        const decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
+          type: 'module'
+        })
+
+        decodeWorker.postMessage({
           message: content,
           type: 'decode'
         })
 
-        this.decodeWorker.onerror = event => {
+        decodeWorker.onerror = event => {
           openedTabs[tabIndex].hasError = true
           openedTabs[tabIndex].isLoading = false
 
           this.setState({ openedTabs: this.state.openedTabs })
 
           Logger.error(event.message)
+          decodeWorker.terminate()
         }
 
-        this.decodeWorker.onmessage = event => {
+        decodeWorker.onmessage = event => {
           openedTabs[tabIndex].content = event.data || content
           openedTabs[tabIndex].canEditorRender = event.data !== null
           openedTabs[tabIndex].isLoading = false
 
           this.setState({ openedTabs: this.state.openedTabs })
+
+          decodeWorker.terminate()
         }
       })
       .catch(err => {

@@ -8,7 +8,7 @@ import { AiOutlineSearch } from 'react-icons/ai'
 import debounce from 'lodash/debounce'
 import Logger from '../../scripts/logger'
 
-const MAX_ROW_COUNT = 1000
+const MAX_ROW_COUNT = 500
 const PARSE_ERROR = 'PARSE_ERROR'
 const MAX_ROW_ERROR = 'MAX_ROW_ERROR'
 
@@ -16,27 +16,35 @@ const CSVRenderer = props => {
   const [isLoading, setLoading] = useState(true)
   const [errors, setErrors] = useState(new Set())
   const [inputValue, setInputValue] = useState('')
-  const [rowCount, setRowCount] = useState(0)
   const tableBodyRef = useRef(null)
   const debouncedFilter = useCallback(debounce(filterTable, 100), [])
-  const [tableData, setTableData] = useState({
-    headers: [],
-    rows: [[]]
-  })
+  const [tableHeaders, setTableHeaders] = useState([])
+  const [tableRows, setTableRows] = useState([
+    {
+      rowArray: [],
+      display: ''
+    }
+  ])
 
   const onChange = event => {
     const value = event.currentTarget.value
     setInputValue(value)
-    debouncedFilter(value.toLowerCase())
+    debouncedFilter(tableRows, value.toLowerCase())
   }
 
-  function filterTable(value) {
-    const tr = tableBodyRef.current.querySelectorAll('tr')
+  function filterTable(tableRows, value) {
+    const rows = tableRows.map(data => {
+      const match = data.rowArray.find(
+        str => str.toLowerCase().indexOf(value) > -1
+      )
 
-    for (let i = 0; i < tr.length; i++) {
-      const match = tr[i].innerText.toLowerCase().indexOf(value) > -1
-      tr[i].style.display = match ? '' : 'none'
-    }
+      return {
+        rowArray: data.rowArray,
+        display: match ? '' : 'none'
+      }
+    })
+
+    setTableRows(rows)
   }
 
   useEffect(() => {
@@ -44,28 +52,29 @@ const CSVRenderer = props => {
       skipEmptyLines: true,
       worker: true,
       comments: false,
+      preview: MAX_ROW_COUNT + 1,
       delimitersToGuess: [
         ',',
         '\t',
         '|',
         ';',
+        ':',
         Papa.RECORD_SEP,
-        Papa.UNIT_SEP,
-        ':'
+        Papa.UNIT_SEP
       ],
-      complete(result) {
-        const rows = result.data.slice(1)
+      complete(results) {
+        setTableHeaders(results.data[0])
+        setTableRows(
+          results.data.slice(1).map(row => ({
+            rowArray: row,
+            display: ''
+          }))
+        )
 
-        if (rows.length > MAX_ROW_COUNT) {
+        if (results.meta.truncated) {
           setErrors(prevState => new Set([...prevState, MAX_ROW_ERROR]))
         }
 
-        setTableData({
-          headers: result.data[0],
-          rows: rows.slice(0, MAX_ROW_COUNT)
-        })
-
-        setRowCount(rows.length)
         setLoading(false)
       },
       error(err) {
@@ -76,10 +85,10 @@ const CSVRenderer = props => {
   }, [])
 
   if (isLoading) {
-    return <LoadingOverlay text="Loading CSV..." />
+    return <LoadingOverlay text="Rendering CSV..." />
   }
 
-  if (tableData.headers.length === 0) {
+  if (tableHeaders.length === 0) {
     return <ErrorOverlay message="No data to display." />
   }
 
@@ -104,16 +113,16 @@ const CSVRenderer = props => {
         <thead>
           <tr data-header>
             <td className="line-number" data-line-number="0" />
-            {tableData.headers.map((value, index) => (
+            {tableHeaders.map((value, index) => (
               <th key={index}>{value}</th>
             ))}
           </tr>
         </thead>
         <tbody ref={tableBodyRef}>
-          {tableData.rows.map((row, index) => (
-            <tr key={`row-${index}`}>
+          {tableRows.map((data, index) => (
+            <tr key={`row-${index}`} style={{ display: data.display }}>
               <td className="line-number" data-line-number={index + 1} />
-              {row.map((value, index) => (
+              {data.rowArray.map((value, index) => (
                 <td key={index}>{value}</td>
               ))}
             </tr>
@@ -122,8 +131,7 @@ const CSVRenderer = props => {
       </table>
       {errors.has(MAX_ROW_ERROR) && (
         <div className="max-row-error">
-          For performance reasons, only {MAX_ROW_COUNT.toLocaleString()} rows
-          were displayed. {rowCount.toLocaleString()} rows total.
+          For performance reasons, only {MAX_ROW_COUNT} rows were displayed.
         </div>
       )}
     </div>
