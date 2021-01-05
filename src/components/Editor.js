@@ -3,12 +3,9 @@ import '../style/editor.scss'
 import 'codemirror/addon/scroll/simplescrollbars.css'
 import 'codemirror/lib/codemirror.css'
 import '../style/github-theme.scss'
-import 'codemirror/addon/scroll/simplescrollbars'
 import React from 'react'
 import PropTypes from 'prop-types'
 import CodeMirror from 'codemirror'
-// import { UnControlled as CodeMirror } from 'react-codemirror2'
-import { getLanguageFromFileName } from '../scripts/util'
 import { noop } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
 import { AiOutlineEye } from 'react-icons/ai'
@@ -43,10 +40,6 @@ class Editor extends React.Component {
   componentDidUpdate(prevProps) {
     const { content } = this.props
 
-    // if (prevProps.colorScheme !== colorScheme) {
-    //   monacoEditor.setTheme(this.getTheme(colorScheme))
-    // }
-
     if (prevProps.content === content) {
       return
     }
@@ -57,20 +50,25 @@ class Editor extends React.Component {
   }
 
   componentDidMount() {
-    this.initEditor()
+    Promise.all([
+      import('codemirror/addon/scroll/simplescrollbars'),
+      import('codemirror/addon/display/autorefresh'),
+      import('codemirror/mode/meta')
+    ]).finally(() => this.initEditor())
   }
 
   async initEditor() {
     const { content, fileName } = this.props
-    let language = getLanguageFromFileName(fileName)
 
-    Logger.info({ language })
+    const mimeType = CodeMirror.findModeByFileName(fileName) || {}
+    const language = mimeType.mode || ''
 
-    try {
-      await import(`codemirror/mode/${language}/${language}`)
-    } catch (e) {
-      Logger.warn(e)
-      language = ''
+    if (language) {
+      try {
+        await import(`codemirror/mode/${language}/${language}`)
+      } catch (e) {
+        Logger.warn(e)
+      }
     }
 
     this.editor = CodeMirror(this.editorRef.current, {
@@ -78,10 +76,10 @@ class Editor extends React.Component {
       mode: language,
       lineNumbers: true,
       readOnly: true,
-      cursorBlinkRate: 0,
       fixedGutter: true,
       theme: 'github',
-      scrollbarStyle: 'overlay'
+      scrollbarStyle: 'overlay',
+      autoRefresh: true
     })
 
     this.setState({ isLoading: false })
@@ -93,20 +91,6 @@ class Editor extends React.Component {
   }
 
   render() {
-    // return (
-    //   <CodeMirror
-    //     className="editor"
-    //     value={this.props.content}
-    //     ref={this.editorRef}
-    //     options={{
-    //       mode: 'javascript',
-    //       theme: 'default',
-    //       lineNumbers: true,
-    //       readOnly: true,
-    //       cursorBlinkRate: 0
-    //     }}
-    //   />
-    // )
     return (
       <div className="editor" ref={this.editorRef}>
         {this.state.isLoading && (
