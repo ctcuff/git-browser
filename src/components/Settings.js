@@ -12,14 +12,22 @@ import {
 import { setTheme } from '../store/actions/settings'
 
 const Settings = props => {
+  let timeoutId = null
   const { isLoggedIn, username, isLoading, rateLimit } = props
   const action = isLoggedIn ? props.logout : props.login
 
   const toggleTheme = () => {
     const isDark = document.body.className === 'theme-dark'
     const theme = isDark ? 'theme-light' : 'theme-dark'
+    document.documentElement.classList.add('is-transitioning')
 
     props.setTheme(theme)
+
+    clearTimeout(timeoutId)
+
+    timeoutId = setTimeout(() => {
+      document.documentElement.classList.remove('is-transitioning')
+    }, 1000)
   }
 
   useEffect(() => {

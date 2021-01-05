@@ -69,6 +69,12 @@ a {
   color: var(--color-text-link);
 }
 
+// Addded to the root when changing themes to give a smooth transition.
+// This class is only kept for the duration of the transition.
+.is-transitioning * {
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
 // Overrides the box shadow at the bottom of the tab view
 // that monaco adds when scrolling down in the editor
 .monaco-editor .scroll-decoration {

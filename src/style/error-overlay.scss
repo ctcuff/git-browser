@@ -7,6 +7,7 @@
   font-size: 1em;
   height: 100%;
   width: 100%;
+  color: var(--color-text-primary);
 
   .reload-btn {
     background-color: transparent;
@@ -14,7 +15,7 @@
     cursor: pointer;
     font-size: inherit;
     font-family: inherit;
-    color: blue;
+    color: var(--color-text-link);
     margin: 0;
   }
 
