@@ -10,7 +10,6 @@ import debounce from 'lodash/debounce'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import FileRenderer from './FileRenderer'
-import ResizePanel from './ResizePanel'
 import gitBrowserIconDark from '../assets/img/git-browser-icon-dark.svg'
 import gitBrowserIconLight from '../assets/img/git-browser-icon-light.svg'
 import Logger from '../scripts/logger'
@@ -18,7 +17,7 @@ import { connect } from 'react-redux'
 
 // Don't allow API requests to files that meet/exceed this size
 // (in bytes) to avoid network strain and long render times
-const MAX_FILE_SIZE = 30_000_000 // 30 MB
+const MAX_FILE_SIZE = 20_000_000 // 20 MB
 
 class App extends React.Component {
   constructor(props) {
@@ -33,10 +32,6 @@ class App extends React.Component {
       isLoading: false
     }
 
-    this.decodeWorker = new Worker('../scripts/decode-worker.js', {
-      type: 'module'
-    })
-
     this.onSelectFile = this.onSelectFile.bind(this)
     this.onTabClosed = this.onTabClosed.bind(this)
     this.closeAllTabs = this.closeAllTabs.bind(this)
@@ -47,18 +42,15 @@ class App extends React.Component {
     this.loadFile = this.loadFile.bind(this)
     this.toggleLoadingOverlay = this.toggleLoadingOverlay.bind(this)
     this.onToggleRenderable = this.onToggleRenderable.bind(this)
+    this.onSearchFinished = this.onSearchFinished.bind(this)
   }
 
   componentDidMount() {
     this.updateViewport()
     window.addEventListener('resize', this.updateViewport)
-
-    // Lazy load the editor so the Editor component can render quicker
-    import('monaco-editor/esm/vs/editor/editor.api.js')
   }
 
   componentWillUnmount() {
-    this.decodeWorker.terminate()
     window.removeEventListener('resize', this.updateViewport)
   }
 
@@ -123,23 +115,33 @@ class App extends React.Component {
 
         // Try to decode the file to see if it can be rendered by the
         // editor. If it can't, pass it to the FileRenderer
-        this.decodeWorker.postMessage(content)
+        const decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
+          type: 'module'
+        })
 
-        this.decodeWorker.onerror = event => {
+        decodeWorker.postMessage({
+          message: content,
+          type: 'decode'
+        })
+
+        decodeWorker.onerror = event => {
           openedTabs[tabIndex].hasError = true
           openedTabs[tabIndex].isLoading = false
 
           this.setState({ openedTabs: this.state.openedTabs })
 
-          Logger.error(event)
+          Logger.error(event.message)
+          decodeWorker.terminate()
         }
 
-        this.decodeWorker.onmessage = event => {
+        decodeWorker.onmessage = event => {
           openedTabs[tabIndex].content = event.data || content
           openedTabs[tabIndex].canEditorRender = event.data !== null
           openedTabs[tabIndex].isLoading = false
 
           this.setState({ openedTabs: this.state.openedTabs })
+
+          decodeWorker.terminate()
         }
       })
       .catch(err => {
@@ -259,9 +261,16 @@ class App extends React.Component {
   closeAllTabs() {
     this.setState({
       openedFilePaths: new Set(),
-      openedTabs: [],
-      isLoading: false
+      openedTabs: []
     })
+  }
+
+  onSearchFinished(hasError) {
+    this.setState({ isLoading: false })
+
+    if (!hasError) {
+      this.closeAllTabs()
+    }
   }
 
   toggleLoadingOverlay() {
@@ -269,7 +278,9 @@ class App extends React.Component {
   }
 
   setActiveTabIndex(activeTabIndex) {
-    this.setState({ activeTabIndex })
+    if (this.state.activeTabIndex !== activeTabIndex) {
+      this.setState({ activeTabIndex })
+    }
   }
 
   render() {
@@ -283,49 +294,47 @@ class App extends React.Component {
       <div className="app">
         <ExplorerPanel
           onSelectFile={this.onSelectFile}
-          onSearchFinished={this.closeAllTabs}
+          onSearchFinished={this.onSearchFinished}
           onSearchStarted={this.toggleLoadingOverlay}
         />
         <div className="right">
-          <ResizePanel />
-          {isLoading ? (
-            <LoadingOverlay text="Loading repository..." />
-          ) : (
-            <React.Fragment>
-              {openedTabs.length === 0 && (
-                <div className="landing">
-                  <img src={icon} alt="Git Browser icon" className="logo" />
-                  <h2 className="heading">Welcome to Git Browser</h2>
-                  <div className="description">
-                    <p>To get started, enter a GitHub URL in the search bar.</p>
-                    <p>
-                      If you haven&apos;t already, log in to get access to a
-                      higher{' '}
-                      <a
-                        href="https://docs.github.com/en/free-pro-team@latest/rest/reference/rate-limit"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        rate limit.
-                      </a>
-                    </p>
-                  </div>
-                </div>
-              )}
-              <TabView
-                onTabClosed={this.onTabClosed}
-                activeTabIndex={activeTabIndex}
-                onSelectTab={this.setActiveTabIndex}
-                onCloseAllClick={this.closeAllTabs}
-              >
-                {openedTabs.map((tab, index) => (
-                  <Tab title={tab.title} key={tab.path} hint={tab.title}>
-                    {this.renderTabContent(tab, index)}
-                  </Tab>
-                ))}
-              </TabView>
-            </React.Fragment>
+          {isLoading && (
+            <LoadingOverlay
+              text="Loading repository..."
+              className="app-loading-overlay"
+            />
           )}
+          {openedTabs.length === 0 && (
+            <div className="landing">
+              <img src={icon} alt="Git Browser icon" className="logo" />
+              <h2 className="heading">Welcome to Git Browser</h2>
+              <div className="description">
+                <p>To get started, enter a GitHub URL in the search bar.</p>
+                <p>
+                  If you haven&apos;t already, log in to get access to a higher{' '}
+                  <a
+                    href="https://docs.github.com/en/free-pro-team@latest/rest/reference/rate-limit"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    rate limit.
+                  </a>
+                </p>
+              </div>
+            </div>
+          )}
+          <TabView
+            onTabClosed={this.onTabClosed}
+            activeTabIndex={activeTabIndex}
+            onSelectTab={this.setActiveTabIndex}
+            onCloseAllClick={this.closeAllTabs}
+          >
+            {openedTabs.map((tab, index) => (
+              <Tab title={tab.title} key={tab.path} hint={tab.title}>
+                {this.renderTabContent(tab, index)}
+              </Tab>
+            ))}
+          </TabView>
         </div>
       </div>
     )

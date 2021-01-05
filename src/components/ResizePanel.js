@@ -2,13 +2,12 @@ import '../style/resize-panel.scss'
 import React from 'react'
 import { parseCSSVar, setCSSVar } from '../scripts/util'
 import { BsThreeDotsVertical } from 'react-icons/bs'
+import PropTypes from 'prop-types'
 
 // Used to ensure the editor panel stays within a certain size
 const clamp = (min, value, max) => Math.max(min, Math.min(value, max))
 
 // Controls the width of the explorer panel when dragged.
-// This is a separate component so that the resize panel
-// won't overlap the scrollbar in the explorer panel.
 class ResizePanel extends React.Component {
   constructor(props) {
     super(props)
@@ -30,14 +29,15 @@ class ResizePanel extends React.Component {
   }
 
   resize(event) {
-    // The smallest the panel is allowed to be before it snaps to 0px
-    const absoluteMin = 80
+    // The smallest the explorer is allowed to be before it snaps closed
+    const absoluteMin = 150
     const absoluteMax = document.body.clientWidth - 100
     const diff = this.mousePosition - event.x
     const panelSize = parseCSSVar('--file-explorer-width')
+    const { isExplorerOpen, onBreakPointClose, onBreakPointOpen } = this.props
 
-    // Ensures that the panel can only shrink to the size of
-    // the body - 60px and grow only to the size of the page - 32px
+    // Ensures that the panel can only shrink to the size of body - absoluteMin
+    // and grow only to the size of the page - absoluteMax
     let newSize = clamp(absoluteMin, panelSize - diff, absoluteMax)
 
     // Setting the mouse position to the new size of the panel
@@ -46,9 +46,13 @@ class ResizePanel extends React.Component {
     this.mousePosition = newSize
 
     // Snaps the panel closed when the cursor position
-    // reaches two thirds the panel's absolute minimum size
-    if (event.x < (2 * absoluteMin) / 3) {
-      newSize = 0
+    // reaches half the panel's absolute minimum size
+    if (event.x < absoluteMin / 2) {
+      if (isExplorerOpen) {
+        onBreakPointClose()
+      }
+    } else if (!isExplorerOpen) {
+      onBreakPointOpen()
     }
 
     setCSSVar('--file-explorer-width', newSize + 'px')
@@ -78,6 +82,12 @@ class ResizePanel extends React.Component {
       </div>
     )
   }
+}
+
+ResizePanel.propTypes = {
+  isExplorerOpen: PropTypes.bool.isRequired,
+  onBreakPointClose: PropTypes.func.isRequired,
+  onBreakPointOpen: PropTypes.func.isRequired
 }
 
 export default ResizePanel

@@ -10,7 +10,9 @@ ReactModal.setAppElement('#app')
 const PreviewModal = props => {
   const [isOpen, setOpen] = useState(props.isOpen)
 
-  useEffect(() => setOpen(props.isOpen), [props.isOpen])
+  useEffect(() => {
+    setOpen(props.isOpen)
+  }, [props.isOpen])
 
   if (!isOpen) {
     return null

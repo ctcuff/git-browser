@@ -8,21 +8,6 @@
   align-items: center;
   flex-direction: column;
 
-  .unsupported {
-    text-align: center;
-    margin: 0 2em;
-  }
-
-  .render-editor-btn {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: inherit;
-    font-family: inherit;
-    color: blue;
-    margin: 0;
-  }
-
   .editor-preview-btn {
     position: absolute;
     bottom: 0;

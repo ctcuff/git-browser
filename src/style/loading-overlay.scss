@@ -5,6 +5,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  background-color: var(--color-app-bg);
 
   .loading-icon {
     animation: spin 1s linear infinite;

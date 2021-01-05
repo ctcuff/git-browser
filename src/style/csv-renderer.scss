@@ -1,0 +1,124 @@
+.csv-renderer {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+  color: var(--color-text-primary);
+
+  table,
+  td,
+  th {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  td,
+  th {
+    border: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  table {
+    padding: 0;
+    margin: 1em 0;
+    width: 99%;
+    font-size: 0.85em;
+  }
+
+  td {
+    padding: 0.5em;
+  }
+
+  th {
+    margin: 0;
+    padding: 0.5em 1em;
+    background-color: var(--color-primary);
+    text-align: left;
+  }
+
+  tr:nth-child(even) {
+    background-color: var(--color-markdown-table-bg);
+  }
+
+  .line-number {
+    width: 10px;
+    padding: 0.6em 1em;
+    text-align: right;
+    background: var(--color-primary);
+    border: none;
+
+    &[data-line-number='0'] {
+      visibility: hidden;
+    }
+
+    &::before {
+      content: attr(data-line-number);
+      color: var(--color-text-muted);
+      font-size: 0.85em;
+    }
+  }
+
+  .search {
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0.5em;
+    z-index: 2;
+    background-color: var(--color-primary);
+    border-bottom: 1px solid var(--color-border);
+
+    input {
+      width: 100%;
+      border: none;
+      appearance: none;
+      color: var(--color-text-secondary);
+      background-color: var(--color-primary);
+      font-size: 0.8em;
+
+      &::placeholder {
+        color: var(--color-text-muted);
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    svg {
+      color: var(--color-text-primary);
+      margin-right: 0.5em;
+      width: 1.1em;
+      height: 1.1em;
+    }
+  }
+
+  .csv-render-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.9em;
+    position: sticky;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
+
+  .max-row-error {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    font-size: 0.9em;
+    padding: 1.2em 1em;
+    position: sticky;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+}

@@ -1,5 +1,5 @@
 :root {
-  --default-explorer-width: 250px;
+  --default-explorer-width: 270px;
   --file-explorer-width: var(--default-explorer-width);
   --scrollbar-height: 8px;
   --tab-bar-height: 41px;
@@ -17,6 +17,7 @@
   --color-text-primary: #000000;
   --color-text-secondary: #353535;
   --color-text-link: #0366d6;
+  --color-text-muted: #888888;
   --color-border: #dfe3e6;
   --color-tab-border-bottom-active: #001799;
   --color-collapse-header: #fafbfc;
@@ -24,7 +25,7 @@
   --color-gutter: #007acc;
   --color-scrollbar: rgba(0, 0, 0, 0.45);
   --color-markdown-table-bg: #eff7ff;
-  --color-markdown-code-bg: rgba(27, 31, 35, 5%);
+  --color-markdown-code-bg: rgba(27, 31, 35, 0.05);
   --color-markdown-blockquote: #6a737d;
 }
 
@@ -38,6 +39,7 @@
   --color-text-primary: #ffffff;
   --color-text-secondary: #bdbdbd;
   --color-text-link: #58a6ff;
+  --color-text-muted: #888888;
   --color-border: #424242;
   --color-tab-border-bottom-active: #006fcc;
   --color-collapse-header: #2d2d2d;
@@ -45,7 +47,7 @@
   --color-gutter: #007acc;
   --color-scrollbar: rgb(146, 146, 146);
   --color-markdown-table-bg: #171a20;
-  --color-markdown-code-bg: rgb(45, 45, 45, 45%);
+  --color-markdown-code-bg: rgba(45, 45, 45, 0.45);
   --color-markdown-blockquote: #b6bbc0;
 }
 
@@ -56,6 +58,11 @@ body {
     Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji,
     Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
   background-color: var(--color-app-bg);
+  line-height: 22px;
+
+  &.is-resizing {
+    user-select: none;
+  }
 }
 
 a {

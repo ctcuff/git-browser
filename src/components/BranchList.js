@@ -8,8 +8,13 @@ const BranchList = props => {
   const [branches, setBranches] = useState(props.branches)
   const [currentBranch, setCurrentBranch] = useState(props.currentBranch)
 
-  useEffect(() => setBranches(props.branches), [props.branches])
-  useEffect(() => setCurrentBranch(props.currentBranch), [props.currentBranch])
+  useEffect(() => {
+    setBranches(props.branches)
+  }, [props.branches])
+
+  useEffect(() => {
+    setCurrentBranch(props.currentBranch)
+  }, [props.currentBranch])
 
   return (
     <ul className="branch-list">
