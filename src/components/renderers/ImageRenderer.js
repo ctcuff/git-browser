@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import Logger from '../../scripts/logger'
+import { GrGrid } from 'react-icons/gr'
 
 const getMimeType = extension => {
   let type = ''
@@ -39,6 +40,7 @@ const getMimeType = extension => {
 const ImageRenderer = props => {
   const [isLoading, setLoading] = useState(true)
   const [hasError, setError] = useState(false)
+  const [hasGrid, toggleGrid] = useState(true)
   const mimeType = getMimeType(props.extension)
 
   const onImageLoaded = () => {
@@ -55,6 +57,10 @@ const ImageRenderer = props => {
     setError(false)
   }
 
+  const toggleBackgroundClass = () => {
+    toggleGrid(!hasGrid)
+  }
+
   if (hasError) {
     return (
       <ErrorOverlay
@@ -66,7 +72,7 @@ const ImageRenderer = props => {
   }
 
   return (
-    <div className="image-renderer">
+    <div className={`image-renderer ${hasGrid ? 'has-grid' : ''}`}>
       {isLoading && <LoadingOverlay text="Rendering image..." />}
       <img
         src={`data:${mimeType};base64,${props.content}`}
@@ -75,6 +81,9 @@ const ImageRenderer = props => {
         onLoad={onImageLoaded}
         onError={onLoadError}
       />
+      <button className="grid-toggle" onClick={toggleBackgroundClass}>
+        <GrGrid title="Toggle background" />
+      </button>
     </div>
   )
 }
