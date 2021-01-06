@@ -119,7 +119,8 @@ class ExplorerPanel extends React.Component {
           isCodePanelOpen: true
         })
       })
-      .catch(searchErrorMessage => {
+      .catch(err => {
+        const searchErrorMessage = err.message || err
         this.setState({ searchErrorMessage })
         return Promise.reject(searchErrorMessage)
       })

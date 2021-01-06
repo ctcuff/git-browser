@@ -1,21 +1,13 @@
 const initialState = {
-  isOpen: false,
-  body: null
+  isOpen: false
 }
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SHOW_MODAL':
-      return {
-        ...state,
-        isOpen: true,
-        body: action.body
-      }
+      return { isOpen: true }
     case 'HIDE_MODAL':
-      return {
-        ...state,
-        isOpen: false
-      }
+      return { isOpen: false }
     default:
       return state
   }

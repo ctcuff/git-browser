@@ -1,5 +1,6 @@
 import URI from 'urijs'
 import store from '../store'
+import { showModal } from '../store/actions/modal'
 
 const BASE_API_URL = 'https://api.github.com'
 const BASE_REPO_URL = BASE_API_URL + '/repos'
@@ -18,7 +19,18 @@ const URLUtil = {
       config.headers.Authorization = `token ${oauthToken}`
     }
 
-    return fetch(url, config)
+    return new Promise((resolve, reject) => {
+      fetch(url, config)
+        .then(res => {
+          if (res.statusText.toLowerCase().includes('rate limit')) {
+            reject('Rate limit exceeded')
+            store.dispatch(showModal())
+          } else {
+            resolve(res)
+          }
+        })
+        .catch(err => reject(err))
+    })
   },
 
   isUrlValid(url) {

@@ -1,14 +1,8 @@
 const initialState = {
   accessToken: null,
-  avatarUrl: null,
   username: null,
   isLoggedIn: false,
-  isLoading: false,
-  rateLimit: {
-    remaining: 0,
-    limit: 0,
-    reset: null
-  }
+  isLoading: false
 }
 
 const reducer = (state = initialState, action) => {
@@ -19,30 +13,15 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         accessToken: payload.accessToken,
-        avatarUrl: payload.avatarUrl,
         username: payload.username,
         isLoggedIn: true
       }
     case 'LOGOUT':
-      return {
-        ...initialState,
-        rateLimit: {
-          ...state.rateLimit
-        }
-      }
+      return initialState
     case 'TOGGLE_LOADING':
       return {
         ...state,
         isLoading: payload.isLoading
-      }
-    case 'UPDATE_RATE_LIMIT':
-      return {
-        ...state,
-        rateLimit: {
-          remaining: payload.remaining,
-          limit: payload.limit,
-          reset: payload.reset
-        }
       }
     default:
       return state

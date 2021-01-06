@@ -14,10 +14,6 @@ const PreviewModal = props => {
     setOpen(props.isOpen)
   }, [props.isOpen])
 
-  if (!isOpen) {
-    return null
-  }
-
   return (
     <ReactModal
       className="modal"
@@ -26,17 +22,22 @@ const PreviewModal = props => {
       onRequestClose={props.hideModal}
       shouldCloseOnOverlayClick
     >
-      <button className="close-btn" onClick={props.hideModal}>
-        &times;
-      </button>
-      <div className="modal-content">{props.body}</div>
+      <div className="modal-content">
+        <h2 className="modal-title">Rate limit reached</h2>
+        <p className="modal-body">
+          {`Woah there, slow down! Looks like you've reached GitHub's rate limit.
+          But there's good news: authenticated users get much higher rate limit!`}
+        </p>
+        <button className="close-btn" onClick={props.hideModal}>
+          Close
+        </button>
+      </div>
     </ReactModal>
   )
 }
 
 const mapStateToProps = state => ({
-  isOpen: state.modal.isOpen,
-  body: state.modal.body
+  isOpen: state.modal.isOpen
 })
 
 const mapDispatchToProps = {
@@ -45,8 +46,7 @@ const mapDispatchToProps = {
 
 PreviewModal.propTypes = {
   isOpen: PropTypes.bool,
-  hideModal: PropTypes.func,
-  body: PropTypes.oneOfType([PropTypes.node, PropTypes.arrayOf(PropTypes.node)])
+  hideModal: PropTypes.func
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PreviewModal)

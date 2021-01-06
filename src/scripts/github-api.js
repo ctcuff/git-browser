@@ -1,12 +1,11 @@
-import URLUtil, { BASE_API_URL, BASE_REPO_URL } from './url-util'
+import URLUtil, { BASE_REPO_URL } from './url-util'
 import Logger from './logger'
-import store from '../store'
-import { updateRateLimit } from '../store/actions/user'
 
 const ERROR_INVALID_GITHUB_URL = 'Invalid GitHub URL'
 const ERROR_REPO_NOT_FOUND = "Couldn't find repository"
-const UNKNOWN_SEARCH_ERROR = 'An error occurred while searching'
-const UNKNOWN_REQUEST_ERROR = 'An error occurred while making the request'
+const ERROR_FILE_NOT_FOUND = 'File not found'
+const UNKNOWN_ERROR = 'An unknown error occurred'
+const ERROR_BRANCH_NOT_FOUND = "Couldn't find branch"
 
 class GitHubAPI {
   /**
@@ -33,11 +32,8 @@ class GitHubAPI {
           return res.json()
         }
 
-        switch (res.status) {
-          case 404:
-            return Promise.reject(ERROR_REPO_NOT_FOUND)
-          default:
-            return Promise.reject(UNKNOWN_SEARCH_ERROR)
+        if (res.status === 404) {
+          return Promise.reject(ERROR_REPO_NOT_FOUND)
         }
       })
       .then(res => {
@@ -51,7 +47,6 @@ class GitHubAPI {
         Logger.error(err)
         return Promise.reject(err)
       })
-      .finally(() => store.dispatch(updateRateLimit()))
   }
 
   /**
@@ -68,7 +63,6 @@ class GitHubAPI {
           Logger.error(err)
           return Promise.reject(err)
         })
-        .finally(() => store.dispatch(updateRateLimit()))
     }
 
     return this.getBranch(repoUrl, branch)
@@ -87,16 +81,26 @@ class GitHubAPI {
     }
 
     return URLUtil.request(branchUrl)
-      .then(res => res.json())
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+
+        switch (res.status) {
+          case 404:
+            return Promise.reject(ERROR_BRANCH_NOT_FOUND)
+          default:
+            return Promise.reject(UNKNOWN_ERROR)
+        }
+      })
       .then(res => {
         res.branch = branch
         return res
       })
       .catch(err => {
         Logger.error(err)
-        return Promise.reject(UNKNOWN_REQUEST_ERROR)
+        return Promise.reject(err)
       })
-      .finally(() => store.dispatch(updateRateLimit()))
   }
 
   /**
@@ -107,13 +111,23 @@ class GitHubAPI {
    */
   static getFile(url) {
     return URLUtil.request(url)
-      .then(res => res.json())
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+
+        switch (res.status) {
+          case 404:
+            return Promise.reject(ERROR_FILE_NOT_FOUND)
+          default:
+            return Promise.reject(UNKNOWN_ERROR)
+        }
+      })
       .then(res => res.content)
       .catch(err => {
         Logger.error(err)
-        return Promise.reject(UNKNOWN_REQUEST_ERROR)
+        return Promise.reject(err)
       })
-      .finally(() => store.dispatch(updateRateLimit()))
   }
 
   /**
@@ -144,7 +158,7 @@ class GitHubAPI {
           case 404:
             return Promise.reject(ERROR_REPO_NOT_FOUND)
           default:
-            return Promise.reject(UNKNOWN_SEARCH_ERROR)
+            Promise.reject(UNKNOWN_ERROR)
         }
       })
       .then(res => {
@@ -155,29 +169,7 @@ class GitHubAPI {
       })
       .catch(err => {
         Logger.error(err)
-        return Promise.reject(UNKNOWN_REQUEST_ERROR)
-      })
-      .finally(() => store.dispatch(updateRateLimit()))
-  }
-
-  /**
-   * @see https://docs.github.com/en/free-pro-team/rest/reference/rate-limit
-   */
-  static checkRateLimit() {
-    return URLUtil.request(BASE_API_URL + '/rate_limit')
-      .then(res => res.json())
-      .then(res => {
-        const { limit, used, remaining, reset } = res.resources.core
-        return {
-          limit,
-          used,
-          remaining,
-          reset: reset * 1000
-        }
-      })
-      .catch(err => {
-        Logger.error(err)
-        return Promise.reject(UNKNOWN_REQUEST_ERROR)
+        return Promise.reject(err)
       })
   }
 }

@@ -197,7 +197,7 @@ class App extends React.Component {
     }
 
     if (hasError) {
-      return <ErrorOverlay message="Error loading file." />
+      return <ErrorOverlay message={"Couldn't load file."} />
     }
 
     const { extension, language } = getLanguageFromFileName(title)
@@ -311,7 +311,7 @@ class App extends React.Component {
               <div className="description">
                 <p>To get started, enter a GitHub URL in the search bar.</p>
                 <p>
-                  If you haven&apos;t already, log in to get access to a higher{' '}
+                  If you haven&apos;t already, sign in to get access to a higher{' '}
                   <a
                     href="https://docs.github.com/en/free-pro-team@latest/rest/reference/rate-limit"
                     rel="noopener noreferrer"

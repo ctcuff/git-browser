@@ -3,17 +3,12 @@ import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { VscGithub } from 'react-icons/vsc'
-import {
-  login,
-  logout,
-  updateRateLimit,
-  authenticate
-} from '../store/actions/user'
+import { login, logout, loadProfileFromStorage } from '../store/actions/user'
 import { setTheme } from '../store/actions/settings'
 
 const Settings = props => {
   let timeoutId = null
-  const { isLoggedIn, username, isLoading, rateLimit } = props
+  const { isLoggedIn, username, isLoading } = props
   const action = isLoggedIn ? props.logout : props.login
 
   const toggleTheme = () => {
@@ -34,27 +29,18 @@ const Settings = props => {
     const profile = JSON.parse(localStorage.getItem('profile'))
 
     if (profile) {
-      props.authenticate({
+      props.loadProfileFromStorage({
         accessToken: profile.accessToken,
-        avatarUrl: profile.avatarUrl,
         username: profile.username
       })
     }
-
-    props.updateRateLimit()
   }, [])
 
   return (
     <div className="settings">
-      {rateLimit.reset && (
-        <div className="profile-info">
-          <p>
-            Rate limit: {rateLimit.remaining}/{rateLimit.limit}
-          </p>
-          <p>Next reset: {new Date(rateLimit.reset).toLocaleString()}</p>
-          {username && <p>Logged in as {username}</p>}
-        </div>
-      )}
+      <button className="theme-toggle-btn" onClick={toggleTheme}>
+        {props.theme === 'theme-dark' ? 'Light mode' : 'Dark mode'}
+      </button>
       <button
         className={`login-btn ${isLoading ? 'is-loading' : ''}`}
         onClick={action}
@@ -69,9 +55,7 @@ const Settings = props => {
           </React.Fragment>
         )}
       </button>
-      <button className="theme-toggle-btn" onClick={toggleTheme}>
-        {props.theme === 'theme-dark' ? 'Light mode' : 'Dark mode'}
-      </button>
+      {username && <p className="profile-username">Logged in as {username}</p>}
     </div>
   )
 }
@@ -79,8 +63,7 @@ const Settings = props => {
 const mapDispatchToProps = {
   login,
   logout,
-  updateRateLimit,
-  authenticate,
+  loadProfileFromStorage,
   setTheme
 }
 
@@ -98,15 +81,9 @@ Settings.propTypes = {
   login: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  updateRateLimit: PropTypes.func.isRequired,
-  authenticate: PropTypes.func.isRequired,
+  loadProfileFromStorage: PropTypes.func.isRequired,
   setTheme: PropTypes.func.isRequired,
-  theme: PropTypes.oneOf(['theme-dark', 'theme-light']).isRequired,
-  rateLimit: PropTypes.shape({
-    remaining: PropTypes.number,
-    limit: PropTypes.number,
-    reset: PropTypes.number
-  })
+  theme: PropTypes.oneOf(['theme-dark', 'theme-light']).isRequired
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings)

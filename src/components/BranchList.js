@@ -2,7 +2,6 @@ import '../style/branch-list.scss'
 import React, { useState, useEffect } from 'react'
 import { AiOutlineBranches } from 'react-icons/ai'
 import PropTypes from 'prop-types'
-import { noop } from '../scripts/util'
 
 const BranchList = props => {
   const [branches, setBranches] = useState(props.branches)
@@ -23,7 +22,7 @@ const BranchList = props => {
           key={branch.name}
           title={branch.name}
           onClick={() => props.onBranchClick(branch)}
-          className={branch.name === currentBranch ? 'branch--current' : null}
+          className={branch.name === currentBranch ? 'branch--current' : ''}
         >
           <AiOutlineBranches className="branch-icon" />
           <span className="branch-name">{branch.name}</span>
@@ -35,10 +34,10 @@ const BranchList = props => {
 
 BranchList.propTypes = {
   branches: PropTypes.arrayOf(
+    // Matches the shape of the branch object returned by
+    // the GitHub API (except repoUrl is a property that
+    // was manually added)
     PropTypes.shape({
-      // Matches the shape of the branch object returned by
-      // the GitHub API (except repoUrl is a property that
-      // was manually added)
       name: PropTypes.string.isRequired,
       commit: PropTypes.shape({
         sha: PropTypes.string.isRequired,
@@ -48,12 +47,8 @@ BranchList.propTypes = {
       repoUrl: PropTypes.string.isRequired
     })
   ),
-  onBranchClick: PropTypes.func,
+  onBranchClick: PropTypes.func.isRequired,
   currentBranch: PropTypes.string
-}
-
-BranchList.defaultProps = {
-  onBranchClick: noop
 }
 
 export default BranchList

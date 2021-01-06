@@ -1,7 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import Logger from '../../scripts/logger'
-import GitHubAPI from '../../scripts/github-api'
 
 firebase.initializeApp({
   apiKey: process.env.API_KEY,
@@ -21,26 +20,7 @@ const toggleLoading = isLoading => ({
   }
 })
 
-const updateRateLimit = () => {
-  return async function (dispatch) {
-    try {
-      const { limit, remaining, reset } = await GitHubAPI.checkRateLimit()
-
-      dispatch({
-        type: 'UPDATE_RATE_LIMIT',
-        payload: {
-          limit,
-          remaining,
-          reset
-        }
-      })
-    } catch (err) {
-      Logger.error(err)
-    }
-  }
-}
-
-const authenticate = payload => ({
+const loadProfileFromStorage = payload => ({
   type: 'LOGIN',
   payload
 })
@@ -58,20 +38,18 @@ const login = () => {
       const accessToken = res.credential.accessToken
       const payload = { accessToken }
 
-      if (res.additionalUserInfo && res.additionalUserInfo.profile) {
+      if (res.additionalUserInfo) {
         payload.username = res.additionalUserInfo.username
-        payload.avatarUrl = res.additionalUserInfo.profile.avatar_url
       }
 
       localStorage.setItem('profile', JSON.stringify({ ...payload }))
 
-      dispatch(authenticate(payload))
+      dispatch(loadProfileFromStorage(payload))
     } catch (err) {
       Logger.error(err)
     }
 
     dispatch(toggleLoading(false))
-    dispatch(updateRateLimit())
   }
 }
 
@@ -92,8 +70,7 @@ const logout = () => {
     }
 
     dispatch(toggleLoading(false))
-    dispatch(updateRateLimit())
   }
 }
 
-export { login, logout, updateRateLimit, authenticate }
+export { login, logout, loadProfileFromStorage }

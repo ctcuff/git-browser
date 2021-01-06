@@ -1,4 +1,4 @@
-const showModal = body => ({ type: 'SHOW_MODAL', body })
+const showModal = () => ({ type: 'SHOW_MODAL' })
 const hideModal = () => ({ type: 'HIDE_MODAL' })
 
 export { showModal, hideModal }
