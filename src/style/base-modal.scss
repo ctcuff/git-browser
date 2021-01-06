@@ -2,22 +2,15 @@
 
 .modal {
   position: relative;
-  background-color: var(--color-primary);
+  background-color: var(--color-modal-bg);
   z-index: 100;
   box-shadow: 0 25px 50px 0 rgba(62, 62, 62, 0.15);
-  padding: 1em;
+  padding: 0.5em 0;
+  max-width: 30em;
   animation: slide-up 0.4s cubic-bezier(0.38, 0.1, 0.36, 0.9);
 
   * {
     color: var(--color-text-primary);
-  }
-
-  @include desktop() {
-    max-width: 30em;
-  }
-
-  @include mobile() {
-    max-width: 70%;
   }
 
   @keyframes slide-up {
@@ -58,7 +51,7 @@
   }
 
   .close-btn {
-    background-color: var(--color-primary);
+    background-color: transparent;
     border: 1px solid var(--color-text-primary);
     border-radius: 4px;
     padding: 0.5em 1em;
@@ -80,7 +73,7 @@
 }
 
 .modal--overlay {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.3);
   position: absolute;
   display: flex;
   justify-content: center;

@@ -1,6 +1,7 @@
 import URI from 'urijs'
 import store from '../store'
 import { showModal } from '../store/actions/modal'
+import { ModalTypes } from '../components/ModalRoot'
 
 const BASE_API_URL = 'https://api.github.com'
 const BASE_REPO_URL = BASE_API_URL + '/repos'
@@ -24,7 +25,7 @@ const URLUtil = {
         .then(res => {
           if (res.statusText.toLowerCase().includes('rate limit')) {
             reject('Rate limit exceeded')
-            store.dispatch(showModal())
+            store.dispatch(showModal(ModalTypes.RATE_LIMIT))
           } else {
             resolve(res)
           }

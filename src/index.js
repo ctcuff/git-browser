@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import App from './components/App'
 import { Provider } from 'react-redux'
 import store from './store'
-import RateLimitModal from './components/RateLimitModal'
+import ModalRoot from './components/ModalRoot'
 import { setTheme } from './store/actions/settings'
 
 if (module.hot) {
@@ -31,7 +31,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <App />
-      <RateLimitModal />
+      <ModalRoot />
     </Provider>
   </React.StrictMode>,
   document.getElementById('app')
