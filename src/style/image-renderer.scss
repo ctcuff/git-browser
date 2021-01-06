@@ -1,11 +1,16 @@
+@import './mixins/media.scss';
+
 .image-renderer {
   width: 90%;
   height: 90%;
-  background-image: url('../assets/checker.svg');
   background-repeat: repeat;
   display: flex;
   justify-self: center;
   align-items: center;
+
+  &.has-grid {
+    background-image: url('../assets/img/checker.svg');
+  }
 
   img {
     width: 100%;
@@ -17,5 +22,35 @@
   .img--loading {
     border: none;
     display: none;
+  }
+
+  .grid-toggle {
+    position: absolute;
+    right: 1.5em;
+    top: 1em;
+    background-color: transparent;
+    z-index: 1;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-primary);
+
+    @include desktop() {
+      opacity: 0.2;
+      transition: opacity 0.3s ease-in;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    svg {
+      width: 2em;
+      height: 2em;
+
+      @include mobile() {
+        width: 1.5em;
+        height: 1.5em;
+      }
+    }
   }
 }
