@@ -5,6 +5,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const WorkerPlugin = require('worker-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const CopyPlugin = require('copy-webpack-plugin')
 
 module.exports = env => {
   const plugins = [
@@ -25,6 +26,16 @@ module.exports = env => {
     new HTMLWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html')
     }),
+    new CopyPlugin([
+      {
+        from: path.resolve(__dirname, 'public', 'favicon-light.ico'),
+        to: path.resolve(__dirname, 'dist')
+      },
+      {
+        from: path.resolve(__dirname, 'public', 'favicon-dark.ico'),
+        to: path.resolve(__dirname, 'dist')
+      }
+    ]),
     new EnvironmentPlugin({
       DEBUG: JSON.parse(env.debug)
     }),
@@ -80,7 +91,7 @@ module.exports = env => {
           ]
         },
         {
-          test: /\.(ttf|png|jpg|svg)$/,
+          test: /\.(ttf|png|jpg|svg|ico)$/,
           use: ['file-loader']
         },
         {
