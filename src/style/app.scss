@@ -31,6 +31,10 @@
 
     .logo {
       width: 10em;
+
+      @include mobile() {
+        width: 7.5em;
+      }
     }
   }
 
