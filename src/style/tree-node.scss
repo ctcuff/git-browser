@@ -41,10 +41,18 @@
     }
   }
 
-  .node-label {
-    max-width: 100%;
+  .node-label,
+  small {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .node-label {
+    max-width: 100%;
+
+    small {
+      display: block;
+    }
   }
 }

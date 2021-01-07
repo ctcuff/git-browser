@@ -1,10 +1,10 @@
 import '../style/file-explorer.scss'
-import React, { Component } from 'react'
+import React from 'react'
 import partition from 'lodash/partition'
 import PropTypes from 'prop-types'
 import TreeNode from './TreeNode'
 
-class FileExplorer extends Component {
+class FileExplorer extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -52,7 +52,11 @@ class FileExplorer extends Component {
 
     nodes[node.path].isOpen = !node.isOpen
 
-    this.setState({ nodes })
+    this.setState({
+      nodes: {
+        ...nodes
+      }
+    })
   }
 
   onSelectNode(node) {

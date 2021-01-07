@@ -3,6 +3,7 @@ import React from 'react'
 import { FaRegFile, FaFolder, FaFolderOpen } from 'react-icons/fa'
 import { FiChevronRight, FiChevronDown } from 'react-icons/fi'
 import PropTypes from 'prop-types'
+import { noop } from '../scripts/util'
 
 const getPaddingLeft = (level, type) => {
   const defaultPadding = 20
@@ -54,14 +55,14 @@ const onSelectNode = (node, props) => {
 }
 
 const TreeNode = props => {
-  const { node, getChildren, level } = props
+  const { node, getChildren, level, showPath, className } = props
   const children = getChildren(node)
   const nodeLabel = getNodeLabel(node)
 
   return (
     <React.Fragment>
       <div
-        className="tree-node"
+        className={`tree-node ${className}`}
         title={node.path}
         style={{ paddingLeft: getPaddingLeft(level, node.type) }}
         onClick={() => onSelectNode(node, props)}
@@ -72,7 +73,9 @@ const TreeNode = props => {
         <div className="tree-node__icon type">
           {renderIcon(node.type, node.isOpen)}
         </div>
-        <span className="node-label">{nodeLabel}</span>
+        <div className="node-label">
+          {nodeLabel} {showPath && <small>{node.path}</small>}
+        </div>
       </div>
       {node.isOpen
         ? children.map(childNode => (
@@ -99,12 +102,16 @@ TreeNode.propTypes = {
   }).isRequired,
   getChildren: PropTypes.func.isRequired,
   level: PropTypes.number.isRequired,
-  onToggle: PropTypes.func.isRequired,
-  onSelectNode: PropTypes.func.isRequired
+  onToggle: PropTypes.func,
+  onSelectNode: PropTypes.func.isRequired,
+  showPath: PropTypes.bool,
+  className: PropTypes.string
 }
 
 TreeNode.defaultProps = {
-  level: 0
+  level: 0,
+  onToggle: noop,
+  getChildren: noop
 }
 
 export default TreeNode

@@ -15,6 +15,7 @@ import URLUtil from '../scripts/url-util'
 import { AiOutlineLeft, AiOutlineMenu } from 'react-icons/ai'
 import ResizePanel from './ResizePanel'
 import Logger from '../scripts/logger'
+import FileSearch from './FileSearch'
 
 const debugState = {
   treeData: sampleTreeData,
@@ -32,7 +33,7 @@ class ExplorerPanel extends React.Component {
     super(props)
 
     this.state = {
-      treeData: null,
+      treeData: {},
       inputValue: '',
       currentRepoUrl: '',
       currentBranch: '',
@@ -224,7 +225,7 @@ class ExplorerPanel extends React.Component {
         </button>
         {!isExplorerOpen && <div className="panel-overlay" />}
         <SimpleBar className="explorer-panel-content">
-          <Collapse title="search repository" open>
+          <Collapse title="search repo" open>
             <SearchInput
               className="search-panel"
               onChange={this.onInputChange}
@@ -234,6 +235,12 @@ class ExplorerPanel extends React.Component {
               errorMessage={searchErrorMessage}
               isLoading={isLoading}
               value={inputValue}
+            />
+          </Collapse>
+          <Collapse title="search file">
+            <FileSearch
+              treeData={treeData}
+              onSelectFile={this.props.onSelectFile}
             />
           </Collapse>
           <Collapse
