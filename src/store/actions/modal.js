@@ -1,7 +1,10 @@
-const showModal = modalType => ({
+const showModal = (modalType, props) => ({
   type: 'SHOW_MODAL',
   payload: {
-    modalType
+    modalType,
+    modalProps: {
+      ...props
+    }
   }
 })
 

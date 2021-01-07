@@ -1,6 +1,8 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import Logger from '../../scripts/logger'
+import { showModal } from './modal'
+import { ModalTypes } from '../../components/ModalRoot'
 
 firebase.initializeApp({
   apiKey: process.env.API_KEY,
@@ -46,7 +48,13 @@ const login = () => {
 
       dispatch(loadProfileFromStorage(payload))
     } catch (err) {
-      Logger.error(err)
+      Logger.warn(err)
+
+      dispatch(
+        showModal(ModalTypes.AUTH_ERROR, {
+          code: err.code
+        })
+      )
     }
 
     dispatch(toggleLoading(false))
