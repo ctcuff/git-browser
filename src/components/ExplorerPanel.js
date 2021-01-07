@@ -43,6 +43,7 @@ class ExplorerPanel extends React.Component {
       isLoading: false,
       isExplorerOpen: window.innerWidth >= 900,
       branches: [],
+      branchesTruncated: false,
       ...debugState
     }
 
@@ -134,10 +135,11 @@ class ExplorerPanel extends React.Component {
   }
 
   getBranches(repoUrl) {
-    return GitHubAPI.getBranches(repoUrl).then(branches => {
+    return GitHubAPI.getBranches(repoUrl).then(data => {
       this.setState({
-        branches,
-        isBranchPanelOpen: true
+        branches: data.branches,
+        isBranchPanelOpen: true,
+        branchesTruncated: data.truncated
       })
     })
   }
@@ -191,7 +193,8 @@ class ExplorerPanel extends React.Component {
       isBranchPanelOpen,
       treeData,
       branches,
-      isExplorerOpen
+      isExplorerOpen,
+      branchesTruncated
     } = this.state
 
     const openClass = isExplorerOpen ? 'is-open' : 'is-closed'
@@ -221,7 +224,7 @@ class ExplorerPanel extends React.Component {
         </button>
         {!isExplorerOpen && <div className="panel-overlay" />}
         <SimpleBar className="explorer-panel-content">
-          <Collapse title="search" open>
+          <Collapse title="search repository" open>
             <SearchInput
               className="search-panel"
               onChange={this.onInputChange}
@@ -253,6 +256,7 @@ class ExplorerPanel extends React.Component {
               branches={branches}
               onBranchClick={this.getBranch}
               currentBranch={currentBranch}
+              truncated={branchesTruncated}
             />
           </Collapse>
         </SimpleBar>

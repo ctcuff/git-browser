@@ -21,18 +21,22 @@
       background-color: var(--color-list-item-hover);
     }
 
+    &.truncated-message {
+      cursor: default;
+    }
+
     &:last-child {
       margin-bottom: 12px;
     }
 
     @include desktop() {
-      &:hover {
+      &:hover:not(.truncated-message) {
         background-color: var(--color-list-item-hover);
       }
     }
 
     @include mobile() {
-      &:active {
+      &:active:not(.truncated-message) {
         background-color: var(--color-list-item-hover);
       }
     }

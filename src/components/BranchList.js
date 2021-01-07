@@ -29,6 +29,13 @@ const BranchList = props => {
           <span className="branch-name">{branch.name}</span>
         </li>
       ))}
+      {props.truncated && (
+        <li className="truncated-message">
+          <small className="branch-name">
+            Only 100 branches were displayed
+          </small>
+        </li>
+      )}
     </ul>
   )
 }
@@ -49,7 +56,8 @@ BranchList.propTypes = {
     })
   ),
   onBranchClick: PropTypes.func,
-  currentBranch: PropTypes.string
+  currentBranch: PropTypes.string,
+  truncated: PropTypes.bool.isRequired
 }
 
 BranchList.defaultProps = {

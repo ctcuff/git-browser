@@ -123,6 +123,7 @@ class GitHubAPI {
 
     const repoPath = URLUtil.extractRepoPath(repoUrl)
     const branchesUrl = URLUtil.buildBranchesUrl(repoPath)
+    let truncated = false
 
     if (!repoPath) {
       return Promise.reject(ERROR_REPO_NOT_FOUND)
@@ -131,6 +132,7 @@ class GitHubAPI {
     return URLUtil.request(branchesUrl + '?per_page=100')
       .then(res => {
         if (res.ok) {
+          truncated = res.headers.has('link')
           return res.json()
         }
 
@@ -142,10 +144,15 @@ class GitHubAPI {
         }
       })
       .then(res => {
-        return res.map(branch => {
+        const branches = res.map(branch => {
           branch.repoUrl = repoUrl
           return branch
         })
+
+        return {
+          branches,
+          truncated
+        }
       })
       .catch(err => {
         Logger.error(err)
