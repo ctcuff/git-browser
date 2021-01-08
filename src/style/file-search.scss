@@ -9,5 +9,9 @@
 
   .file-search-node {
     padding-left: 0.5em !important;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
