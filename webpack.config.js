@@ -18,7 +18,9 @@ const includedFiles = [
 
 module.exports = env => {
   const plugins = [
-    new Dotenv(),
+    new Dotenv({
+      systemvars: true
+    }),
     new HotModuleReplacementPlugin(),
     new MonacoWebpackPlugin({
       features: [
