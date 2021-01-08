@@ -1,8 +1,66 @@
+@import './mixins/media.scss';
+
 .file-explorer {
   display: table;
   width: 100%;
+  position: relative;
   // Used in combination with text-overflow: ellipsis to
   // allow the text in the explorer panel to display ellipsis
   // when the text grows past the panel width
   table-layout: fixed;
+
+  @include desktop() {
+    &:hover {
+      .collapse-btn {
+        display: block;
+      }
+    }
+  }
+
+  .collapse-btn {
+    background-color: transparent;
+    border: none;
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+
+    &:focus {
+      outline: none;
+    }
+
+    @include desktop() {
+      position: absolute;
+      padding: 0.5em;
+      right: 0.5em;
+      cursor: pointer;
+      display: none;
+    }
+
+    @include mobile() {
+      width: 100%;
+      padding: 0.5em 1em;
+      display: flex;
+      align-items: center;
+      font-size: 0.9em;
+      border-bottom: 1px solid var(--color-border);
+
+      &:active {
+        background-color: var(--color-list-item-hover);
+      }
+    }
+
+    span {
+      @include desktop() {
+        display: none;
+      }
+    }
+
+    svg {
+      height: 100%;
+      font-size: 1.3em;
+
+      @include mobile() {
+        margin-right: 0.5em;
+      }
+    }
+  }
 }

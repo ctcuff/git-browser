@@ -16,14 +16,19 @@ import { AiOutlineLeft, AiOutlineMenu } from 'react-icons/ai'
 import ResizePanel from './ResizePanel'
 import Logger from '../scripts/logger'
 import FileSearch from './FileSearch'
+import ExplorerPanelOverlay from './ExplorerPanelOverlay'
+import {
+  AiOutlineSearch,
+  AiOutlineFileSearch,
+  AiOutlineBranches
+} from 'react-icons/ai'
+import { VscFiles } from 'react-icons/vsc'
 
 const debugState = {
   treeData: sampleTreeData,
   branches: sampleBranchData,
   currentBranch: 'dev/2020',
   currentRepoUrl: 'github.com/ctcuff/ctcuff.github.io',
-  isBranchPanelOpen: true,
-  isCodePanelOpen: true,
   inputValue: 'github.com/ctcuff/ctcuff.github.io',
   currentRepoPath: 'ctcuff/ctcuff.github.io'
 }
@@ -38,12 +43,24 @@ class ExplorerPanel extends React.Component {
       currentRepoUrl: '',
       currentBranch: '',
       currentRepoPath: '',
-      isCodePanelOpen: false,
-      isBranchPanelOpen: false,
       searchErrorMessage: null,
       isLoading: false,
       isExplorerOpen: window.innerWidth >= 900,
       branches: [],
+      panels: {
+        searchRepo: {
+          isOpen: true
+        },
+        searchFiles: {
+          isOpen: false
+        },
+        code: {
+          isOpen: true
+        },
+        branches: {
+          isOpen: true
+        }
+      },
       branchesTruncated: false,
       ...debugState
     }
@@ -55,12 +72,12 @@ class ExplorerPanel extends React.Component {
     this.getTree = this.getTree.bind(this)
     this.getBranch = this.getBranch.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
-    this.onCodePanelToggle = this.onCodePanelToggle.bind(this)
-    this.onBranchPanelToggle = this.onBranchPanelToggle.bind(this)
     this.toggleLoading = this.toggleLoading.bind(this)
     this.toggleExplorer = this.toggleExplorer.bind(this)
     this.openExplorer = this.openExplorer.bind(this)
     this.closeExplorer = this.closeExplorer.bind(this)
+    this.togglePanel = this.togglePanel.bind(this)
+    this.panelButtons = this.panelButtons.bind(this)
   }
 
   onInputChange(inputValue) {
@@ -117,7 +134,12 @@ class ExplorerPanel extends React.Component {
         this.setState({
           treeData: Tree.treeify(res.tree),
           currentBranch: res.branch,
-          isCodePanelOpen: true
+          panels: {
+            ...this.state.panels,
+            code: {
+              isOpen: true
+            }
+          }
         })
       })
       .catch(searchErrorMessage => {
@@ -139,8 +161,13 @@ class ExplorerPanel extends React.Component {
     return GitHubAPI.getBranches(repoUrl).then(data => {
       this.setState({
         branches: data.branches,
-        isBranchPanelOpen: true,
-        branchesTruncated: data.truncated
+        branchesTruncated: data.truncated,
+        panels: {
+          ...this.state.panels,
+          branches: {
+            isOpen: true
+          }
+        }
       })
     })
   }
@@ -162,14 +189,6 @@ class ExplorerPanel extends React.Component {
       })
   }
 
-  onCodePanelToggle(isCodePanelOpen) {
-    this.setState({ isCodePanelOpen })
-  }
-
-  onBranchPanelToggle(isBranchPanelOpen) {
-    this.setState({ isBranchPanelOpen })
-  }
-
   toggleExplorer() {
     const isExplorerOpen = !this.state.isExplorerOpen
     this.setState({ isExplorerOpen })
@@ -183,15 +202,56 @@ class ExplorerPanel extends React.Component {
     this.setState({ isExplorerOpen: false })
   }
 
+  togglePanel(panel, isOpen) {
+    if (!this.state.panels[panel]) {
+      Logger.warn('No panel with name', panel)
+      return
+    }
+
+    this.setState({
+      isExplorerOpen: true,
+      panels: {
+        ...this.state.panels,
+        [panel]: {
+          isOpen
+        }
+      }
+    })
+  }
+
+  panelButtons() {
+    return [
+      {
+        icon: <AiOutlineSearch />,
+        title: 'Search repository',
+        onClick: () => this.togglePanel('searchRepo', true)
+      },
+      {
+        icon: <AiOutlineFileSearch />,
+        title: 'Search files',
+        onClick: () => this.togglePanel('searchFiles', true)
+      },
+      {
+        icon: <VscFiles />,
+        title: 'Explorer',
+        onClick: () => this.togglePanel('code', true)
+      },
+      {
+        icon: <AiOutlineBranches />,
+        title: 'Branches',
+        onClick: () => this.togglePanel('branches', true)
+      }
+    ]
+  }
+
   render() {
     const {
+      panels,
       currentRepoUrl,
       currentBranch,
       searchErrorMessage,
       isLoading,
       inputValue,
-      isCodePanelOpen,
-      isBranchPanelOpen,
       treeData,
       branches,
       isExplorerOpen,
@@ -223,21 +283,35 @@ class ExplorerPanel extends React.Component {
             <AiOutlineMenu className="panel-toggle-icon" />
           )}
         </button>
-        {!isExplorerOpen && <div className="panel-overlay" />}
+        {!isExplorerOpen && (
+          <ExplorerPanelOverlay panelActions={this.panelButtons()} />
+        )}
         <SimpleBar className="explorer-panel-content">
-          <Collapse title="search repo" open>
+          <Collapse
+            title="search repo"
+            open={panels.searchRepo.isOpen}
+            onToggle={() =>
+              this.togglePanel('searchRepo', !panels.searchRepo.isOpen)
+            }
+          >
             <SearchInput
               className="search-panel"
               onChange={this.onInputChange}
               onSearch={this.getRepo}
-              placeholder="GitHub repo URL"
+              placeholder="GitHub repository URL"
               hasError={!!searchErrorMessage}
               errorMessage={searchErrorMessage}
               isLoading={isLoading}
               value={inputValue}
             />
           </Collapse>
-          <Collapse title="search file">
+          <Collapse
+            title="search file"
+            open={panels.searchFiles.isOpen}
+            onToggle={() =>
+              this.togglePanel('searchFiles', !panels.searchFiles.isOpen)
+            }
+          >
             <FileSearch
               treeData={treeData}
               onSelectFile={this.props.onSelectFile}
@@ -245,8 +319,8 @@ class ExplorerPanel extends React.Component {
           </Collapse>
           <Collapse
             title="code"
-            open={isCodePanelOpen}
-            onToggle={this.onCodePanelToggle}
+            open={panels.code.isOpen}
+            onToggle={() => this.togglePanel('code', !panels.code.isOpen)}
           >
             <FileExplorer
               onSelectFile={this.props.onSelectFile}
@@ -256,8 +330,10 @@ class ExplorerPanel extends React.Component {
           </Collapse>
           <Collapse
             title="branches"
-            open={isBranchPanelOpen}
-            onToggle={this.onBranchPanelToggle}
+            open={panels.branches.isOpen}
+            onToggle={() =>
+              this.togglePanel('branches', !panels.branches.isOpen)
+            }
           >
             <BranchList
               branches={branches}

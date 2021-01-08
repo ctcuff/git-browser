@@ -93,7 +93,7 @@ const TreeNode = props => {
 
 TreeNode.propTypes = {
   node: PropTypes.shape({
-    type: PropTypes.string,
+    type: PropTypes.oneOf(['file', 'folder']),
     name: PropTypes.string,
     path: PropTypes.path,
     url: PropTypes.string,
@@ -111,7 +111,8 @@ TreeNode.propTypes = {
 TreeNode.defaultProps = {
   level: 0,
   onToggle: noop,
-  getChildren: noop
+  getChildren: noop,
+  className: ''
 }
 
 export default TreeNode

@@ -55,7 +55,7 @@ const SearchInput = props => {
 
   return (
     <div className={`search-input ${props.className}`}>
-      <div className={`input-wrapper ${hasError ? 'input--error' : undefined}`}>
+      <div className={`input-wrapper ${hasError ? 'input--error' : ''}`}>
         <input
           type="text"
           id={inputId}
@@ -104,7 +104,8 @@ SearchInput.defaultProps = {
   hasError: false,
   errorMessage: '',
   isLoading: false,
-  initialValue: ''
+  initialValue: '',
+  className: ''
 }
 
 export default SearchInput

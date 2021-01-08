@@ -1,8 +1,7 @@
 @import './mixins/media';
+$toggle-button-height: 32px;
 
 .explorer-panel {
-  $toggle-button-height: 32px;
-
   display: flex;
   flex-grow: 0;
   flex-shrink: 0;
@@ -23,7 +22,11 @@
   }
 
   &.is-closed {
-    flex-basis: 32px;
+    flex-basis: 40px;
+
+    @include mobile() {
+      flex-basis: 32px;
+    }
   }
 
   .explorer-panel-content {
@@ -61,17 +64,6 @@
 
   .panel-toggle-icon {
     color: var(--color-text-primary);
-  }
-
-  // Covers the explorer panel when the explorer is closed.
-  // This prevents x overflow and hides the panel's squished content
-  .panel-overlay {
-    position: absolute;
-    z-index: 100;
-    width: 100%;
-    background-color: var(--color-collapse-header);
-    top: $toggle-button-height;
-    bottom: 0;
   }
 
   .search-panel {

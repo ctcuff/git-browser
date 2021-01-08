@@ -11,6 +11,11 @@ const FileSearch = props => {
   const [hasError, setHasError] = useState(false)
   const [filteredTreeData, setFilteredTreeData] = useState({})
 
+  const onChange = value => {
+    setInputValue(value)
+    setHasError(false)
+  }
+
   const onSearch = value => {
     if (!value.trim()) {
       setFilteredTreeData({})
@@ -32,14 +37,19 @@ const FileSearch = props => {
       ) {
         // Mark the node as root so the FileExplorer doesn't
         // add any margin to the file
-        nodes[key] = { ...node }
-        nodes[key].isRoot = true
+        nodes[key] = {
+          ...node,
+          isRoot: true
+        }
         count++
       }
     })
 
     setHasError(count === 0)
-    setFilteredTreeData(nodes)
+
+    if (count > 0) {
+      setFilteredTreeData(nodes)
+    }
   }
 
   useEffect(() => {
@@ -54,7 +64,7 @@ const FileSearch = props => {
         onSearch={onSearch}
         placeholder="Search file"
         value={inputValue}
-        onChange={setInputValue}
+        onChange={onChange}
         hasError={hasError}
         errorMessage="No files found"
       />
@@ -77,7 +87,7 @@ FileSearch.propTypes = {
   onSelectFile: PropTypes.func.isRequired,
   treeData: PropTypes.objectOf(
     PropTypes.shape({
-      type: PropTypes.string,
+      type: PropTypes.oneOf(['file', 'folder']),
       name: PropTypes.string,
       path: PropTypes.path,
       url: PropTypes.string,
