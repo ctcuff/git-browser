@@ -3,15 +3,13 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { noop } from '../scripts/util'
 import { AiOutlineSearch, AiOutlineLoading } from 'react-icons/ai'
-import uniqueId from 'lodash/uniqueId'
-
-const inputId = uniqueId('input-')
 
 const SearchInput = props => {
   const [inputValue, setInputValue] = useState(props.value)
   const [hasError, setHasError] = useState(props.hasError)
   const [errorMessage, setErrorMessage] = useState(props.errorMessage)
   const [isLoading, setLoading] = useState(props.isLoading)
+  const inputId = `input-${Math.floor(Math.random() * 1_000)}`
 
   const onSearch = () => {
     if (!isLoading) {
@@ -57,13 +55,16 @@ const SearchInput = props => {
 
   return (
     <div className={`search-input ${props.className}`}>
-      <div className={`input-wrapper ${hasError ? 'input--error' : undefined}`}>
+      <div className={`input-wrapper ${hasError ? 'input--error' : ''}`}>
         <input
           type="text"
           id={inputId}
           onChange={onChange}
           placeholder={props.placeholder}
           value={props.value}
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
         />
         <button
           className="search-button"
@@ -103,7 +104,8 @@ SearchInput.defaultProps = {
   hasError: false,
   errorMessage: '',
   isLoading: false,
-  initialValue: ''
+  initialValue: '',
+  className: ''
 }
 
 export default SearchInput

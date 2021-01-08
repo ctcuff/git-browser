@@ -1,0 +1,17 @@
+.file-search {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+
+  .file-search-input {
+    padding: 0.5em;
+  }
+
+  .file-search-node {
+    padding-left: 0.5em !important;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

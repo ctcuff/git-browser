@@ -1,10 +1,11 @@
 import '../style/file-explorer.scss'
-import React, { Component } from 'react'
+import React from 'react'
 import partition from 'lodash/partition'
 import PropTypes from 'prop-types'
 import TreeNode from './TreeNode'
+import { VscCollapseAll } from 'react-icons/vsc'
 
-class FileExplorer extends Component {
+class FileExplorer extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -16,6 +17,7 @@ class FileExplorer extends Component {
     this.getChildren = this.getChildren.bind(this)
     this.onToggle = this.onToggle.bind(this)
     this.onSelectNode = this.onSelectNode.bind(this)
+    this.closeAllFolders = this.closeAllFolders.bind(this)
   }
 
   getRootNodes() {
@@ -31,7 +33,7 @@ class FileExplorer extends Component {
     left.forEach(node => (nodes[node.path] = node))
     right.forEach(node => (nodes[node.path] = node))
 
-    return Object.values(nodes).filter(node => node.isRoot === true)
+    return Object.values(nodes).filter(node => node.isRoot)
   }
 
   getChildren(node) {
@@ -52,13 +54,34 @@ class FileExplorer extends Component {
 
     nodes[node.path].isOpen = !node.isOpen
 
-    this.setState({ nodes })
+    this.setState({
+      nodes: {
+        ...nodes
+      }
+    })
   }
 
   onSelectNode(node) {
     if (node.type === 'file') {
       this.props.onSelectFile(node)
     }
+  }
+
+  closeAllFolders() {
+    const nodes = this.state.nodes
+
+    Object.keys(nodes).forEach(key => {
+      const node = nodes[key]
+      if (node.type === 'folder') {
+        node.isOpen = false
+      }
+    })
+
+    this.setState({
+      nodes: {
+        ...nodes
+      }
+    })
   }
 
   render() {
@@ -70,6 +93,14 @@ class FileExplorer extends Component {
 
     return (
       <div className="file-explorer">
+        <button
+          className="collapse-btn"
+          onClick={this.closeAllFolders}
+          title="Collapse folders in explorer"
+        >
+          <VscCollapseAll />
+          <span>Collapse folders</span>
+        </button>
         <React.Fragment>
           {rootNodes.map(node => (
             <TreeNode
@@ -90,7 +121,7 @@ FileExplorer.propTypes = {
   onSelectFile: PropTypes.func.isRequired,
   nodes: PropTypes.objectOf(
     PropTypes.shape({
-      type: PropTypes.string,
+      type: PropTypes.oneOf(['file', 'folder']),
       name: PropTypes.string,
       path: PropTypes.path,
       url: PropTypes.string,
