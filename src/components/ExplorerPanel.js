@@ -58,16 +58,22 @@ class ExplorerPanel extends React.Component {
           isOpen: false
         },
         code: {
-          isOpen: true
+          isOpen: false
         },
         branches: {
-          isOpen: true
+          isOpen: false
         },
         settings: {
           isOpen: true
         }
-      },
-      ...debugState
+      }
+    }
+
+    if (process.env.DEBUG) {
+      this.state = {
+        ...this.state,
+        ...debugState
+      }
     }
 
     this.inputRef = React.createRef()

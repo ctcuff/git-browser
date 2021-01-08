@@ -48,6 +48,11 @@ class App extends React.Component {
   componentDidMount() {
     this.updateViewport()
     window.addEventListener('resize', this.updateViewport)
+
+    // Lazy load monaco so the Editor component can render quicker
+    import('monaco-editor/esm/vs/editor/editor.api.js').catch(err => {
+      Logger.error(err)
+    })
   }
 
   componentWillUnmount() {

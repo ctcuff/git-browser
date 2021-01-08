@@ -19,10 +19,6 @@
     svg {
       transform: scale(1.5);
       color: var(--color-text-primary);
-
-      @include mobile() {
-        transform: scale(1.3);
-      }
     }
   }
 }

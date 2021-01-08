@@ -4,12 +4,15 @@ import PropTypes from 'prop-types'
 import { noop } from '../scripts/util'
 import { AiOutlineSearch, AiOutlineLoading } from 'react-icons/ai'
 
+const rand = () => Math.floor(Math.random() * 1_000_000)
+const randId = () => `input-${rand()}-${rand()}-${rand()}`
+
 const SearchInput = props => {
   const [inputValue, setInputValue] = useState(props.value)
   const [hasError, setHasError] = useState(props.hasError)
   const [errorMessage, setErrorMessage] = useState(props.errorMessage)
   const [isLoading, setLoading] = useState(props.isLoading)
-  const inputId = `input-${Math.floor(Math.random() * 1_000)}`
+  const inputId = randId()
 
   const onSearch = () => {
     if (!isLoading) {
