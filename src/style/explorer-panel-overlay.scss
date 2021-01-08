@@ -17,8 +17,12 @@
     cursor: pointer;
 
     svg {
-      transform: scale(1.3);
+      transform: scale(1.5);
       color: var(--color-text-primary);
+
+      @include mobile() {
+        transform: scale(1.3);
+      }
     }
   }
 }

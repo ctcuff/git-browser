@@ -21,7 +21,8 @@ import ExplorerPanelOverlay from './ExplorerPanelOverlay'
 import {
   AiOutlineSearch,
   AiOutlineFileSearch,
-  AiOutlineBranches
+  AiOutlineBranches,
+  AiOutlineSetting
 } from 'react-icons/ai'
 import { VscFiles } from 'react-icons/vsc'
 
@@ -48,6 +49,7 @@ class ExplorerPanel extends React.Component {
       isLoading: false,
       isExplorerOpen: window.innerWidth >= 900,
       branches: [],
+      isBranchListTruncated: false,
       panels: {
         searchRepo: {
           isOpen: true
@@ -60,9 +62,11 @@ class ExplorerPanel extends React.Component {
         },
         branches: {
           isOpen: true
+        },
+        settings: {
+          isOpen: true
         }
       },
-      branchesTruncated: false,
       ...debugState
     }
 
@@ -163,7 +167,7 @@ class ExplorerPanel extends React.Component {
     return GitHubAPI.getBranches(repoUrl).then(data => {
       this.setState({
         branches: data.branches,
-        branchesTruncated: data.truncated,
+        isBranchListTruncated: data.truncated,
         panels: {
           ...this.state.panels,
           branches: {
@@ -242,6 +246,11 @@ class ExplorerPanel extends React.Component {
         icon: <AiOutlineBranches />,
         title: 'Branches',
         onClick: () => this.togglePanel('branches', true)
+      },
+      {
+        icon: <AiOutlineSetting />,
+        title: 'Settings',
+        onClick: () => this.togglePanel('settings', true)
       }
     ]
   }
@@ -257,7 +266,7 @@ class ExplorerPanel extends React.Component {
       treeData,
       branches,
       isExplorerOpen,
-      branchesTruncated
+      isBranchListTruncated
     } = this.state
 
     const openClass = isExplorerOpen ? 'is-open' : 'is-closed'
@@ -341,10 +350,16 @@ class ExplorerPanel extends React.Component {
               branches={branches}
               onBranchClick={this.getBranch}
               currentBranch={currentBranch}
-              truncated={branchesTruncated}
+              truncated={isBranchListTruncated}
             />
           </Collapse>
-          <Collapse title="Settings" open>
+          <Collapse
+            title="Settings"
+            open={panels.settings.isOpen}
+            onToggle={() =>
+              this.togglePanel('settings', !panels.settings.isOpen)
+            }
+          >
             <Settings />
           </Collapse>
         </SimpleBar>
