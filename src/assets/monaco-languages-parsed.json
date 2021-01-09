@@ -924,5 +924,10 @@
     "language": "markdown",
     "displayName": "Markdown",
     "extension": ".md"
+  },
+  ".ipynb": {
+    "language": "json",
+    "displayName": "Jupyter Notebook",
+    "extension": ".ipynb"
   }
 }
