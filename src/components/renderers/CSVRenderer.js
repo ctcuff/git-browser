@@ -37,7 +37,7 @@ class CSVRenderer extends React.Component {
 
     this.onChange = this.onChange.bind(this)
     this.renderTable = this.renderTable.bind(this)
-    this.loadPreview = this.loadPreview.bind(this)
+    this.init = this.init.bind(this)
     this.parseCSV = this.parseCSV.bind(this)
     this.onParseComplete = this.onParseComplete.bind(this)
     this.onParseError = this.onParseError.bind(this)
@@ -45,18 +45,15 @@ class CSVRenderer extends React.Component {
     this.filterTable = debounce(this.filterTable.bind(this), 100)
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     try {
-      await this.loadPreview()
-
-      this.updateCurrentStep('Rendering CSV...')
-      this.parseCSV(this.props.content)
+      this.init()
     } catch (err) {
       Logger.error(err)
     }
   }
 
-  async loadPreview() {
+  async init() {
     this.setState({
       isLoading: true,
       errors: new Set(),
@@ -65,6 +62,9 @@ class CSVRenderer extends React.Component {
 
     try {
       this.Parser = (await import('papaparse')).default
+
+      this.updateCurrentStep('Rendering CSV...')
+      this.parseCSV(this.props.content)
     } catch (err) {
       Logger.error(err)
 
@@ -192,7 +192,7 @@ class CSVRenderer extends React.Component {
         <ErrorOverlay
           message="Error loading CSV renderer."
           retryMessage="Retry"
-          onRetryClick={this.loadPreview}
+          onRetryClick={this.init}
         />
       )
     }

@@ -28,7 +28,7 @@ class MarkdownRenderer extends React.Component {
       FORBID_ATTR: ['style']
     }
 
-    this.loadPreview = this.loadPreview.bind(this)
+    this.init = this.init.bind(this)
     this.importLibraries = this.importLibraries.bind(this)
     this.unsafeParseMarkdown = this.unsafeParseMarkdown.bind(this)
     this.sanitizeMarkdown = this.sanitizeMarkdown.bind(this)
@@ -40,7 +40,7 @@ class MarkdownRenderer extends React.Component {
 
   componentDidMount() {
     this.setHighlightTheme(this.props.theme)
-    this.loadPreview()
+    this.init()
   }
 
   componentDidUpdate(prevProps) {
@@ -51,7 +51,7 @@ class MarkdownRenderer extends React.Component {
     }
   }
 
-  async loadPreview() {
+  async init() {
     this.setState({
       hasError: false,
       isLoading: true,
@@ -201,7 +201,7 @@ class MarkdownRenderer extends React.Component {
         <ErrorOverlay
           message="Error loading preview."
           retryMessage="Retry"
-          onRetryClick={this.loadPreview}
+          onRetryClick={this.init}
         />
       )
     }
