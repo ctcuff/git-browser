@@ -7,11 +7,6 @@ import LoadingOverlay from '../LoadingOverlay'
 import Logger from '../../scripts/logger'
 import ErrorOverlay from '../ErrorOverlay'
 
-// Query light/dark themes for highlight.js so we can enable/disable
-// stylesheets when the app theme changes
-const lightStyle = document.querySelector('link[title="theme-light"]')
-const darkStyle = document.querySelector('link[title="theme-dark"]')
-
 class MarkdownRenderer extends React.Component {
   constructor(props) {
     super(props)
@@ -34,21 +29,11 @@ class MarkdownRenderer extends React.Component {
     this.sanitizeMarkdown = this.sanitizeMarkdown.bind(this)
     this.afterSanitizeElements = this.afterSanitizeElements.bind(this)
     this.afterSanitizeAttributes = this.afterSanitizeAttributes.bind(this)
-    this.setHighlightTheme = this.setHighlightTheme.bind(this)
     this.updateStep = this.updateStep.bind(this)
   }
 
   componentDidMount() {
-    this.setHighlightTheme(this.props.theme)
     this.init()
-  }
-
-  componentDidUpdate(prevProps) {
-    const theme = this.props.theme
-
-    if (prevProps.theme !== theme) {
-      this.setHighlightTheme(theme)
-    }
   }
 
   async init() {
@@ -153,7 +138,7 @@ class MarkdownRenderer extends React.Component {
           try {
             return hljs.highlight(lang, str).value
           } catch (e) {
-            // Ignored
+            Logger.warn(e)
           }
         }
         return ''
@@ -176,21 +161,6 @@ class MarkdownRenderer extends React.Component {
     DOMPurify.addHook('afterSanitizeAttributes', this.afterSanitizeAttributes)
 
     return DOMPurify.sanitize(markdown, this.domConfig)
-  }
-
-  setHighlightTheme(theme) {
-    switch (theme) {
-      case 'theme-light':
-        darkStyle.setAttribute('disabled', 'disabled')
-        lightStyle.removeAttribute('disabled')
-        break
-      case 'theme-dark':
-        lightStyle.setAttribute('disabled', 'disabled')
-        darkStyle.removeAttribute('disabled')
-        break
-      default:
-        Logger.warn('Invalid theme passed to MarkdownRenderer', theme)
-    }
   }
 
   render() {
