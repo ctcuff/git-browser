@@ -28,6 +28,10 @@
   --color-markdown-code-bg: rgba(27, 31, 35, 0.05);
   --color-markdown-blockquote: #6a737d;
   --color-modal-bg: #ffffff;
+
+  --color-nb-stderr: #ffdddd;
+  --color-nb-output: #d84315;
+  --color-nb-table-border: #5c5c5c;
 }
 
 .theme-dark {
@@ -51,6 +55,10 @@
   --color-markdown-code-bg: rgba(45, 45, 45, 0.45);
   --color-markdown-blockquote: #b6bbc0;
   --color-modal-bg: #333333;
+
+  --color-nb-stderr: #6b0f0f;
+  --color-nb-output: #ff6262;
+  --color-nb-table-border: var(--color-border);
 }
 
 body {
@@ -69,12 +77,6 @@ body {
 
 a {
   color: var(--color-text-link);
-}
-
-// Addded to the root when changing themes to give a smooth transition.
-// This class is only kept for the duration of the transition.
-.is-transitioning * {
-  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
 // Overrides the box shadow at the bottom of the tab view

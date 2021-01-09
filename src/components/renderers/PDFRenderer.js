@@ -34,9 +34,11 @@ class PDFRenderer extends React.Component {
       isLoading: true,
       hasError: false,
       decodedContent: null,
+      currentStep: 'Loading PDF...',
       pages: []
     }
 
+    this.init = this.init.bind(this)
     this.loadPDF = this.loadPDF.bind(this)
     this.reload = this.reload.bind(this)
     this.renderPages = this.renderPages.bind(this)
@@ -49,6 +51,14 @@ class PDFRenderer extends React.Component {
   }
 
   componentDidMount() {
+    this.init()
+  }
+
+  componentWillUnmount() {
+    this.rawDecodeWorker.terminate()
+  }
+
+  init() {
     // Dynamic import to reduce bundle size
     import('pdfjs-dist')
       .then(pdfjs => {
@@ -60,10 +70,6 @@ class PDFRenderer extends React.Component {
         Logger.error(err)
         this.setErrorState()
       })
-  }
-
-  componentWillUnmount() {
-    this.rawDecodeWorker.terminate()
   }
 
   decodeContent() {
@@ -99,11 +105,15 @@ class PDFRenderer extends React.Component {
 
   async renderPages(pdfDocument) {
     const pages = []
+    const numPages = pdfDocument.numPages
 
-    for (let i = 0; i < pdfDocument.numPages; i++) {
+    for (let i = 0; i < numPages; i++) {
       await pdfDocument.getPage(i + 1).then(
         page => {
           pages.push(<PDFPage page={page} key={i} />)
+          this.setState({
+            currentStep: `Loading page ${i + 1}/${numPages}`
+          })
         },
         err => {
           Logger.error(`Error loading page at index ${i}`, err)
@@ -130,18 +140,21 @@ class PDFRenderer extends React.Component {
       {
         isLoading: true,
         hasError: false,
-        pages: []
+        pages: [],
+        currentStep: 'Loading PDF...'
       },
-      () => this.decodeContent()
+      () => this.init()
     )
   }
 
   render() {
-    if (this.state.isLoading) {
-      return <LoadingOverlay text="Loading PDF..." />
+    const { currentStep, isLoading, hasError, pages } = this.state
+
+    if (isLoading) {
+      return <LoadingOverlay text={currentStep} />
     }
 
-    if (this.state.hasError) {
+    if (hasError) {
       return (
         <ErrorOverlay
           message="Error loading PDF"
@@ -153,9 +166,9 @@ class PDFRenderer extends React.Component {
 
     return (
       <div className="pdf-renderer">
-        <div className="pdf">{this.state.pages}</div>
+        <div className="pdf">{pages}</div>
         <div className="page-count">
-          <p> Total pages: {this.state.pages.length}</p>
+          <p> Total pages: {pages.length}</p>
         </div>
       </div>
     )
