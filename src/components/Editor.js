@@ -37,7 +37,7 @@ class Editor extends React.Component {
   componentDidUpdate(prevProps) {
     const colorScheme = this.props.theme
 
-    if (prevProps.theme !== colorScheme) {
+    if (prevProps.theme !== colorScheme && this.monaco) {
       this.monaco.setTheme(this.getTheme(colorScheme))
     }
   }
@@ -105,8 +105,9 @@ class Editor extends React.Component {
   }
 
   componentWillUnmount() {
-    this.editor.getModel().dispose()
-    this.editor.dispose()
+    if (this.editor) {
+      this.editor.dispose()
+    }
     this.encodeWorker.terminate()
   }
 
