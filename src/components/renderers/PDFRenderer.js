@@ -153,10 +153,10 @@ class PDFRenderer extends React.Component {
 
     return (
       <div className="pdf-renderer">
+        <div className="pdf">{this.state.pages}</div>
         <div className="page-count">
           <p> Total pages: {this.state.pages.length}</p>
         </div>
-        <div className="pdf">{this.state.pages}</div>
       </div>
     )
   }
