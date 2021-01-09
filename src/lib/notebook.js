@@ -52,7 +52,8 @@
   };
 
   var getSanitizer = function () {
-    var lib = root.DOMPurify || require("dompurify");
+    // HOTFIX: Remove require call to DOMPurify
+    var lib = root.DOMPurify || ident;
     return lib && lib.sanitize;
   };
 
@@ -284,14 +285,18 @@
           'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js',
           */
       if (window.renderMathInElement != null) {
-        window.renderMathInElement(el, {
-          delimiters: [
-            { left: "$$", right: "$$", display: true },
-            { left: "\\[", right: "\\]", display: true },
-            { left: "\\(", right: "\\)", display: false },
-            { left: "$", right: "$", display: false },
-          ],
-        });
+        // HOTFIX: katex auto renderer sometimes throws an error
+        try {
+          window.renderMathInElement(el, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "\\[", right: "\\]", display: true },
+              { left: "\\(", right: "\\)", display: false },
+              { left: "$", right: "$", display: false },
+            ],
+          });
+        } catch(e) {
+        }
       }
 
       return el;

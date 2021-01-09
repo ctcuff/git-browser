@@ -5,6 +5,8 @@ import Logger from '../../scripts/logger'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 
+const KATEX_VERSION = '0.10.0'
+
 class JupyterRenderer extends React.Component {
   constructor(props) {
     super(props)
@@ -21,6 +23,9 @@ class JupyterRenderer extends React.Component {
     this.parseNotebook = this.parseNotebook.bind(this)
     this.setCurrentStep = this.setCurrentStep.bind(this)
     this.highlighter = this.highlighter.bind(this)
+    this.loadKatexScripts = this.loadKatexScripts.bind(this)
+    this.loadKatexStyle = this.loadKatexStyle.bind(this)
+    this.sanitizeNotebook = this.sanitizeNotebook.bind(this)
   }
 
   componentDidMount() {
@@ -38,10 +43,11 @@ class JupyterRenderer extends React.Component {
       await this.loadLibraries()
 
       this.setCurrentStep('Parsing notebook...')
-      const HTML = await this.parseNotebook(this.props.content)
+      const HTML = this.parseNotebook(this.props.content)
+      const sanitizedHTML = this.sanitizeNotebook(HTML)
 
       this.setState({
-        HTML,
+        HTML: sanitizedHTML,
         isLoading: false
       })
     } catch (err) {
@@ -58,17 +64,22 @@ class JupyterRenderer extends React.Component {
 
   async loadLibraries() {
     try {
-      const [nb, MarkdownIt, hljs, anser] = await Promise.all([
+      await this.loadKatexScripts()
+      this.loadKatexStyle()
+
+      const [nb, MarkdownIt, hljs, anser, DOMPurify] = await Promise.all([
         import('../../lib/notebook'),
         import('markdown-it'),
         import('highlight.js'),
-        import('anser')
+        import('anser'),
+        import('dompurify')
       ])
 
       this.nb = nb.default
       this.MarkdownIt = MarkdownIt.default
       this.hljs = hljs.default
       this.Anser = anser.default
+      this.DOMPurify = DOMPurify.default
     } catch (err) {
       Logger.error(err)
 
@@ -77,6 +88,62 @@ class JupyterRenderer extends React.Component {
         hasError: true
       })
     }
+  }
+
+  loadKatexStyle() {
+    if (document.querySelector('link[data-katex-style]')) {
+      return
+    }
+
+    const cssUrl = `https://cdnjs.cloudflare.com/ajax/libs/KaTeX/${KATEX_VERSION}/katex.min.css`
+    const link = document.createElement('link')
+
+    link.rel = 'stylesheet'
+    link.href = cssUrl
+    link.setAttribute('data-katex-style', 'true')
+
+    document.head.appendChild(link)
+  }
+
+  loadKatexScripts() {
+    const tags = document.querySelectorAll('script[data-latex-script]')
+    const sources = [
+      `https://cdnjs.cloudflare.com/ajax/libs/KaTeX/${KATEX_VERSION}/katex.min.js`,
+      `https://cdnjs.cloudflare.com/ajax/libs/KaTeX/${KATEX_VERSION}/contrib/auto-render.min.js`
+    ]
+
+    if (tags.length === sources.length) {
+      return Promise.resolve()
+    }
+
+    sources.forEach(source => {
+      const script = document.createElement('script')
+      script.setAttribute('data-latex-script', 'true')
+      script.src = source
+      document.body.appendChild(script)
+    })
+
+    return new Promise(resolve => {
+      const timeout = 5000
+      const interval = 20
+      let timer = 0
+
+      // Periodically check that Katex was actually loaded
+      const checkInterval = setInterval(() => {
+        timer += interval
+
+        if (window.katex && window.renderMathInElement) {
+          clearInterval(checkInterval)
+          return resolve()
+        }
+
+        if (timer > timeout) {
+          Logger.warn('Timed out loading katex.')
+          clearInterval(checkInterval)
+          return resolve()
+        }
+      }, interval)
+    })
   }
 
   parseNotebook(content) {
@@ -90,7 +157,7 @@ class JupyterRenderer extends React.Component {
       const md = new MarkdownIt({
         html: true,
         typographer: true,
-        linkify: false,
+        linkify: true,
         breaks: true,
         highlight: this.highlighter
       })
@@ -106,8 +173,22 @@ class JupyterRenderer extends React.Component {
       return HTMLString
     } catch (err) {
       Logger.error(err)
-      return ''
+      throw err
     }
+  }
+
+  sanitizeNotebook(content) {
+    const DOMPurify = this.DOMPurify
+
+    DOMPurify.addHook('afterSanitizeAttributes', node => {
+      // Opens all links in a new tab when clicked
+      if ('target' in node) {
+        node.setAttribute('target', '_blank')
+        node.setAttribute('rel', 'noopener noreferrer')
+      }
+    })
+
+    return DOMPurify.sanitize(content)
   }
 
   highlighter(str, lang) {
