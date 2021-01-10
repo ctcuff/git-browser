@@ -2,7 +2,7 @@
 
 .app {
   overflow: hidden;
-  height: calc((var(--vh, 1vh) * 100) - var(--gutter-height));
+  height: calc((var(--vh, 1vh) * 100));
   display: flex;
   background-color: var(--color-app-bg);
 

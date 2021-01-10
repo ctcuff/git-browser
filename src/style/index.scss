@@ -3,8 +3,6 @@
   --file-explorer-width: var(--default-explorer-width);
   --scrollbar-height: 8px;
   --tab-bar-height: 41px;
-  --gutter-height: 0px;
-  // --gutter-height: 20px;
 }
 
 .theme-light {
@@ -22,8 +20,8 @@
   --color-tab-border-bottom-active: #001799;
   --color-collapse-header: #fafbfc;
   --color-app-bg: #ffffff;
-  --color-gutter: #007acc;
   --color-scrollbar: rgba(0, 0, 0, 0.45);
+
   --color-markdown-table-bg: #eff7ff;
   --color-markdown-code-bg: rgba(27, 31, 35, 0.05);
   --color-markdown-blockquote: #6a737d;
@@ -41,7 +39,7 @@
   --color-panel-text: #bdbdbd;
   --color-panel-border: transparent;
   --color-list-item-hover: #303036;
-  --color-text-primary: #ffffff;
+  --color-text-primary: #d2d2d2;
   --color-text-secondary: #bdbdbd;
   --color-text-link: #58a6ff;
   --color-text-muted: #888888;
@@ -49,8 +47,8 @@
   --color-tab-border-bottom-active: #006fcc;
   --color-collapse-header: #2d2d2d;
   --color-app-bg: #1e1e1e;
-  --color-gutter: #007acc;
   --color-scrollbar: rgb(146, 146, 146);
+
   --color-markdown-table-bg: #171a20;
   --color-markdown-code-bg: rgba(45, 45, 45, 0.45);
   --color-markdown-blockquote: #b6bbc0;
