@@ -5,6 +5,8 @@ import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import Logger from '../../scripts/logger'
 import { GrGrid } from 'react-icons/gr'
+import { connect } from 'react-redux'
+import { withClasses } from '../../scripts/util'
 
 const getMimeType = extension => {
   let type = ''
@@ -38,10 +40,16 @@ const getMimeType = extension => {
 }
 
 const ImageRenderer = props => {
+  const { extension, alt, content, theme } = props
   const [isLoading, setLoading] = useState(true)
   const [hasError, setError] = useState(false)
-  const [hasGrid, toggleGrid] = useState(true)
-  const mimeType = getMimeType(props.extension)
+  const [hasGrid, toggleGrid] = useState(false)
+  const mimeType = getMimeType(extension)
+  const classes = withClasses({
+    'has-grid': hasGrid,
+    'dark-grid': theme === 'theme-dark',
+    'light-grid': theme === 'theme-light'
+  })
 
   const onImageLoaded = () => {
     setLoading(false)
@@ -72,12 +80,12 @@ const ImageRenderer = props => {
   }
 
   return (
-    <div className={`image-renderer ${hasGrid ? 'has-grid' : ''}`}>
+    <div className={`image-renderer ${classes}`}>
       {isLoading && <LoadingOverlay text="Rendering image..." />}
       <img
-        src={`data:${mimeType};base64,${props.content}`}
+        src={`data:${mimeType};base64,${content}`}
         className={isLoading ? 'img--loading' : ''}
-        alt={props.alt}
+        alt={alt}
         onLoad={onImageLoaded}
         onError={onLoadError}
       />
@@ -112,7 +120,12 @@ ImageRenderer.propTypes = {
     '.webp',
     // MIME Type: image/x-icon
     '.ico'
-  ]).isRequired
+  ]).isRequired,
+  theme: PropTypes.oneOf(['theme-light', 'theme-dark']).isRequired
 }
 
-export default ImageRenderer
+const mapStateToProps = state => ({
+  theme: state.settings.theme
+})
+
+export default connect(mapStateToProps)(ImageRenderer)

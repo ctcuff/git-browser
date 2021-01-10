@@ -87,6 +87,19 @@ const base64EncodeUnicode = str => {
   )
 }
 
+/**
+ * Takes an object of class names and returns a string of only the
+ * classes that have keys that evaluate to true.
+ *
+ * ```
+ * withClasses({ foo: true, bar: false, baz: true }) // returns 'foo baz'
+ * ```
+ */
+const withClasses = classObj => {
+  const classNames = Object.keys(classObj).filter(key => classObj[key])
+  return classNames.join(' ')
+}
+
 /* istanbul ignore next */
 const noop = () => {}
 
@@ -96,5 +109,6 @@ export {
   getLanguageFromFileName,
   noop,
   base64DecodeUnicode,
-  base64EncodeUnicode
+  base64EncodeUnicode,
+  withClasses
 }
