@@ -8,8 +8,6 @@ import PropTypes from 'prop-types'
 import GitHubAPI from '../scripts/github-api'
 import SearchInput from './SearchInput'
 import BranchList from './BranchList'
-import sampleBranchData from '../assets/sample-branch-data.json'
-import sampleTreeData from '../assets/sample-tree-data.json'
 import SimpleBar from 'simplebar-react'
 import URLUtil from '../scripts/url-util'
 import { AiOutlineLeft, AiOutlineMenu } from 'react-icons/ai'
@@ -25,15 +23,6 @@ import {
   AiOutlineSetting
 } from 'react-icons/ai'
 import { VscFiles } from 'react-icons/vsc'
-
-const debugState = {
-  treeData: sampleTreeData,
-  branches: sampleBranchData,
-  currentBranch: 'dev/2020',
-  currentRepoUrl: 'github.com/ctcuff/ctcuff.github.io',
-  inputValue: 'github.com/ctcuff/ctcuff.github.io',
-  currentRepoPath: 'ctcuff/ctcuff.github.io'
-}
 
 class ExplorerPanel extends React.Component {
   constructor(props) {
@@ -69,13 +58,6 @@ class ExplorerPanel extends React.Component {
       }
     }
 
-    if (process.env.DEBUG) {
-      this.state = {
-        ...this.state,
-        ...debugState
-      }
-    }
-
     this.inputRef = React.createRef()
 
     this.getRepo = this.getRepo.bind(this)
@@ -89,6 +71,31 @@ class ExplorerPanel extends React.Component {
     this.closeExplorer = this.closeExplorer.bind(this)
     this.togglePanel = this.togglePanel.bind(this)
     this.panelButtons = this.panelButtons.bind(this)
+    this.updateURLQuery = this.updateURLQuery.bind(this)
+  }
+
+  componentDidMount() {
+    // Get the ?repo=user/repoName query from the URL and make a search
+    const params = new URLSearchParams(window.location.search)
+    const query = decodeURIComponent(params.get('repo') || '')
+    const url = 'github.com/' + query
+
+    if (query) {
+      this.setState({ inputValue: url })
+      this.getRepo(url)
+    }
+  }
+
+  updateURLQuery(query) {
+    // Appends the ?repo=user/repoName query to the URL
+    const prevUrl = window.location.pathname + window.location.search
+    const newUrl = `${window.location.pathname}?repo=${encodeURIComponent(
+      query
+    )}`
+
+    if (prevUrl !== newUrl) {
+      window.history.replaceState({}, '', newUrl)
+    }
   }
 
   onInputChange(inputValue) {
@@ -120,6 +127,11 @@ class ExplorerPanel extends React.Component {
     try {
       await this.getTree(url, 'default')
       await this.getBranches(url)
+
+      const path = URLUtil.extractRepoPath(url)
+
+      this.setState({ currentRepoPath: url })
+      this.updateURLQuery(path)
       this.props.onSearchFinished(false)
     } catch (err) {
       this.props.onSearchFinished(true)
@@ -159,12 +171,7 @@ class ExplorerPanel extends React.Component {
         return Promise.reject(searchErrorMessage)
       })
       .finally(() => {
-        const currentRepoPath = this.state.currentRepoPath
-
-        this.setState({
-          currentRepoUrl: repoUrl,
-          currentRepoPath: URLUtil.extractRepoPath(repoUrl) || currentRepoPath
-        })
+        this.setState({ currentRepoUrl: repoUrl })
         this.toggleLoading()
       })
   }
