@@ -1,4 +1,4 @@
-# [Git Browser](https://gitbrowser.io)
+# Git Browser
 Git Browser is a different way of viewing GitHub repositories in your browser. Have you ever wanted to look at a specific file on Github? Have you ever wanted to browse a few different files across multiple folders? Probably not but I have! No more cloning a repo then opening it up in your editor of choice just to browse a couple of files.
 
 # Features
