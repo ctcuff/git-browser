@@ -5,10 +5,35 @@ import { noop, parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
 import { AiOutlineEye } from 'react-icons/ai'
 import { connect } from 'react-redux'
-import FileRenderer from './FileRenderer'
 import Logger from '../scripts/logger'
 
 class Editor extends React.Component {
+  // File extensions that cause the component to
+  // display the "preview file" button. These files will be displayed as
+  // human readable text by the renderers that render these files
+  static previewExtensions = new Set(['.svg', '.md', '.mdx', '.csv', '.ipynb'])
+  // Files that will always be displayed by the FileRenderer component.
+  // This allows us to avoid unnecessarily decoding a file.
+  static illegalExtensions = new Set([
+    '.apng',
+    '.avif',
+    '.gif',
+    '.png',
+    '.webp',
+    '.jpg',
+    '.jpeg',
+    '.jfif',
+    '.pjpeg',
+    '.pjp',
+    '.ico',
+    '.pdf',
+    '.mp4',
+    '.webm',
+    '.mp3',
+    '.wav',
+    '.ogg'
+  ])
+
   constructor(props) {
     super(props)
 
@@ -113,7 +138,7 @@ class Editor extends React.Component {
 
   renderPreviewButton() {
     if (
-      !FileRenderer.validEditorExtensions.includes(this.props.extension) ||
+      !Editor.previewExtensions.has(this.props.extension) ||
       this.state.isLoading
     ) {
       return null

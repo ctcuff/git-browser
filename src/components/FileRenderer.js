@@ -13,13 +13,9 @@ import { VscCode } from 'react-icons/vsc'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import Logger from '../scripts/logger'
+import Editor from '../components/Editor'
 
 class FileRenderer extends React.Component {
-  // File extensions that cause the Editor component to
-  // display the "preview file" button. These files will be displayed as
-  // human readable text by the renderers that render these files
-  static validEditorExtensions = ['.svg', '.md', '.mdx', '.csv', '.ipynb']
-
   constructor(props) {
     super(props)
 
@@ -43,7 +39,7 @@ class FileRenderer extends React.Component {
 
     // Skip decoding if this file if it doesn't need to be displayed as text.
     // i.e.: Images, PDFs, audio, etc...
-    if (!FileRenderer.validEditorExtensions.includes(extension)) {
+    if (!Editor.previewExtensions.has(extension)) {
       this.setState({ isLoading: false })
       return
     }
@@ -77,10 +73,7 @@ class FileRenderer extends React.Component {
 
     // Files with decoded content display human readable text. If
     // we can't decode the content, display an unsupported message
-    if (
-      !decodedContent &&
-      FileRenderer.validEditorExtensions.includes(extension)
-    ) {
+    if (!decodedContent && Editor.previewExtensions.has(extension)) {
       return this.renderUnsupported()
     }
 
@@ -136,7 +129,7 @@ class FileRenderer extends React.Component {
   }
 
   renderPreviewButton() {
-    if (!FileRenderer.validEditorExtensions.includes(this.props.extension)) {
+    if (!Editor.previewExtensions.has(this.props.extension)) {
       return null
     }
 

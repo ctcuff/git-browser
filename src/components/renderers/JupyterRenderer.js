@@ -5,8 +5,6 @@ import Logger from '../../scripts/logger'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 
-const KATEX_VERSION = '0.10.0'
-
 class JupyterRenderer extends React.Component {
   constructor(props) {
     super(props)
@@ -23,8 +21,6 @@ class JupyterRenderer extends React.Component {
     this.parseNotebook = this.parseNotebook.bind(this)
     this.setCurrentStep = this.setCurrentStep.bind(this)
     this.highlighter = this.highlighter.bind(this)
-    this.loadKatexScripts = this.loadKatexScripts.bind(this)
-    this.loadKatexStyle = this.loadKatexStyle.bind(this)
     this.sanitizeNotebook = this.sanitizeNotebook.bind(this)
   }
 
@@ -64,9 +60,6 @@ class JupyterRenderer extends React.Component {
 
   async loadLibraries() {
     try {
-      await this.loadKatexScripts()
-      this.loadKatexStyle()
-
       const [nb, MarkdownIt, hljs, anser, DOMPurify] = await Promise.all([
         import('../../lib/notebook'),
         import('markdown-it'),
@@ -88,62 +81,6 @@ class JupyterRenderer extends React.Component {
         hasError: true
       })
     }
-  }
-
-  loadKatexStyle() {
-    if (document.querySelector('link[data-katex-style]')) {
-      return
-    }
-
-    const cssUrl = `https://cdnjs.cloudflare.com/ajax/libs/KaTeX/${KATEX_VERSION}/katex.min.css`
-    const link = document.createElement('link')
-
-    link.rel = 'stylesheet'
-    link.href = cssUrl
-    link.setAttribute('data-katex-style', 'true')
-
-    document.head.appendChild(link)
-  }
-
-  loadKatexScripts() {
-    const tags = document.querySelectorAll('script[data-latex-script]')
-    const sources = [
-      `https://cdnjs.cloudflare.com/ajax/libs/KaTeX/${KATEX_VERSION}/katex.min.js`,
-      `https://cdnjs.cloudflare.com/ajax/libs/KaTeX/${KATEX_VERSION}/contrib/auto-render.min.js`
-    ]
-
-    if (tags.length === sources.length) {
-      return Promise.resolve()
-    }
-
-    sources.forEach(source => {
-      const script = document.createElement('script')
-      script.setAttribute('data-latex-script', 'true')
-      script.src = source
-      document.body.appendChild(script)
-    })
-
-    return new Promise(resolve => {
-      const timeout = 5000
-      const interval = 20
-      let timer = 0
-
-      // Periodically check that Katex was actually loaded
-      const checkInterval = setInterval(() => {
-        timer += interval
-
-        if (window.katex && window.renderMathInElement) {
-          clearInterval(checkInterval)
-          return resolve()
-        }
-
-        if (timer > timeout) {
-          Logger.warn('Timed out loading katex.')
-          clearInterval(checkInterval)
-          return resolve()
-        }
-      }, interval)
-    })
   }
 
   parseNotebook(content) {

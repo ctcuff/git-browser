@@ -5,6 +5,7 @@
 // NOTE: This version of notebook has been modified to work in a React environment
 (function () {
   var VERSION = "0.5.2";
+  var DEBUG = process.env.DEBUG
   var root = this;
 
   // HOTFIX: Remove the JSDOM dependency and always assume the
@@ -284,6 +285,7 @@
           'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css',
           'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js',
           */
+      // HOTFIX: Assume katex is a property of the window
       if (window.renderMathInElement != null) {
         // HOTFIX: katex auto renderer sometimes throws an error
         try {
@@ -296,6 +298,9 @@
             ],
           });
         } catch(e) {
+          if (DEBUG) {
+            console.warn(e)
+          }
         }
       }
 

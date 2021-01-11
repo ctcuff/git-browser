@@ -43,6 +43,7 @@ class App extends React.Component {
     this.toggleLoadingOverlay = this.toggleLoadingOverlay.bind(this)
     this.onToggleRenderable = this.onToggleRenderable.bind(this)
     this.onSearchFinished = this.onSearchFinished.bind(this)
+    this.decodeTabContent = this.decodeTabContent.bind(this)
   }
 
   componentDidMount() {
@@ -97,6 +98,7 @@ class App extends React.Component {
   }
 
   loadFile(file) {
+    const { extension } = getLanguageFromFileName(file.name)
     const openedTabs = this.state.openedTabs
     let tabIndex = this.findTabIndex(file.path)
 
@@ -118,36 +120,23 @@ class App extends React.Component {
           return
         }
 
+        // Skip decoding this file if it can't be displayed by the editor
+        // or if it should be displayed bt the FileRenderer first
+        if (
+          Editor.previewExtensions.has(extension) ||
+          Editor.illegalExtensions.has(extension)
+        ) {
+          openedTabs[tabIndex].content = content
+          openedTabs[tabIndex].canEditorRender = false
+          openedTabs[tabIndex].isLoading = false
+
+          this.setState({ openedTabs: this.state.openedTabs })
+          return
+        }
+
         // Try to decode the file to see if it can be rendered by the
         // editor. If it can't, pass it to the FileRenderer
-        const decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
-          type: 'module'
-        })
-
-        decodeWorker.postMessage({
-          message: content,
-          type: 'decode'
-        })
-
-        decodeWorker.onerror = event => {
-          openedTabs[tabIndex].hasError = true
-          openedTabs[tabIndex].isLoading = false
-
-          this.setState({ openedTabs: this.state.openedTabs })
-
-          Logger.error(event.message)
-          decodeWorker.terminate()
-        }
-
-        decodeWorker.onmessage = event => {
-          openedTabs[tabIndex].content = event.data || content
-          openedTabs[tabIndex].canEditorRender = event.data !== null
-          openedTabs[tabIndex].isLoading = false
-
-          this.setState({ openedTabs: this.state.openedTabs })
-
-          decodeWorker.terminate()
-        }
+        this.decodeTabContent(content, tabIndex)
       })
       .catch(err => {
         tabIndex = this.findTabIndex(file.path)
@@ -163,6 +152,39 @@ class App extends React.Component {
 
         Logger.error(err)
       })
+  }
+
+  decodeTabContent(content, tabIndex) {
+    const openedTabs = this.state.openedTabs
+    // Use a worker to avoid UI freezes
+    const decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
+      type: 'module'
+    })
+
+    decodeWorker.postMessage({
+      message: content,
+      type: 'decode'
+    })
+
+    decodeWorker.onerror = event => {
+      openedTabs[tabIndex].hasError = true
+      openedTabs[tabIndex].isLoading = false
+
+      this.setState({ openedTabs: this.state.openedTabs })
+
+      Logger.error(event.message)
+      decodeWorker.terminate()
+    }
+
+    decodeWorker.onmessage = event => {
+      openedTabs[tabIndex].content = event.data || content
+      openedTabs[tabIndex].canEditorRender = event.data !== null
+      openedTabs[tabIndex].isLoading = false
+
+      this.setState({ openedTabs: this.state.openedTabs })
+
+      decodeWorker.terminate()
+    }
   }
 
   findTabIndex(path) {
