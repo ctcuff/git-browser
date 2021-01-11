@@ -14,7 +14,6 @@ const Collapse = props => {
     setOpen(!isOpen)
   }
 
-  // Need to re render this component if the open prop changes
   useEffect(() => {
     setOpen(props.open)
   }, [props.open])

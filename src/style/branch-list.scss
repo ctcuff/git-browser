@@ -34,12 +34,6 @@
         background-color: var(--color-list-item-hover);
       }
     }
-
-    @include mobile() {
-      &:active:not(.truncated-message) {
-        background-color: var(--color-list-item-hover);
-      }
-    }
   }
 
   .branch-name {
