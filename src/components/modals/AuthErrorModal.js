@@ -8,8 +8,10 @@ const AuthErrorModal = props => {
   let message
 
   switch (props.code) {
-    // Ignore the error where the user refuses a login request
+    // Ignore errors that aren't related to the auth process
     case 'auth/user-cancelled':
+    case 'auth/popup-closed-by-user':
+    case 'auth/cancelled-popup-request':
       // Need to make sure the modal state gets reset
       setTimeout(props.hideModal, 100)
       return null
