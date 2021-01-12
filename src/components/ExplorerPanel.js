@@ -75,23 +75,26 @@ class ExplorerPanel extends React.Component {
   }
 
   componentDidMount() {
-    // Get the ?repo=user/repoName query from the URL and make a search
+    // Get the repo and branch queries from the URL and make a search
     const params = new URLSearchParams(window.location.search)
-    const query = decodeURIComponent(params.get('repo') || '')
-    const url = 'github.com/' + query
+    const repo = decodeURIComponent(params.get('repo') || '')
+    const branch = decodeURIComponent(params.get('branch') || '')
+    const url = 'github.com/' + repo
 
-    if (query) {
+    if (repo) {
       this.setState({ inputValue: url })
-      this.getRepo(url)
+      this.getRepo(url, branch)
     }
   }
 
-  updateURLQuery(query) {
+  updateURLQuery(query, branch = '') {
     // Appends the ?repo=user/repoName query to the URL
     const prevUrl = window.location.pathname + window.location.search
-    const newUrl = `${window.location.pathname}?repo=${encodeURIComponent(
-      query
-    )}`
+    let newUrl = `${window.location.pathname}?repo=${encodeURIComponent(query)}`
+
+    if (branch) {
+      newUrl += `&branch=${encodeURIComponent(branch)}`
+    }
 
     if (prevUrl !== newUrl) {
       window.history.replaceState({}, '', newUrl)
@@ -109,7 +112,7 @@ class ExplorerPanel extends React.Component {
     this.setState({ isLoading: !this.state.isLoading })
   }
 
-  async getRepo(url) {
+  async getRepo(url, branch = 'default') {
     if (
       !url ||
       this.state.currentRepoUrl === url ||
@@ -125,13 +128,10 @@ class ExplorerPanel extends React.Component {
     // If we try to load the tree for the repository and it
     // fails, don't try to load the branches
     try {
-      await this.getTree(url, 'default')
+      await this.getTree(url, branch)
       await this.getBranches(url)
 
-      const path = URLUtil.extractRepoPath(url)
-
       this.setState({ currentRepoPath: url })
-      this.updateURLQuery(path)
       this.props.onSearchFinished(false)
     } catch (err) {
       this.props.onSearchFinished(true)
@@ -164,6 +164,10 @@ class ExplorerPanel extends React.Component {
             }
           }
         })
+
+        const path = URLUtil.extractRepoPath(repoUrl)
+
+        this.updateURLQuery(path, res.branch)
       })
       .catch(err => {
         const searchErrorMessage = err.message || err
@@ -199,9 +203,7 @@ class ExplorerPanel extends React.Component {
     this.props.onSearchStarted()
 
     this.getTree(branch.repoUrl, branch.name)
-      .then(() => {
-        this.props.onSearchFinished(false)
-      })
+      .then(() => this.props.onSearchFinished(false))
       .catch(err => {
         Logger.error(err)
         this.props.onSearchFinished(true)
@@ -209,8 +211,7 @@ class ExplorerPanel extends React.Component {
   }
 
   toggleExplorer() {
-    const isExplorerOpen = !this.state.isExplorerOpen
-    this.setState({ isExplorerOpen })
+    this.setState({ isExplorerOpen: !this.state.isExplorerOpen })
   }
 
   openExplorer() {

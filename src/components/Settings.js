@@ -49,6 +49,14 @@ const Settings = props => {
         )}
       </button>
       {username && <p className="profile-username">Logged in as {username}</p>}
+      <a
+        className="source-link"
+        href="https://github.com/ctcuff/git-browser"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        View source on GitHub
+      </a>
     </div>
   )
 }
