@@ -1,9 +1,20 @@
 /* eslint-disable no-var, semi */
 import { base64DecodeUnicode, base64EncodeUnicode } from './util'
 
-// Encoding/decoding a large string can take time and it blocks the main thread.
-// Because of this, we have to encode/decode it using a worker and post
-// the result when it's finished.
+/**
+ * Encoding/decoding a large string can take time and it blocks the main thread.
+ * Because of this, we have to encode/decode it using a worker and post
+ * the result when it's finished.
+ *
+ * This worker takes an object as a message:
+ *```
+ * {
+ *  type: 'encode' | 'decode',
+ *  message: 'Some string'
+ *  raw: true | false,
+ * }
+ * ```
+ */
 onmessage = function (event) {
   const { message, type, raw = false } = event.data
   let content = null

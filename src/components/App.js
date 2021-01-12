@@ -333,7 +333,9 @@ class App extends React.Component {
           )}
           {openedTabs.length === 0 && (
             <div className="landing">
-              <img src={icon} alt="Git Browser icon" className="logo" />
+              <div className="logo">
+                <img src={icon} alt="Git Browser icon" />
+              </div>
               <h2 className="heading">Welcome to Git Browser</h2>
               <div className="description">
                 <p>To get started, enter a GitHub URL in the search bar.</p>

@@ -8,7 +8,6 @@ import AudioRenderer from './renderers/AudioRenderer'
 import MarkdownRenderer from './renderers/MarkdownRenderer'
 import CSVRenderer from './renderers/CSVRenderer'
 import JupyterRenderer from './renderers/JupyterRenderer'
-import { noop } from '../scripts/util'
 import { VscCode } from 'react-icons/vsc'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
@@ -144,13 +143,37 @@ class FileRenderer extends React.Component {
     )
   }
 
-  // Let the App component know that ths file should
+  // Let the App component know that this file should
   // be rendered by the editor
   forceRenderEditor() {
-    // The content may not have been properly decoded. If it
-    // wasn't, we'll "force" decoding with atob
-    const content = this.state.decodedContent || atob(this.props.content)
-    this.props.onForceRender(content, true)
+    const content = this.state.decodedContent
+
+    if (content) {
+      this.props.onForceRender(content, true)
+      return
+    }
+
+    this.setState({ isLoading: true })
+
+    // The content may not have been properly decoded when this
+    // component was mounted (this happens with files that can't
+    // be displayed as text). If it wasn't, we'll try to "force"
+    // decoding with atob
+    this.decodeWorker.postMessage({
+      type: 'decode',
+      message: this.props.content,
+      raw: true
+    })
+
+    this.decodeWorker.onmessage = event => {
+      this.setState({ isLoading: false })
+      this.props.onForceRender(event.data, true)
+    }
+
+    this.decodeWorker.onerror = error => {
+      this.setState({ isLoading: false })
+      Logger.error(error)
+    }
   }
 
   render() {
@@ -172,11 +195,7 @@ FileRenderer.propTypes = {
   content: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   extension: PropTypes.string.isRequired,
-  onForceRender: PropTypes.func
-}
-
-FileRenderer.defaultProps = {
-  onForceRender: noop
+  onForceRender: PropTypes.func.isRequired
 }
 
 export default FileRenderer

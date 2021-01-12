@@ -30,10 +30,27 @@
     }
 
     .logo {
+      // Setting padding-bottom, height, and width allows the
+      // image container to keep its size if there is no
+      // image loaded yet. This prevents content from shifting
+      // when the image is loaded
+      padding-bottom: 10em;
+      height: 0;
       width: 10em;
+      position: relative;
+      display: flex;
 
       @include mobile() {
         width: 7.5em;
+        padding-bottom: 7.5em;
+      }
+
+      img {
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        object-fit: contain;
       }
     }
 

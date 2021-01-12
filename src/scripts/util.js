@@ -61,14 +61,16 @@ const getLanguageFromFileName = fileName => {
   return languageData[extension]
 }
 
-// Properly decodes a base64 string since some non-english
-// characters may not decode properly using atob. Note that this
-// throws an error if the string can't be decoded. In that case,
-// it may be an image, PDF, or some other file type that
-// FileRenderer might be able to display
-// https://stackoverflow.com/a/30106551/9124220
+/**
+ * Properly decodes a base64 string since some non-english
+ * characters may not decode properly using atob. Note that this
+ * throws an error if the string can't be decoded. In that case,
+ * it may be an image, PDF, or some other file type that
+ * FileRenderer might be able to display
+ */
 const base64DecodeUnicode = str => {
   // Going backwards: from byte stream, to percent-encoding, to original string.
+  // https://stackoverflow.com/a/30106551/9124220
   return decodeURIComponent(
     atob(str)
       .split('')
@@ -77,8 +79,9 @@ const base64DecodeUnicode = str => {
   )
 }
 
-// Properly encodes a base 64 string since it may contain non UTF
-// or Latin characters
+/**
+ * Properly encodes a base 64 string since it may contain non UTF characters
+ */
 const base64EncodeUnicode = str => {
   return btoa(
     encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, value) => {
