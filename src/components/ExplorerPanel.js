@@ -340,6 +340,7 @@ class ExplorerPanel extends React.Component {
             <FileSearch
               treeData={treeData}
               onSelectFile={this.props.onSelectFile}
+              activeFilePath={this.props.activeFilePath}
             />
           </Collapse>
           <Collapse
@@ -348,9 +349,16 @@ class ExplorerPanel extends React.Component {
             onToggle={() => this.togglePanel('code', !panels.code.isOpen)}
           >
             <FileExplorer
-              onSelectFile={this.props.onSelectFile}
-              nodes={treeData}
               key={key}
+              nodes={treeData}
+              onSelectFile={this.props.onSelectFile}
+              activeFilePath={
+                // Pass an empty string when closed to prevent the explorer
+                // from unnecessarily searching for the active file
+                isExplorerOpen && panels.code.isOpen
+                  ? this.props.activeFilePath
+                  : ''
+              }
             />
           </Collapse>
           <Collapse
@@ -385,7 +393,8 @@ class ExplorerPanel extends React.Component {
 ExplorerPanel.propTypes = {
   onSelectFile: PropTypes.func.isRequired,
   onSearchStarted: PropTypes.func.isRequired,
-  onSearchFinished: PropTypes.func.isRequired
+  onSearchFinished: PropTypes.func.isRequired,
+  activeFilePath: PropTypes.string.isRequired
 }
 
 export default ExplorerPanel

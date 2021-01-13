@@ -15,9 +15,37 @@ class FileExplorer extends React.PureComponent {
 
     this.getRootNodes = this.getRootNodes.bind(this)
     this.getChildren = this.getChildren.bind(this)
-    this.onToggle = this.onToggle.bind(this)
+    this.toggleNode = this.toggleNode.bind(this)
     this.onSelectNode = this.onSelectNode.bind(this)
     this.closeAllFolders = this.closeAllFolders.bind(this)
+    this.openUpToRoot = this.openUpToRoot.bind(this)
+  }
+
+  componentDidUpdate(prevProps) {
+    const activeFilePath = this.props.activeFilePath
+
+    // When the active file changes, find the new active file and open
+    // every parent folder until the root. Note that this behavior is
+    // disabled with a large number of nodes for performance reasons.
+    if (
+      activeFilePath &&
+      prevProps.activeFilePath !== activeFilePath &&
+      Object.keys(this.state.nodes).length <= 1500
+    ) {
+      this.openUpToRoot(activeFilePath)
+    }
+  }
+
+  openUpToRoot(path) {
+    const nodes = this.state.nodes
+
+    if (nodes[path].type === 'folder' && !nodes[path].isOpen) {
+      this.toggleNode(nodes[path])
+    }
+
+    if (nodes[path].parent) {
+      this.openUpToRoot(nodes[path].parent)
+    }
   }
 
   getRootNodes() {
@@ -49,7 +77,7 @@ class FileExplorer extends React.PureComponent {
     return [...left, ...right]
   }
 
-  onToggle(node) {
+  toggleNode(node) {
     const nodes = this.state.nodes
 
     nodes[node.path].isOpen = !node.isOpen
@@ -107,8 +135,9 @@ class FileExplorer extends React.PureComponent {
               node={node}
               key={node.path}
               getChildren={this.getChildren}
-              onToggle={this.onToggle}
+              onToggle={this.toggleNode}
               onSelectNode={this.onSelectNode}
+              activeFilePath={this.props.activeFilePath}
             />
           ))}
         </React.Fragment>
@@ -128,7 +157,8 @@ FileExplorer.propTypes = {
       isRoot: PropTypes.bool
     })
   ),
-  repoName: PropTypes.string
+  repoName: PropTypes.string,
+  activeFilePath: PropTypes.string.isRequired
 }
 
 FileExplorer.defaultProps = {

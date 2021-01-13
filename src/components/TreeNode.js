@@ -3,7 +3,7 @@ import React from 'react'
 import { FaRegFile, FaFolder, FaFolderOpen } from 'react-icons/fa'
 import { FiChevronRight, FiChevronDown } from 'react-icons/fi'
 import PropTypes from 'prop-types'
-import { noop } from '../scripts/util'
+import { noop, withClasses } from '../scripts/util'
 
 const getPaddingLeft = (level, type) => {
   const defaultPadding = 20
@@ -55,14 +55,18 @@ const onSelectNode = (node, props) => {
 }
 
 const TreeNode = props => {
-  const { node, getChildren, level, showPath, className } = props
+  const { node, getChildren, level, showPath, activeFilePath } = props
   const children = getChildren(node)
   const nodeLabel = getNodeLabel(node)
+  const classes = withClasses({
+    [props.className]: true,
+    'is-active': node.path === activeFilePath
+  })
 
   return (
     <React.Fragment>
       <div
-        className={`tree-node ${className}`}
+        className={`tree-node ${classes}`}
         title={node.path}
         style={{ paddingLeft: getPaddingLeft(level, node.type) }}
         onClick={() => onSelectNode(node, props)}
@@ -105,7 +109,8 @@ TreeNode.propTypes = {
   onToggle: PropTypes.func,
   onSelectNode: PropTypes.func.isRequired,
   showPath: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
+  activeFilePath: PropTypes.string.isRequired
 }
 
 TreeNode.defaultProps = {

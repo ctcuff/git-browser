@@ -29,7 +29,8 @@ class App extends React.Component {
       openedFilePaths: new Set(),
       openedTabs: [],
       activeTabIndex: 0,
-      isLoading: false
+      isLoading: false,
+      activeFilePath: ''
     }
 
     this.onSelectFile = this.onSelectFile.bind(this)
@@ -58,6 +59,22 @@ class App extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateViewport)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { openedTabs, activeTabIndex } = this.state
+
+    if (
+      prevState.openedTabs.length === openedTabs.length &&
+      prevState.activeTabIndex === activeTabIndex
+    ) {
+      return
+    }
+
+    const activeFilePath =
+      openedTabs.length > 0 ? openedTabs[activeTabIndex].path : ''
+
+    this.setState({ activeFilePath })
   }
 
   updateViewport() {
@@ -91,7 +108,8 @@ class App extends React.Component {
       {
         openedFilePaths: new Set(openedFilePaths.add(node.path)),
         activeTabIndex: openedTabs.length,
-        openedTabs: [...openedTabs, initialTabState]
+        openedTabs: [...openedTabs, initialTabState],
+        activeFilePath: node.path
       },
       () => this.loadFile(node)
     )
@@ -311,7 +329,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { activeTabIndex, openedTabs, isLoading } = this.state
+    const { activeTabIndex, openedTabs, isLoading, activeFilePath } = this.state
     const icon =
       this.props.theme === 'theme-light'
         ? gitBrowserIconLight
@@ -323,6 +341,7 @@ class App extends React.Component {
           onSelectFile={this.onSelectFile}
           onSearchFinished={this.onSearchFinished}
           onSearchStarted={this.toggleLoadingOverlay}
+          activeFilePath={activeFilePath}
         />
         <div className="right">
           {isLoading && (
