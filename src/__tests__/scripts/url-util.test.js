@@ -1,16 +1,24 @@
-/* eslint-disable no-import-assign */
-import * as config from 'src/config'
+jest.mock('react-modal', () => ({
+  setAppElement: () => {}
+}))
+
+import store from 'src/store'
 import URLUtil from 'src/scripts/url-util'
+
+const mockResp = {
+  statusText: ''
+}
 
 describe('URLUtil', () => {
   afterEach(() => {
-    config.OAUTH_TOKEN = 'mock-token'
+    jest.restoreAllMocks()
   })
 
-  test('request adds oauth token if found', () => {
-    global.fetch = jest.fn()
-    config.OAUTH_TOKEN = null
-    URLUtil.request('test1')
+  test('request adds oauth token if found', async () => {
+    const mockStore = jest.spyOn(store, 'getState')
+    global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
+
+    const res = await URLUtil.request('test1')
 
     expect(fetch).toHaveBeenCalledWith(
       'test1',
@@ -19,7 +27,10 @@ describe('URLUtil', () => {
       })
     )
 
-    config.OAUTH_TOKEN = 'mock-token'
+    expect(res).toEqual(mockResp)
+
+    process.env.DEBUG = 'true'
+    process.env.OAUTH_TOKEN = 'mock-token'
     URLUtil.request('test2')
 
     expect(fetch).toHaveBeenCalledWith(
@@ -30,6 +41,36 @@ describe('URLUtil', () => {
         }
       })
     )
+
+    process.env.DEBUG = ''
+    process.env.OAUTH_TOKEN = ''
+    mockStore.mockReturnValue({
+      user: {
+        accessToken: 'mock-user-token'
+      }
+    })
+
+    URLUtil.request('test3')
+
+    expect(fetch).toHaveBeenCalledWith(
+      'test3',
+      expect.objectContaining({
+        headers: {
+          Authorization: 'token mock-user-token'
+        }
+      })
+    )
+  })
+
+  test('request handles rate limit and other errors', async () => {
+    mockResp.statusText = 'some rate limit error'
+    global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
+
+    expect(URLUtil.request('test')).rejects.toEqual('Rate limit exceeded')
+
+    global.fetch = jest.fn().mockReturnValue(Promise.reject('mockError'))
+
+    expect(URLUtil.request('test')).rejects.toEqual('mockError')
   })
 
   test('isUrlValid checks url validity', () => {
