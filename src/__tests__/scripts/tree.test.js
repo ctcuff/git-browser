@@ -7,7 +7,7 @@ describe('Tree', () => {
     // Need to make sure it ignores commits
     sampleTreeApiResponse.tree.push({
       path: 'mock-file.txt',
-      type: ' commit'
+      type: 'commit'
     })
 
     // Need to make sure it handles duplicates

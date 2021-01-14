@@ -1,7 +1,3 @@
-jest.mock('react-modal', () => ({
-  setAppElement: () => {}
-}))
-
 import store from 'src/store'
 import URLUtil from 'src/scripts/url-util'
 

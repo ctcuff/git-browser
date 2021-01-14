@@ -81,4 +81,4 @@ const logout = () => {
   }
 }
 
-export { login, logout, loadProfileFromStorage }
+export { login, logout, loadProfileFromStorage, toggleLoading }
