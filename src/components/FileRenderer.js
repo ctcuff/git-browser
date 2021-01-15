@@ -13,6 +13,7 @@ import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import Logger from '../scripts/logger'
 import Editor from '../components/Editor'
+import AsciiDocRenderer from './renderers/AsciiDocRenderer'
 
 class FileRenderer extends React.Component {
   constructor(props) {
@@ -70,9 +71,9 @@ class FileRenderer extends React.Component {
     const { content, title, extension } = this.props
     const decodedContent = this.state.decodedContent
 
-    // Files with decoded content display human readable text. If
+    // Files with human readable text need to be decoded. If
     // we can't decode the content, display an unsupported message
-    if (!decodedContent && Editor.previewExtensions.has(extension)) {
+    if (decodedContent === null && Editor.previewExtensions.has(extension)) {
       return this.renderUnsupported()
     }
 
@@ -104,6 +105,8 @@ class FileRenderer extends React.Component {
       case '.md':
       case '.mdx':
         return <MarkdownRenderer content={decodedContent} />
+      case '.adoc':
+        return <AsciiDocRenderer content={decodedContent} />
       case '.csv':
         return <CSVRenderer content={decodedContent} />
       case '.ipynb':

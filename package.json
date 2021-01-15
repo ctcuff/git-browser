@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "anser": "^2.0.1",
+    "asciidoctor": "^2.2.1",
     "dompurify": "^2.2.6",
     "firebase": "^8.2.1",
     "highlight.js": "^10.5.0",

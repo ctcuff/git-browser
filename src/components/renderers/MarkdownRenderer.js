@@ -180,6 +180,10 @@ class MarkdownRenderer extends React.Component {
       return <LoadingOverlay text={currentStep} />
     }
 
+    if (!markdownContent.trim()) {
+      return <ErrorOverlay message="No content to display." showIcon={false} />
+    }
+
     return (
       <div className="markdown-renderer">
         <div

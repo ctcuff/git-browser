@@ -11,7 +11,14 @@ class Editor extends React.Component {
   // File extensions that cause the component to
   // display the "preview file" button. These files will be displayed as
   // human readable text by the renderers that render these files
-  static previewExtensions = new Set(['.svg', '.md', '.mdx', '.csv', '.ipynb'])
+  static previewExtensions = new Set([
+    '.svg',
+    '.md',
+    '.mdx',
+    '.csv',
+    '.ipynb',
+    '.adoc'
+  ])
   // Files that will always be displayed by the FileRenderer component.
   // This allows us to avoid unnecessarily decoding a file.
   static illegalExtensions = new Set([

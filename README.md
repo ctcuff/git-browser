@@ -13,6 +13,8 @@ Similar to GitHub, this project supports not only viewing code, but rendering fi
 - Audio
 - PDFs
     - Thanks to [pdfjs](https://github.com/mozilla/pdf.js/) 🎉
+- AsciiDoc
+    - Thanks to [Asciidoctor](https://github.com/asciidoctor/asciidoctor.js) 🎉
 - Jupyter Notebook (Experimental)
     - Thanks to [notebookjs](https://github.com/jsvine/notebookjs) 🎉
 
