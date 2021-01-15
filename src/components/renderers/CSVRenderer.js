@@ -27,12 +27,12 @@ class CSVRenderer extends React.Component {
       currentStep: 'Loading...',
       inputValue: '',
       tableHeaders: [],
-      tableRows: [
-        {
-          rowArray: [],
-          display: ''
-        }
-      ]
+      // Contains an array of objects that look like:
+      //  {
+      //    rowArray: [],
+      //    display: ''
+      //  }
+      tableRows: []
     }
 
     this.onChange = this.onChange.bind(this)
@@ -46,6 +46,11 @@ class CSVRenderer extends React.Component {
   }
 
   componentDidMount() {
+    if (!this.props.content.trim()) {
+      this.setState({ isLoading: false })
+      return
+    }
+
     try {
       this.init()
     } catch (err) {
@@ -85,7 +90,7 @@ class CSVRenderer extends React.Component {
     Parser.parse(content, {
       skipEmptyLines: true,
       worker: true,
-      comments: false,
+      comments: '#',
       preview: MAX_ROW_COUNT + 1,
       delimitersToGuess: [
         ',',
@@ -181,10 +186,21 @@ class CSVRenderer extends React.Component {
   }
 
   render() {
-    const { inputValue, errors, isLoading, currentStep } = this.state
+    const {
+      inputValue,
+      errors,
+      isLoading,
+      currentStep,
+      tableRows,
+      tableHeaders
+    } = this.state
 
     if (isLoading) {
       return <LoadingOverlay text={currentStep} />
+    }
+
+    if (tableRows.length === 0 && tableHeaders.length === 0) {
+      return <ErrorOverlay message="No data to display." showIcon={false} />
     }
 
     if (errors.has(LIBRARY_IMPORT_ERROR)) {

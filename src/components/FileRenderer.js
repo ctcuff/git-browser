@@ -43,6 +43,14 @@ class FileRenderer extends React.Component {
       return
     }
 
+    if (content.trim() === '') {
+      this.setState({
+        decodedContent: '',
+        isLoading: false
+      })
+      return
+    }
+
     // Decode base64 content on a separate thread to avoid UI freezes
     this.decodeWorker.postMessage({
       message: content,
@@ -72,7 +80,7 @@ class FileRenderer extends React.Component {
 
     // Files with decoded content display human readable text. If
     // we can't decode the content, display an unsupported message
-    if (!decodedContent && Editor.previewExtensions.has(extension)) {
+    if (decodedContent === null && Editor.previewExtensions.has(extension)) {
       return this.renderUnsupported()
     }
 
@@ -105,6 +113,7 @@ class FileRenderer extends React.Component {
       case '.mdx':
         return <MarkdownRenderer content={decodedContent} />
       case '.csv':
+      case '.tsv':
         return <CSVRenderer content={decodedContent} />
       case '.ipynb':
         return <JupyterRenderer content={decodedContent} />
