@@ -36,12 +36,22 @@ class FileRenderer extends React.Component {
   }
 
   componentDidMount() {
-    const { content, extension } = this.props
+    const { content, extension, wasForceRendered } = this.props
 
     // Skip decoding if this file if it doesn't need to be displayed as text.
     // i.e.: Images, PDFs, audio, etc...
     if (!Editor.previewExtensions.has(extension)) {
       this.setState({ isLoading: false })
+      return
+    }
+
+    // Skip decoding if this file was force rendered since the text is
+    // already in a human-readable form
+    if (wasForceRendered && Editor.textExtensions.has(extension)) {
+      this.setState({
+        decodedContent: content,
+        isLoading: false
+      })
       return
     }
 
@@ -236,7 +246,12 @@ FileRenderer.propTypes = {
   content: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   extension: PropTypes.string.isRequired,
-  onForceRender: PropTypes.func.isRequired
+  onForceRender: PropTypes.func.isRequired,
+  wasForceRendered: PropTypes.bool
+}
+
+FileRenderer.defaultProps = {
+  wasForceRendered: false
 }
 
 export default FileRenderer

@@ -10,7 +10,7 @@
     "build": "webpack --config webpack.config.js --mode='production' --env.debug='false'",
     "build:analyze": "yarn build --env.analyze",
     "dev": "webpack-dev-server --env.debug='true'",
-    "test": "jest",
+    "test": "jest --env=./test-env.js",
     "test:ci": "yarn test --bail --passWithNoTests --coverage",
     "lint": "eslint './src/**/*.js'",
     "format": "yarn format:js && yarn format:scss",

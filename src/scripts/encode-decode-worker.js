@@ -36,24 +36,16 @@ onmessage = function (event) {
 }
 
 function encode(content, raw) {
-  if (raw) {
-    return btoa(content)
-  }
-
   try {
-    return base64EncodeUnicode(content)
+    return base64EncodeUnicode(content, raw)
   } catch (e) {
     return null
   }
 }
 
 function decode(content, raw) {
-  if (raw) {
-    return atob(content)
-  }
-
   try {
-    return base64DecodeUnicode(content)
+    return base64DecodeUnicode(content, raw)
   } catch (e) {
     return null
   }

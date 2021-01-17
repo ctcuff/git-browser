@@ -8,9 +8,8 @@ import { connect } from 'react-redux'
 import Logger from '../scripts/logger'
 
 class Editor extends React.Component {
-  // File extensions that cause the component to
-  // display the "preview file" button. These files will be displayed as
-  // human readable text by the renderers that render these files
+  // File extensions that cause the component to display
+  // the "preview file" button.
   static previewExtensions = new Set([
     '.svg',
     '.md',
@@ -19,6 +18,9 @@ class Editor extends React.Component {
     '.tsv',
     '.ipynb'
   ])
+  // Files that don't have to be decoded when sent to the FileRenderer
+  // since they already display as text when the Editor is rendered
+  static textExtensions = new Set(['.md', '.mdx', '.csv', '.tsv', '.ipynb'])
   // Files that will always be displayed by the FileRenderer component.
   // This allows us to avoid unnecessarily decoding a file.
   static illegalExtensions = new Set([
@@ -169,12 +171,17 @@ class Editor extends React.Component {
     if (this.state.isEncoding) {
       return
     }
-    const { content, onForceRender } = this.props
+    const { content, onForceRender, extension } = this.props
 
     this.setState({
       isEncoding: true,
       isLoading: true
     })
+
+    if (Editor.textExtensions.has(extension)) {
+      onForceRender(content, false)
+      return
+    }
 
     this.encodeWorker.postMessage({
       message: content,

@@ -2,7 +2,6 @@ import '../style/app.scss'
 import React from 'react'
 import Editor from './Editor'
 import { setCSSVar, getLanguageFromFileName } from '../scripts/util'
-import PropTypes from 'prop-types'
 import ExplorerPanel from './ExplorerPanel'
 import GitHubAPI from '../scripts/github-api'
 import { Tab, TabView } from './Tabs'
@@ -10,10 +9,8 @@ import debounce from 'lodash/debounce'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import FileRenderer from './FileRenderer'
-import gitBrowserIconDark from '../assets/img/git-browser-icon-dark.svg'
-import gitBrowserIconLight from '../assets/img/git-browser-icon-light.svg'
 import Logger from '../scripts/logger'
-import { connect } from 'react-redux'
+import LandingScreen from './LandingScreen'
 
 // Don't allow API requests to files that meet/exceed this size
 // (in bytes) to avoid network strain and long render times
@@ -82,7 +79,8 @@ class App extends React.Component {
       isTooLarge: false,
       canEditorRender: false,
       hasError: false,
-      content: ''
+      content: '',
+      wasForceRendered: false
     }
 
     // Render a temporary loading tab while we wait for the
@@ -202,7 +200,8 @@ class App extends React.Component {
       isLoading,
       isTooLarge,
       canEditorRender,
-      hasError
+      hasError,
+      wasForceRendered
     } = tab
 
     if (index !== this.state.activeTabIndex) {
@@ -241,6 +240,7 @@ class App extends React.Component {
         title={title}
         extension={extension}
         onForceRender={this.onToggleRenderable}
+        wasForceRendered={wasForceRendered}
       />
     )
   }
@@ -252,6 +252,7 @@ class App extends React.Component {
 
     openedTabs[activeTabIndex].canEditorRender = canEditorRender
     openedTabs[activeTabIndex].content = content
+    openedTabs[activeTabIndex].wasForceRendered = true
 
     this.setState({ openedTabs })
   }
@@ -310,10 +311,6 @@ class App extends React.Component {
 
   render() {
     const { activeTabIndex, openedTabs, isLoading } = this.state
-    const icon =
-      this.props.theme === 'theme-light'
-        ? gitBrowserIconLight
-        : gitBrowserIconDark
 
     return (
       <div className="app">
@@ -329,27 +326,7 @@ class App extends React.Component {
               className="app-loading-overlay"
             />
           )}
-          {openedTabs.length === 0 && (
-            <div className="landing">
-              <div className="logo">
-                <img src={icon} alt="Git Browser icon" />
-              </div>
-              <h2 className="heading">Welcome to Git Browser</h2>
-              <div className="description">
-                <p>To get started, enter a GitHub URL in the search bar.</p>
-                <p>
-                  If you haven&apos;t already, sign in to get access to a higher{' '}
-                  <a
-                    href="https://docs.github.com/en/free-pro-team@latest/rest/reference/rate-limit"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    rate limit.
-                  </a>
-                </p>
-              </div>
-            </div>
-          )}
+          {openedTabs.length === 0 && <LandingScreen />}
           <TabView
             onTabClosed={this.onTabClosed}
             activeTabIndex={activeTabIndex}
@@ -368,16 +345,4 @@ class App extends React.Component {
   }
 }
 
-App.propTypes = {
-  theme: PropTypes.oneOf(['theme-dark', 'theme-light'])
-}
-
-App.defaultProps = {
-  theme: 'theme-light'
-}
-
-const mapStateToProps = state => ({
-  theme: state.settings.theme
-})
-
-export default connect(mapStateToProps)(App)
+export default App
