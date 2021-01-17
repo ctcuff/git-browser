@@ -12,7 +12,7 @@ class MarkdownRenderer extends React.Component {
     super(props)
 
     this.state = {
-      markdownContent: null,
+      markdownContent: '',
       isLoading: false,
       hasError: false,
       currentStep: 'Loading...'

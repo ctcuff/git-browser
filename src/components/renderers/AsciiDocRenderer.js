@@ -84,7 +84,7 @@ class AsciiDocRenderer extends React.Component {
     DOMPurify.addHook('afterSanitizeElements', this.afterSanitizeElements)
 
     return DOMPurify.sanitize(content, {
-      FORBID_TAGS: ['script', 'button'],
+      FORBID_TAGS: ['script', 'button', 'video'],
       FORBID_ATTR: ['style']
     })
   }
