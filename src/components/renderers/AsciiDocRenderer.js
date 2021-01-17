@@ -1,4 +1,4 @@
-import '../../style/ascii-doc-renderer.scss'
+import '../../style/renderers/ascii-doc-renderer.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
 import ErrorOverlay from '../ErrorOverlay'

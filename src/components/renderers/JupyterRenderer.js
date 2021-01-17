@@ -1,4 +1,4 @@
-import '../../style/jupyter-renderer.scss'
+import '../../style/renderers/jupyter-renderer.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
 import Logger from '../../scripts/logger'

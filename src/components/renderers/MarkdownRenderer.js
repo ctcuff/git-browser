@@ -1,4 +1,4 @@
-import '../../style/markdown-renderer.scss'
+import '../../style/renderers/markdown-renderer.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
 import { noop } from '../../scripts/util'

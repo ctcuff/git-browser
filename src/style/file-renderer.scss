@@ -8,6 +8,11 @@
   align-items: center;
   flex-direction: column;
 
+  .file-renderer-unsupported {
+    z-index: 2;
+    background-color: var(--color-app-bg);
+  }
+
   .editor-preview-btn {
     position: absolute;
     bottom: 0;

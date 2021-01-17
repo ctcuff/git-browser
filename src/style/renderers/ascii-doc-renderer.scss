@@ -3,6 +3,7 @@
   width: 100%;
   color: var(--color-text-primary);
   overflow: auto;
+  line-height: 1.5;
 
   .ascii-doc-content {
     max-width: 80%;
@@ -67,10 +68,6 @@
       background-color: transparent;
       padding: 0;
     }
-  }
-
-  h1 {
-    line-height: 1em;
   }
 
   h1,

@@ -78,7 +78,7 @@ class ExplorerPanel extends React.Component {
     // Get the repo and branch queries from the URL and make a search
     const params = new URLSearchParams(window.location.search)
     const repo = decodeURIComponent(params.get('repo') || '')
-    const branch = decodeURIComponent(params.get('branch') || '')
+    const branch = decodeURIComponent(params.get('branch') || 'default')
     const url = 'github.com/' + repo
 
     if (repo) {
@@ -87,7 +87,7 @@ class ExplorerPanel extends React.Component {
     }
   }
 
-  updateURLQuery(query, branch = '') {
+  updateURLQuery(query, branch) {
     // Appends the ?repo=user/repoName query to the URL
     const prevUrl = window.location.pathname + window.location.search
     let newUrl = `${window.location.pathname}?repo=${encodeURIComponent(query)}`
