@@ -169,21 +169,17 @@ class App extends React.Component {
     decodeWorker.onerror = event => {
       openedTabs[tabIndex].hasError = true
       openedTabs[tabIndex].isLoading = false
-
-      this.setState({ openedTabs: this.state.openedTabs })
-
-      Logger.error(event.message)
+      Logger.error('Error decoding tab content', event)
       decodeWorker.terminate()
+      this.setState({ openedTabs: this.state.openedTabs })
     }
 
     decodeWorker.onmessage = event => {
-      openedTabs[tabIndex].content = event.data || content
+      openedTabs[tabIndex].content = event.data
       openedTabs[tabIndex].canEditorRender = event.data !== null
       openedTabs[tabIndex].isLoading = false
-
-      this.setState({ openedTabs: this.state.openedTabs })
-
       decodeWorker.terminate()
+      this.setState({ openedTabs: this.state.openedTabs })
     }
   }
 
@@ -224,7 +220,9 @@ class App extends React.Component {
     }
 
     if (hasError) {
-      return <ErrorOverlay message={"Couldn't load file."} />
+      return (
+        <ErrorOverlay message="An error occurred while loading this file." />
+      )
     }
 
     const { extension, language } = getLanguageFromFileName(title)

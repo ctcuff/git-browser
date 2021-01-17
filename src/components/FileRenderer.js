@@ -20,13 +20,15 @@ class FileRenderer extends React.Component {
 
     this.state = {
       isLoading: true,
-      decodedContent: null
+      decodedContent: null,
+      hasError: false
     }
 
     this.getComponent = this.getComponent.bind(this)
     this.forceRenderEditor = this.forceRenderEditor.bind(this)
     this.renderUnsupported = this.renderUnsupported.bind(this)
     this.renderPreviewButton = this.renderPreviewButton.bind(this)
+    this.decodeContent = this.decodeContent.bind(this)
 
     this.decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
       type: 'module'
@@ -43,7 +45,7 @@ class FileRenderer extends React.Component {
       return
     }
 
-    if (content.trim() === '') {
+    if (content && !content.trim()) {
       this.setState({
         decodedContent: '',
         isLoading: false
@@ -52,21 +54,35 @@ class FileRenderer extends React.Component {
     }
 
     // Decode base64 content on a separate thread to avoid UI freezes
+    this.decodeContent()
+  }
+
+  decodeContent() {
+    this.setState({
+      isLoading: true,
+      hasError: false
+    })
+
     this.decodeWorker.postMessage({
-      message: content,
+      message: this.props.content,
       type: 'decode'
     })
 
     this.decodeWorker.onmessage = event => {
+      // decodedContent will be null if the content couldn't
+      // be properly decoded for some reason
       this.setState({
         isLoading: false,
-        decodedContent: event.data || null
+        decodedContent: event.data
       })
     }
 
     this.decodeWorker.onerror = event => {
-      this.setState({ isLoading: false })
-      Logger.error('Error decoding file', event.message)
+      this.setState({
+        isLoading: false,
+        hasError: true
+      })
+      Logger.error('Error decoding file', event)
     }
   }
 
@@ -84,6 +100,14 @@ class FileRenderer extends React.Component {
       return this.renderUnsupported()
     }
 
+    // Occurs if an empty string was passed to this component
+    if (
+      (content && !content.trim()) ||
+      (decodedContent !== null && !decodedContent.trim())
+    ) {
+      return <ErrorOverlay message="No content to preview." showIcon={false} />
+    }
+
     switch (extension) {
       case '.apng':
       case '.avif':
@@ -97,6 +121,7 @@ class FileRenderer extends React.Component {
       case '.pjp':
       case '.svg':
       case '.ico':
+      case '.bmp':
         return (
           <ImageRenderer content={content} extension={extension} alt={title} />
         )
@@ -129,6 +154,7 @@ class FileRenderer extends React.Component {
     `
     return (
       <ErrorOverlay
+        className="file-renderer-unsupported"
         message={message}
         retryMessage="Do you want to load it anyway?"
         onRetryClick={this.forceRenderEditor}
@@ -188,6 +214,12 @@ class FileRenderer extends React.Component {
   render() {
     if (this.state.isLoading) {
       return <LoadingOverlay text="Loading file..." />
+    }
+
+    if (this.state.hasError) {
+      return (
+        <ErrorOverlay message="An error occurred while loading the preview." />
+      )
     }
 
     return (

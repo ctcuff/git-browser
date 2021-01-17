@@ -39,7 +39,7 @@
     color: var(--color-text-primary);
 
     @include desktop() {
-      opacity: 0.2;
+      opacity: 0.5;
       transition: opacity 0.3s ease-in;
 
       &:hover {

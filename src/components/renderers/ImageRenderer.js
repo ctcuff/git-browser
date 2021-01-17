@@ -15,9 +15,12 @@ const getMimeType = extension => {
     case '.apng':
     case '.avif':
     case '.gif':
-    case '.png':
     case '.webp':
       type = extension.slice(1)
+      break
+    case '.bmp':
+    case '.png':
+      type = 'png'
       break
     case '.jpg':
     case '.jpeg':
@@ -113,6 +116,7 @@ ImageRenderer.propTypes = {
     '.pjpeg',
     '.pjp',
     // MIME Type: image/png
+    '.bmp',
     '.png',
     // MIME Type: image/svg+xml
     '.svg',

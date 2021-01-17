@@ -1,7 +1,7 @@
 import '../style/editor.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { noop, parseCSSVar } from '../scripts/util'
+import { parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
 import { AiOutlineEye } from 'react-icons/ai'
 import { connect } from 'react-redux'
@@ -24,6 +24,7 @@ class Editor extends React.Component {
   static illegalExtensions = new Set([
     '.apng',
     '.avif',
+    '.bmp',
     '.gif',
     '.png',
     '.webp',
@@ -213,12 +214,8 @@ Editor.propTypes = {
   language: PropTypes.string.isRequired,
   fileName: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
-  theme: PropTypes.string.isRequired,
-  onForceRender: PropTypes.func
-}
-
-Editor.defaultProps = {
-  onForceRender: noop
+  theme: PropTypes.oneOf(['theme-light', 'theme-dark']).isRequired,
+  onForceRender: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({

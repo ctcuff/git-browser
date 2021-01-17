@@ -46,11 +46,6 @@ class CSVRenderer extends React.Component {
   }
 
   componentDidMount() {
-    if (!this.props.content.trim()) {
-      this.setState({ isLoading: false })
-      return
-    }
-
     try {
       this.init()
     } catch (err) {
@@ -186,21 +181,10 @@ class CSVRenderer extends React.Component {
   }
 
   render() {
-    const {
-      inputValue,
-      errors,
-      isLoading,
-      currentStep,
-      tableRows,
-      tableHeaders
-    } = this.state
+    const { inputValue, errors, isLoading, currentStep } = this.state
 
     if (isLoading) {
       return <LoadingOverlay text={currentStep} />
-    }
-
-    if (tableRows.length === 0 && tableHeaders.length === 0) {
-      return <ErrorOverlay message="No data to display." showIcon={false} />
     }
 
     if (errors.has(LIBRARY_IMPORT_ERROR)) {
