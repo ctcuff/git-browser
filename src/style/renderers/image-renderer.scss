@@ -1,4 +1,4 @@
-@import './mixins/media.scss';
+@import '../mixins/media';
 
 .image-renderer {
   width: 90%;
@@ -9,11 +9,11 @@
   align-items: center;
 
   &.has-grid.light-grid {
-    background-image: url('../assets/img/checker-theme-light.svg');
+    background-image: url('../../assets/img/checker-theme-light.svg');
   }
 
   &.has-grid.dark-grid {
-    background-image: url('../assets/img/checker-theme-dark.svg');
+    background-image: url('../../assets/img/checker-theme-dark.svg');
   }
 
   img {

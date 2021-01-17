@@ -173,7 +173,7 @@ class App extends React.Component {
     }
 
     decodeWorker.onmessage = event => {
-      openedTabs[tabIndex].content = event.data
+      openedTabs[tabIndex].content = event.data || content
       openedTabs[tabIndex].canEditorRender = event.data !== null
       openedTabs[tabIndex].isLoading = false
       decodeWorker.terminate()

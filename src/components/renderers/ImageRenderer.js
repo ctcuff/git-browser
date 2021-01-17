@@ -1,4 +1,4 @@
-import '../../style/image-renderer.scss'
+import '../../style/renderers/image-renderer.scss'
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'

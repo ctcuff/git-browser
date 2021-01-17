@@ -1,4 +1,4 @@
-import '../../style/csv-renderer.scss'
+import '../../style/renderers/csv-renderer.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
