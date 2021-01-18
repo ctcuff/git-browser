@@ -85,6 +85,43 @@ const URLUtil = {
 
   buildBranchesUrl(repoPath) {
     return `${BASE_REPO_URL}/${repoPath}/branches`
+  },
+
+  /**
+   * Takes an object and appends each key and value to the window URL as a query.
+   * Any false value is removed from the URL.
+   * ```
+   * URLUtil.updateURLSearchParams({
+   *  "repo": "user/name",
+   *  "path": null,
+   *  "file": "test.css"
+   * })
+   *
+   * ```
+   * returns `?repo=user%2Fname&file=test.css`
+   */
+  updateURLSearchParams(queryObj) {
+    const prevUrl = window.location.pathname + window.location.search
+    const params = new URLSearchParams(window.location.search)
+
+    Object.keys(queryObj).forEach(key => {
+      if (queryObj[key]) {
+        params.set(key, queryObj[key])
+      } else {
+        params.delete(key)
+      }
+    })
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`
+
+    if (prevUrl !== newUrl) {
+      window.history.replaceState({}, '', newUrl)
+    }
+  },
+
+  getSearchParam(key, defaultValue = null) {
+    const params = new URLSearchParams(window.location.search)
+    return params.get(key) || defaultValue
   }
 }
 

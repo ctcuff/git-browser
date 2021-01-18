@@ -71,33 +71,17 @@ class ExplorerPanel extends React.Component {
     this.closeExplorer = this.closeExplorer.bind(this)
     this.togglePanel = this.togglePanel.bind(this)
     this.panelButtons = this.panelButtons.bind(this)
-    this.updateURLQuery = this.updateURLQuery.bind(this)
   }
 
   componentDidMount() {
     // Get the repo and branch queries from the URL and make a search
-    const params = new URLSearchParams(window.location.search)
-    const repo = decodeURIComponent(params.get('repo') || '')
-    const branch = decodeURIComponent(params.get('branch') || 'default')
+    const repo = URLUtil.getSearchParam('repo')
+    const branch = URLUtil.getSearchParam('branch', 'default')
     const url = 'github.com/' + repo
 
     if (repo) {
       this.setState({ inputValue: url })
       this.getRepo(url, branch)
-    }
-  }
-
-  updateURLQuery(query, branch) {
-    // Appends the ?repo=user/repoName query to the URL
-    const prevUrl = window.location.pathname + window.location.search
-    let newUrl = `${window.location.pathname}?repo=${encodeURIComponent(query)}`
-
-    if (branch) {
-      newUrl += `&branch=${encodeURIComponent(branch)}`
-    }
-
-    if (prevUrl !== newUrl) {
-      window.history.replaceState({}, '', newUrl)
     }
   }
 
@@ -165,9 +149,10 @@ class ExplorerPanel extends React.Component {
           }
         })
 
-        const path = URLUtil.extractRepoPath(repoUrl)
-
-        this.updateURLQuery(path, res.branch)
+        URLUtil.updateURLSearchParams({
+          repo: URLUtil.extractRepoPath(repoUrl),
+          branch
+        })
       })
       .catch(err => {
         const searchErrorMessage = err.message || err

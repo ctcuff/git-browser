@@ -11,6 +11,7 @@ import ErrorOverlay from './ErrorOverlay'
 import FileRenderer from './FileRenderer'
 import Logger from '../scripts/logger'
 import LandingScreen from './LandingScreen'
+import URLUtil from '../scripts/url-util'
 
 // Don't allow API requests to files that meet/exceed this size
 // (in bytes) to avoid network strain and long render times
@@ -41,6 +42,10 @@ class App extends React.Component {
     this.onToggleRenderable = this.onToggleRenderable.bind(this)
     this.onSearchFinished = this.onSearchFinished.bind(this)
     this.decodeTabContent = this.decodeTabContent.bind(this)
+
+    // All tabs get cleared when a load finishes. This flag tells the
+    // component not to clear tabs if the ?file="" query is in the URL
+    this.mountedWithFile = !!URLUtil.getSearchParam('file')
   }
 
   componentDidMount() {
@@ -277,6 +282,11 @@ class App extends React.Component {
       activeTabIndex -= 1
     }
 
+    const filePath =
+      openedTabs.length === 0 ? null : openedTabs[activeTabIndex].path
+
+    URLUtil.updateURLSearchParams({ file: filePath })
+
     this.setState({
       openedFilePaths,
       openedTabs,
@@ -285,6 +295,7 @@ class App extends React.Component {
   }
 
   closeAllTabs() {
+    URLUtil.updateURLSearchParams({ file: null })
     this.setState({
       openedFilePaths: new Set(),
       openedTabs: []
@@ -294,9 +305,13 @@ class App extends React.Component {
   onSearchFinished(hasError) {
     this.setState({ isLoading: false })
 
-    if (!hasError) {
+    // Small hack to make sure the App doesn't immediately close
+    // the tab that may have been loaded on mount
+    if (!hasError && !this.mountedWithFile) {
       this.closeAllTabs()
     }
+
+    this.mountedWithFile = false
   }
 
   toggleLoadingOverlay() {
@@ -304,9 +319,17 @@ class App extends React.Component {
   }
 
   setActiveTabIndex(activeTabIndex) {
-    if (this.state.activeTabIndex !== activeTabIndex) {
-      this.setState({ activeTabIndex })
+    const tab = this.state.openedTabs[activeTabIndex]
+
+    if (this.state.activeTabIndex === activeTabIndex) {
+      return
     }
+
+    if (tab) {
+      URLUtil.updateURLSearchParams({ file: tab.path })
+    }
+
+    this.setState({ activeTabIndex })
   }
 
   render() {
