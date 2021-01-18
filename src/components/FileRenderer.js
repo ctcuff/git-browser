@@ -13,6 +13,7 @@ import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import Logger from '../scripts/logger'
 import Editor from '../components/Editor'
+import AsciiDocRenderer from './renderers/AsciiDocRenderer'
 
 class FileRenderer extends React.Component {
   constructor(props) {
@@ -20,13 +21,15 @@ class FileRenderer extends React.Component {
 
     this.state = {
       isLoading: true,
-      decodedContent: null
+      decodedContent: null,
+      hasError: false
     }
 
     this.getComponent = this.getComponent.bind(this)
     this.forceRenderEditor = this.forceRenderEditor.bind(this)
     this.renderUnsupported = this.renderUnsupported.bind(this)
     this.renderPreviewButton = this.renderPreviewButton.bind(this)
+    this.decodeContent = this.decodeContent.bind(this)
 
     this.decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
       type: 'module'
@@ -34,7 +37,7 @@ class FileRenderer extends React.Component {
   }
 
   componentDidMount() {
-    const { content, extension } = this.props
+    const { content, extension, wasForceRendered } = this.props
 
     // Skip decoding if this file if it doesn't need to be displayed as text.
     // i.e.: Images, PDFs, audio, etc...
@@ -43,22 +46,54 @@ class FileRenderer extends React.Component {
       return
     }
 
+    // Skip decoding if this file was force rendered since the text is
+    // already in a human-readable form
+    if (wasForceRendered && Editor.textExtensions.has(extension)) {
+      this.setState({
+        decodedContent: content,
+        isLoading: false
+      })
+      return
+    }
+
+    if (content && !content.trim()) {
+      this.setState({
+        decodedContent: '',
+        isLoading: false
+      })
+      return
+    }
+
     // Decode base64 content on a separate thread to avoid UI freezes
+    this.decodeContent()
+  }
+
+  decodeContent() {
+    this.setState({
+      isLoading: true,
+      hasError: false
+    })
+
     this.decodeWorker.postMessage({
-      message: content,
+      message: this.props.content,
       type: 'decode'
     })
 
     this.decodeWorker.onmessage = event => {
+      // decodedContent will be null if the content couldn't
+      // be properly decoded for some reason
       this.setState({
         isLoading: false,
-        decodedContent: event.data || null
+        decodedContent: event.data
       })
     }
 
     this.decodeWorker.onerror = event => {
-      this.setState({ isLoading: false })
-      Logger.error('Error decoding file', event.message)
+      this.setState({
+        isLoading: false,
+        hasError: true
+      })
+      Logger.error('Error decoding file', event)
     }
   }
 
@@ -70,10 +105,18 @@ class FileRenderer extends React.Component {
     const { content, title, extension } = this.props
     const decodedContent = this.state.decodedContent
 
-    // Files with decoded content display human readable text. If
+    // Files with human readable text need to be decoded. If
     // we can't decode the content, display an unsupported message
-    if (!decodedContent && Editor.previewExtensions.has(extension)) {
+    if (decodedContent === null && Editor.previewExtensions.has(extension)) {
       return this.renderUnsupported()
+    }
+
+    // Occurs if an empty string was passed to this component
+    if (
+      (content && !content.trim()) ||
+      (decodedContent !== null && !decodedContent.trim())
+    ) {
+      return <ErrorOverlay message="No content to preview." showIcon={false} />
     }
 
     switch (extension) {
@@ -89,6 +132,7 @@ class FileRenderer extends React.Component {
       case '.pjp':
       case '.svg':
       case '.ico':
+      case '.bmp':
         return (
           <ImageRenderer content={content} extension={extension} alt={title} />
         )
@@ -104,7 +148,10 @@ class FileRenderer extends React.Component {
       case '.md':
       case '.mdx':
         return <MarkdownRenderer content={decodedContent} />
+      case '.adoc':
+        return <AsciiDocRenderer content={decodedContent} />
       case '.csv':
+      case '.tsv':
         return <CSVRenderer content={decodedContent} />
       case '.ipynb':
         return <JupyterRenderer content={decodedContent} />
@@ -120,6 +167,7 @@ class FileRenderer extends React.Component {
     `
     return (
       <ErrorOverlay
+        className="file-renderer-unsupported"
         message={message}
         retryMessage="Do you want to load it anyway?"
         onRetryClick={this.forceRenderEditor}
@@ -181,6 +229,12 @@ class FileRenderer extends React.Component {
       return <LoadingOverlay text="Loading file..." />
     }
 
+    if (this.state.hasError) {
+      return (
+        <ErrorOverlay message="An error occurred while loading the preview." />
+      )
+    }
+
     return (
       <div className="file-renderer">
         {this.getComponent()}
@@ -195,7 +249,12 @@ FileRenderer.propTypes = {
   content: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   extension: PropTypes.string.isRequired,
-  onForceRender: PropTypes.func.isRequired
+  onForceRender: PropTypes.func.isRequired,
+  wasForceRendered: PropTypes.bool
+}
+
+FileRenderer.defaultProps = {
+  wasForceRendered: false
 }
 
 export default FileRenderer

@@ -1,4 +1,4 @@
-import '../../style/csv-renderer.scss'
+import '../../style/renderers/csv-renderer.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
@@ -27,12 +27,12 @@ class CSVRenderer extends React.Component {
       currentStep: 'Loading...',
       inputValue: '',
       tableHeaders: [],
-      tableRows: [
-        {
-          rowArray: [],
-          display: ''
-        }
-      ]
+      // Contains an array of objects that look like:
+      //  {
+      //    rowArray: [],
+      //    display: ''
+      //  }
+      tableRows: []
     }
 
     this.onChange = this.onChange.bind(this)
@@ -85,7 +85,7 @@ class CSVRenderer extends React.Component {
     Parser.parse(content, {
       skipEmptyLines: true,
       worker: true,
-      comments: false,
+      comments: '#',
       preview: MAX_ROW_COUNT + 1,
       delimitersToGuess: [
         ',',

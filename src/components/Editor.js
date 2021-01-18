@@ -1,22 +1,40 @@
 import '../style/editor.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { noop, parseCSSVar } from '../scripts/util'
+import { parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
 import { AiOutlineEye } from 'react-icons/ai'
 import { connect } from 'react-redux'
 import Logger from '../scripts/logger'
 
 class Editor extends React.Component {
-  // File extensions that cause the component to
-  // display the "preview file" button. These files will be displayed as
-  // human readable text by the renderers that render these files
-  static previewExtensions = new Set(['.svg', '.md', '.mdx', '.csv', '.ipynb'])
+  // File extensions that cause the component to display
+  // the "preview file" button.
+  static previewExtensions = new Set([
+    '.svg',
+    '.md',
+    '.mdx',
+    '.csv',
+    '.adoc',
+    '.tsv',
+    '.ipynb'
+  ])
+  // Files that don't have to be decoded when sent to the FileRenderer
+  // since they already display as text when the Editor is rendered
+  static textExtensions = new Set([
+    '.md',
+    '.mdx',
+    '.csv',
+    '.tsv',
+    '.ipynb',
+    '.adoc'
+  ])
   // Files that will always be displayed by the FileRenderer component.
   // This allows us to avoid unnecessarily decoding a file.
   static illegalExtensions = new Set([
     '.apng',
     '.avif',
+    '.bmp',
     '.gif',
     '.png',
     '.webp',
@@ -161,12 +179,17 @@ class Editor extends React.Component {
     if (this.state.isEncoding) {
       return
     }
-    const { content, onForceRender } = this.props
+    const { content, onForceRender, extension } = this.props
 
     this.setState({
       isEncoding: true,
       isLoading: true
     })
+
+    if (Editor.textExtensions.has(extension)) {
+      onForceRender(content, false)
+      return
+    }
 
     this.encodeWorker.postMessage({
       message: content,
@@ -206,12 +229,8 @@ Editor.propTypes = {
   language: PropTypes.string.isRequired,
   fileName: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
-  theme: PropTypes.string.isRequired,
-  onForceRender: PropTypes.func
-}
-
-Editor.defaultProps = {
-  onForceRender: noop
+  theme: PropTypes.oneOf(['theme-light', 'theme-dark']).isRequired,
+  onForceRender: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({

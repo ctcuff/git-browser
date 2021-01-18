@@ -1,4 +1,4 @@
-@import './mixins/media.scss';
+@import '../mixins/media';
 
 .image-renderer {
   width: 90%;
@@ -9,11 +9,11 @@
   align-items: center;
 
   &.has-grid.light-grid {
-    background-image: url('../assets/img/checker-theme-light.svg');
+    background-image: url('../../assets/img/checker-theme-light.svg');
   }
 
   &.has-grid.dark-grid {
-    background-image: url('../assets/img/checker-theme-dark.svg');
+    background-image: url('../../assets/img/checker-theme-dark.svg');
   }
 
   img {
@@ -39,7 +39,7 @@
     color: var(--color-text-primary);
 
     @include desktop() {
-      opacity: 0.2;
+      opacity: 0.5;
       transition: opacity 0.3s ease-in;
 
       &:hover {

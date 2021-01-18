@@ -1,4 +1,4 @@
-import '../../style/video-renderer.scss'
+import '../../style/renderers/video-renderer.scss'
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import ErrorOverlay from '../ErrorOverlay'

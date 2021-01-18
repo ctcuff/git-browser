@@ -1,42 +1,40 @@
 // monaco editor has to be mocked for tests to work
 // https://github.com/Microsoft/monaco-editor/issues/996
 
-const noop = () => {}
-
 const editor = {
   create() {
     return this
   },
   getModel: () => ({
-    dispose: noop,
-    setValue: noop
+    dispose: jest.fn(),
+    setValue: jest.fn()
   }),
-  createModel: noop,
-  dispose: noop,
-  setModelLanguage: noop,
-  setTheme: noop,
-  changeViewZones: noop
+  createModel: jest.fn(),
+  dispose: jest.fn(),
+  setModelLanguage: jest.fn(),
+  setTheme: jest.fn(),
+  changeViewZones: jest.fn()
 }
 
 const languages = {
   typescript: {
     typescriptDefaults: {
-      setDiagnosticsOptions: noop
+      setDiagnosticsOptions: jest.fn()
     },
     javascriptDefaults: {
-      setDiagnosticsOptions: noop
+      setDiagnosticsOptions: jest.fn()
     }
   },
   css: {
     cssDefaults: {
-      setDiagnosticsOptions: noop
+      setDiagnosticsOptions: jest.fn()
     }
   },
   json: {
     jsonDefaults: {
-      setDiagnosticsOptions: noop
+      setDiagnosticsOptions: jest.fn()
     }
   }
 }
 
-module.exports = { editor, languages }
+export { editor, languages }

@@ -1,4 +1,4 @@
-import '../../style/pdf-renderer.scss'
+import '../../style/renderers/pdf-renderer.scss'
 import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'

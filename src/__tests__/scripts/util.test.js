@@ -18,7 +18,7 @@ describe('util', () => {
       displayName: 'PDF',
       extension: '.pdf'
     })
-    expect(util.getLanguageFromFileName('test-file.does-not-exist')).toEqual({
+    expect(util.getLanguageFromFileName('test.file.does-not-exist')).toEqual({
       language: 'plaintext',
       displayName: 'Plain Text',
       extension: '.does-not-exist'
@@ -55,10 +55,24 @@ describe('util', () => {
     )
   })
 
-  test('base64DecodeUnicode decodes correctly or throws error', () => {
-    expect(util.base64DecodeUnicode(btoa('message'))).toEqual('message')
+  test('encodes/decodes correctly or throws error', () => {
+    const message = 'message √√√'
+    const encodedMessage = util.base64EncodeUnicode(message)
+
+    expect(util.base64DecodeUnicode(encodedMessage)).toEqual(message)
     expect(() => {
       util.base64DecodeUnicode('not a base 64 string')
     }).toThrowError()
+  })
+
+  test('withClasses builds class string', () => {
+    const classes = util.withClasses({
+      foo: false,
+      bar: 1 + 1 === 2,
+      baz: undefined,
+      quux: true
+    })
+
+    expect(classes).toEqual('bar quux')
   })
 })

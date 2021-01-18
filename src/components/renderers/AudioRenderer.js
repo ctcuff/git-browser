@@ -1,4 +1,4 @@
-import '../../style/audio-renderer.scss'
+import '../../style/renderers/audio-renderer.scss'
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'

@@ -3,7 +3,7 @@ Git Browser is a different way of viewing GitHub repositories in your browser. H
 
 # Features
 Similar to GitHub, this project supports not only viewing code, but rendering files:
-- CSV
+- CSV (as well as TSV)
     - Thanks to [papaparse](https://github.com/mholt/PapaParse) 🎉
 - Markdown (as well as mdx, kinda...)
     - Thanks to [markdown-it](https://github.com/markdown-it/markdown-it) 🎉
@@ -13,6 +13,8 @@ Similar to GitHub, this project supports not only viewing code, but rendering fi
 - Audio
 - PDFs
     - Thanks to [pdfjs](https://github.com/mozilla/pdf.js/) 🎉
+- AsciiDoc
+    - Thanks to [Asciidoctor](https://github.com/asciidoctor/asciidoctor.js) 🎉
 - Jupyter Notebook (Experimental)
     - Thanks to [notebookjs](https://github.com/jsvine/notebookjs) 🎉
 

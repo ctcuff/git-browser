@@ -1,4 +1,4 @@
-import '../../style/markdown-renderer.scss'
+import '../../style/renderers/markdown-renderer.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
 import { noop } from '../../scripts/util'
@@ -12,7 +12,7 @@ class MarkdownRenderer extends React.Component {
     super(props)
 
     this.state = {
-      markdownContent: null,
+      markdownContent: '',
       isLoading: false,
       hasError: false,
       currentStep: 'Loading...'
@@ -178,6 +178,10 @@ class MarkdownRenderer extends React.Component {
 
     if (isLoading) {
       return <LoadingOverlay text={currentStep} />
+    }
+
+    if (!markdownContent.trim()) {
+      return <ErrorOverlay message="No content to display." showIcon={false} />
     }
 
     return (
