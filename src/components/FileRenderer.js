@@ -8,12 +8,13 @@ import AudioRenderer from './renderers/AudioRenderer'
 import MarkdownRenderer from './renderers/MarkdownRenderer'
 import CSVRenderer from './renderers/CSVRenderer'
 import JupyterRenderer from './renderers/JupyterRenderer'
+import AsciiDocRenderer from './renderers/AsciiDocRenderer'
+import GLBRenderer from './renderers/GLBRenderer'
 import { VscCode } from 'react-icons/vsc'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import Logger from '../scripts/logger'
 import Editor from '../components/Editor'
-import AsciiDocRenderer from './renderers/AsciiDocRenderer'
 
 class FileRenderer extends React.Component {
   constructor(props) {
@@ -145,6 +146,9 @@ class FileRenderer extends React.Component {
       case '.wav':
       case '.ogg':
         return <AudioRenderer content={content} extension={extension} />
+      case '.glb':
+      case '.gltf':
+        return <GLBRenderer content={content} />
       case '.md':
       case '.mdx':
         return <MarkdownRenderer content={decodedContent} />

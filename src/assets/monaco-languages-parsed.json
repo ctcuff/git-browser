@@ -934,5 +934,10 @@
     "language": "markdown",
     "displayName": "Markdown",
     "extension": ".mdx"
+  },
+  ".storyboard": {
+    "language": "xml",
+    "displayName": "Storyboard",
+    "extension": ".storyboard"
   }
 }

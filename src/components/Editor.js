@@ -17,7 +17,8 @@ class Editor extends React.Component {
     '.csv',
     '.adoc',
     '.tsv',
-    '.ipynb'
+    '.ipynb',
+    '.gltf'
   ])
   // Files that don't have to be decoded when sent to the FileRenderer
   // since they already display as text when the Editor is rendered
@@ -49,7 +50,8 @@ class Editor extends React.Component {
     '.webm',
     '.mp3',
     '.wav',
-    '.ogg'
+    '.ogg',
+    '.glb'
   ])
 
   constructor(props) {
