@@ -6,7 +6,7 @@ Similar to GitHub, this project supports not only viewing code, but rendering fi
 - Various forms of images (png, jpg, apng, svg, ico, etc...)
 - GIFs (It's pronounced GIF by the way)
 - Video (mp4 and webm)
-- Audio (mp3, wav, and ogg)
+- Audio (mp3, wav, ogg, and aac)
 - CSV (as well as TSV)
     - Thanks to [papaparse](https://github.com/mholt/PapaParse) 🎉
 - Markdown (as well as mdx, kinda...)
