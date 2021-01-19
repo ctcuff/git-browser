@@ -3,14 +3,14 @@ Git Browser is a different way of viewing GitHub repositories in your browser. H
 
 # Features
 Similar to GitHub, this project supports not only viewing code, but rendering files:
+- Various forms of images (png, jpg, apng, svg, ico, etc...)
+- GIFs (It's pronounced GIF by the way)
+- Video (mp4 and webm)
+- Audio (mp3, wav, and ogg)
 - CSV (as well as TSV)
     - Thanks to [papaparse](https://github.com/mholt/PapaParse) 🎉
 - Markdown (as well as mdx, kinda...)
     - Thanks to [markdown-it](https://github.com/markdown-it/markdown-it) 🎉
-- Various forms of images (png, jpg, apng, svg, ico, etc...)
-- GIFs (It's pronounced GIF by the way)
-- Videos
-- Audio
 - PDFs
     - Thanks to [pdfjs](https://github.com/mozilla/pdf.js/) 🎉
 - AsciiDoc
