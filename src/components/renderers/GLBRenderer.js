@@ -29,9 +29,9 @@ class GLBRenderer extends React.Component {
     })
 
     try {
+      import('@google/model-viewer')
       // Used to get rid of the outline that appears when dragging the model
       import('../../lib/focus-visible')
-      import('@google/model-viewer')
       this.setState({ isLoading: false })
     } catch (err) {
       Logger.error(err)
