@@ -145,6 +145,7 @@ class FileRenderer extends React.Component {
       case '.mp3':
       case '.wav':
       case '.ogg':
+      case '.aac':
         return <AudioRenderer content={content} extension={extension} />
       case '.glb':
       case '.gltf':

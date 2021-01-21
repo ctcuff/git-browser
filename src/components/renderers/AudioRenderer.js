@@ -51,7 +51,7 @@ const AudioRenderer = props => {
 
 AudioRenderer.propTypes = {
   content: PropTypes.string.isRequired,
-  extension: PropTypes.oneOf(['.mp3', '.wav', '.ogg']).isRequired
+  extension: PropTypes.oneOf(['.mp3', '.wav', '.ogg', '.aac']).isRequired
 }
 
 export default AudioRenderer

@@ -51,7 +51,8 @@ class Editor extends React.Component {
     '.mp3',
     '.wav',
     '.ogg',
-    '.glb'
+    '.glb',
+    '.aac'
   ])
 
   constructor(props) {
