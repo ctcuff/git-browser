@@ -10,6 +10,7 @@ import CSVRenderer from './renderers/CSVRenderer'
 import JupyterRenderer from './renderers/JupyterRenderer'
 import AsciiDocRenderer from './renderers/AsciiDocRenderer'
 import GLBRenderer from './renderers/GLBRenderer'
+import FontRenderer from './renderers/FontRenderer'
 import { VscCode } from 'react-icons/vsc'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
@@ -150,6 +151,11 @@ class FileRenderer extends React.Component {
       case '.glb':
       case '.gltf':
         return <GLBRenderer content={content} />
+      case '.otf':
+      case '.ttf':
+      case '.woff':
+      case '.woff2':
+        return <FontRenderer content={content} extension={extension} />
       case '.md':
       case '.mdx':
         return <MarkdownRenderer content={decodedContent} />

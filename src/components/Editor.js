@@ -11,48 +11,52 @@ class Editor extends React.Component {
   // File extensions that cause the component to display
   // the "preview file" button.
   static previewExtensions = new Set([
-    '.svg',
+    '.adoc',
+    '.csv',
+    '.gltf',
+    '.ipynb',
     '.md',
     '.mdx',
-    '.csv',
-    '.adoc',
-    '.tsv',
-    '.ipynb',
-    '.gltf'
+    '.svg',
+    '.tsv'
   ])
   // Files that don't have to be decoded when sent to the FileRenderer
   // since they already display as text when the Editor is rendered
   static textExtensions = new Set([
+    '.adoc',
+    '.csv',
+    '.ipynb',
     '.md',
     '.mdx',
-    '.csv',
-    '.tsv',
-    '.ipynb',
-    '.adoc'
+    '.tsv'
   ])
   // Files that will always be displayed by the FileRenderer component.
   // This allows us to avoid unnecessarily decoding a file.
   static illegalExtensions = new Set([
+    '.aac',
     '.apng',
     '.avif',
     '.bmp',
     '.gif',
-    '.png',
-    '.webp',
-    '.jpg',
-    '.jpeg',
-    '.jfif',
-    '.pjpeg',
-    '.pjp',
-    '.ico',
-    '.pdf',
-    '.mp4',
-    '.webm',
-    '.mp3',
-    '.wav',
-    '.ogg',
     '.glb',
-    '.aac'
+    '.ico',
+    '.jfif',
+    '.jpeg',
+    '.jpg',
+    '.mp3',
+    '.mp4',
+    '.ogg',
+    '.otf',
+    '.pdf',
+    '.pjp',
+    '.pjpeg',
+    '.png',
+    '.ttf',
+    '.wav',
+    '.webm',
+    '.webp',
+    '.woff',
+    '.woff2'
   ])
 
   constructor(props) {
