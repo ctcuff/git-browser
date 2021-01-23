@@ -70,44 +70,82 @@ describe('URLUtil', () => {
   })
 
   test('isUrlValid checks url validity', () => {
-    expect(URLUtil.isUrlValid(null)).toBe(false)
-    expect(URLUtil.isUrlValid('test.com')).toBe(true)
+    expect(URLUtil.isUrlValid(null)).toEqual(false)
+    expect(URLUtil.isUrlValid('test.com')).toEqual(true)
   })
 
   test('isGithubUrl checks url validity', () => {
-    expect(URLUtil.isGithubUrl(null)).toBe(false)
-    expect(URLUtil.isGithubUrl('test.com')).toBe(false)
-    expect(URLUtil.isGithubUrl('github.com/user')).toBe(true)
+    expect(URLUtil.isGithubUrl(null)).toEqual(false)
+    expect(URLUtil.isGithubUrl('test.com')).toEqual(false)
+    expect(URLUtil.isGithubUrl('github.com/user')).toEqual(true)
   })
 
   test('addScheme adds scheme to url if necessary', () => {
-    expect(URLUtil.addScheme('test.com')).toBe('https://test.com')
-    expect(URLUtil.addScheme('https://test.com')).toBe('https://test.com')
+    expect(URLUtil.addScheme('test.com')).toEqual('https://test.com')
+    expect(URLUtil.addScheme('https://test.com')).toEqual('https://test.com')
   })
 
   test('extractRepoPath extracts github path', () => {
     // Need to wrap this in a function so expect won't fail
     expect(() => URLUtil.extractRepoPath('')).toThrowError()
-    expect(URLUtil.extractRepoPath('github.com/')).toBe(null)
-    expect(URLUtil.extractRepoPath('github.com/user')).toBe(null)
-    expect(URLUtil.extractRepoPath('github.com/user/repo')).toBe('user/repo')
-    expect(URLUtil.extractRepoPath('github.com//user//repo//')).toBe(
+    expect(URLUtil.extractRepoPath('github.com/')).toEqual(null)
+    expect(URLUtil.extractRepoPath('github.com/user')).toEqual(null)
+    expect(URLUtil.extractRepoPath('github.com/user/repo')).toEqual('user/repo')
+    expect(URLUtil.extractRepoPath('github.com//user//repo//')).toEqual(
       'user/repo'
     )
-    expect(URLUtil.extractRepoPath('github.com///user///repo///')).toBe(
+    expect(URLUtil.extractRepoPath('github.com///user///repo///')).toEqual(
       'user/repo'
     )
   })
 
   test('buildBranchUrl returns GitHub API branch url', () => {
-    expect(URLUtil.buildBranchUrl('user/test-repo', 'master')).toBe(
+    expect(URLUtil.buildBranchUrl('user/test-repo', 'master')).toEqual(
       'https://api.github.com/repos/user/test-repo/git/trees/master?recursive=true'
     )
   })
 
   test('buildBranchesUrl returns GitHub API branches url', () => {
-    expect(URLUtil.buildBranchesUrl('user/test-repo')).toBe(
+    expect(URLUtil.buildBranchesUrl('user/test-repo')).toEqual(
       'https://api.github.com/repos/user/test-repo/branches'
+    )
+  })
+
+  test('updateURLSearchParams updates url', () => {
+    const spy = jest.spyOn(window.history, 'replaceState')
+    URLUtil.updateURLSearchParams({
+      foo: 'false',
+      bar: 'true',
+      baz: undefined,
+      quux: 12
+    })
+
+    expect(window.location.search).toEqual('?foo=false&bar=true&quux=12')
+
+    URLUtil.updateURLSearchParams({ quux: null })
+    URLUtil.updateURLSearchParams({ quux: null })
+
+    expect(window.location.search).toEqual('?foo=false&bar=true')
+    // Need to make updateURLSearchParams doesn't replace the URL if the
+    // previous URL is equal to the new URL
+    expect(spy).toHaveBeenCalledTimes(2)
+  })
+
+  test('getSearchParam return search params from current URL', () => {
+    URLUtil.updateURLSearchParams({
+      foo: 2,
+      bar: 'value',
+      baz: 'false'
+    })
+
+    expect(URLUtil.getSearchParam('foo')).toEqual('2')
+    expect(URLUtil.getSearchParam('bar')).toEqual('value')
+    expect(URLUtil.getSearchParam('baz')).toEqual('false')
+
+    URLUtil.updateURLSearchParams({ foo: null })
+
+    expect(URLUtil.getSearchParam('foo', 'someDefaultValue')).toEqual(
+      'someDefaultValue'
     )
   })
 })

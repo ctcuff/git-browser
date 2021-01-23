@@ -10,7 +10,7 @@ describe('util', () => {
     }))
 
     files.forEach(file => {
-      expect(util.getLanguageFromFileName(file.name)).toBe(file.expected)
+      expect(util.getLanguageFromFileName(file.name)).toEqual(file.expected)
     })
 
     expect(util.getLanguageFromFileName('test-file.pdf')).toEqual({
@@ -31,9 +31,9 @@ describe('util', () => {
     util.setCSSVar('--height', '100px')
     util.setCSSVar('--height', '200px', mockElement)
 
-    expect(util.parseCSSVar('--does-not-exist')).toBe(0)
-    expect(util.parseCSSVar('--height')).toBe(100)
-    expect(util.parseCSSVar('--height', mockElement)).toBe(200)
+    expect(util.parseCSSVar('--does-not-exist')).toEqual(0)
+    expect(util.parseCSSVar('--height')).toEqual(100)
+    expect(util.parseCSSVar('--height', mockElement)).toEqual(200)
   })
 
   test('setCSSVar sets CSS variable', () => {
@@ -44,15 +44,15 @@ describe('util', () => {
     util.setCSSVar('--width', '100px', mockElement)
     util.setCSSVar('--a-number', 100, mockElement)
 
-    expect(getComputedStyle(root).getPropertyValue('--theme')).toBe(
+    expect(getComputedStyle(root).getPropertyValue('--theme')).toEqual(
       'mock-theme'
     )
-    expect(getComputedStyle(mockElement).getPropertyValue('--width')).toBe(
+    expect(getComputedStyle(mockElement).getPropertyValue('--width')).toEqual(
       '100px'
     )
-    expect(getComputedStyle(mockElement).getPropertyValue('--a-number')).toBe(
-      '100'
-    )
+    expect(
+      getComputedStyle(mockElement).getPropertyValue('--a-number')
+    ).toEqual('100')
   })
 
   test('encodes/decodes correctly or throws error', () => {
