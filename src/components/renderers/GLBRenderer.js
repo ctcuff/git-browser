@@ -47,6 +47,10 @@ class GLBRenderer extends React.Component {
   }
 
   render() {
+    const { extension, content } = this.props
+    const mimeType =
+      extension === '.glb' ? 'model/gltf-binary' : 'model/gltf+json'
+
     if (this.state.isLoading) {
       return <LoadingOverlay text="Loading libraries..." />
     }
@@ -63,7 +67,7 @@ class GLBRenderer extends React.Component {
 
     return (
       <model-viewer
-        src={`data:;base64,${this.props.content}`}
+        src={`data:${mimeType};base64,${content}`}
         error={this.showError}
         auto-rotate
         camera-controls
@@ -73,7 +77,8 @@ class GLBRenderer extends React.Component {
 }
 
 GLBRenderer.propTypes = {
-  content: PropTypes.string.isRequired
+  content: PropTypes.string.isRequired,
+  extension: PropTypes.oneOf(['.gltf', '.glb'])
 }
 
 export default GLBRenderer

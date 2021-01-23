@@ -150,7 +150,8 @@ class FileRenderer extends React.Component {
         return <AudioRenderer content={content} extension={extension} />
       case '.glb':
       case '.gltf':
-        return <GLBRenderer content={content} />
+        return <GLBRenderer content={content} extension={extension} />
+      case '.eot':
       case '.otf':
       case '.ttf':
       case '.woff':
