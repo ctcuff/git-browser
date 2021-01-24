@@ -9,6 +9,10 @@
     'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
     sans-serif;
 
+  @include mobile() {
+    font-size: 0.8em;
+  }
+
   .font-default {
     font-family: var(--font-default) !important;
   }

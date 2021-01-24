@@ -17,6 +17,13 @@
     }
   }
 
+  @include mobile() {
+    &:active {
+      color: var(--color-text-primary);
+      background-color: var(--color-list-item-hover);
+    }
+  }
+
   &:last-child {
     margin-bottom: 12px;
   }
