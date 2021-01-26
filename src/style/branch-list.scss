@@ -34,6 +34,12 @@
         background-color: var(--color-list-item-hover);
       }
     }
+
+    @include mobile() {
+      &:active {
+        background-color: var(--color-list-item-hover);
+      }
+    }
   }
 
   .branch-name {

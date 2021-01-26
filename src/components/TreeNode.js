@@ -4,6 +4,7 @@ import { FaRegFile, FaFolder, FaFolderOpen } from 'react-icons/fa'
 import { FiChevronRight, FiChevronDown } from 'react-icons/fi'
 import PropTypes from 'prop-types'
 import { noop, withClasses } from '../scripts/util'
+import URLUtil from '../scripts/url-util'
 
 const getPaddingLeft = (level, type) => {
   const defaultPadding = 20
@@ -50,8 +51,12 @@ const renderToggleIcon = (type, isOpen) => {
 }
 
 const onSelectNode = (node, props) => {
-  const callback = node.type === 'folder' ? props.onToggle : props.onSelectNode
-  callback(node)
+  if (node.type === 'folder') {
+    props.onToggle(node)
+  } else {
+    URLUtil.updateURLSearchParams({ file: node.path })
+    props.onSelectNode(node)
+  }
 }
 
 const TreeNode = props => {
@@ -69,7 +74,7 @@ const TreeNode = props => {
         className={`tree-node ${classes}`}
         title={node.path}
         style={{ paddingLeft: getPaddingLeft(level, node.type) }}
-        onClick={() => onSelectNode(node, props)}
+        onClick={onSelectNode.bind(this, node, props)}
       >
         <div className="tree-node__icon toggle">
           {renderToggleIcon(node.type, node.isOpen)}
@@ -81,16 +86,15 @@ const TreeNode = props => {
           {nodeLabel} {showPath && <small>{node.path}</small>}
         </div>
       </div>
-      {node.isOpen
-        ? children.map(childNode => (
-            <TreeNode
-              {...props}
-              node={childNode}
-              level={level + 1}
-              key={childNode.path}
-            />
-          ))
-        : null}
+      {node.isOpen &&
+        children.map(childNode => (
+          <TreeNode
+            {...props}
+            node={childNode}
+            level={level + 1}
+            key={childNode.path}
+          />
+        ))}
     </React.Fragment>
   )
 }

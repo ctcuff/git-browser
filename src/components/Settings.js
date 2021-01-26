@@ -14,7 +14,6 @@ const Settings = props => {
     const isDark = document.body.className === 'theme-dark'
     const theme = isDark ? 'theme-light' : 'theme-dark'
 
-    document.documentElement.classList.add('is-transitioning')
     props.setTheme(theme)
   }
 

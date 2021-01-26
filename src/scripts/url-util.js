@@ -7,6 +7,13 @@ const BASE_API_URL = 'https://api.github.com'
 const BASE_REPO_URL = BASE_API_URL + '/repos'
 
 const URLUtil = {
+  /**
+   * A wrapper around fetch that makes a request to the GitHub API.
+   * This rejects if the GitHub rate limit is exceeded.
+   *
+   * @param {string} url
+   * @returns {Promise}
+   */
   request(url) {
     const oauthToken = store.getState().user.accessToken
     const debugToken = process.env.OAUTH_TOKEN
@@ -34,6 +41,10 @@ const URLUtil = {
     })
   },
 
+  /**
+   * @param {string} url
+   * @returns {boolean}
+   */
   isUrlValid(url) {
     try {
       new URL(this.addScheme(url))
@@ -43,6 +54,10 @@ const URLUtil = {
     }
   },
 
+  /**
+   * @param {string} url
+   * @returns {boolean}
+   */
   isGithubUrl(url) {
     if (!this.isUrlValid(url)) {
       return false
@@ -53,6 +68,11 @@ const URLUtil = {
     return uri.hostname().toLowerCase() === 'github.com'
   },
 
+  /**
+   * Adds `https://` to a url if that or `http://` isn't present
+   * @param {string} url
+   * @returns {string}
+   */
   addScheme(url) {
     if (!url.startsWith('http') || !url.startsWith('https')) {
       return 'https://' + url
@@ -61,8 +81,11 @@ const URLUtil = {
   },
 
   /**
-   * Takes a github url: 'https://github.com/user/repo-name'
+   * Takes a github url: `https://github.com/user/repo-name`
    * and returns the string `user/repo-name`
+   *
+   * @param {string} url
+   * @returns {string}
    */
   extractRepoPath(url) {
     if (!this.isUrlValid(url)) {
@@ -79,12 +102,68 @@ const URLUtil = {
     return `${segments[0]}/${segments[1]}`
   },
 
+  /**
+   * @param {string} repoPath
+   * @param {string} branchName
+   * @returns {string}
+   */
   buildBranchUrl(repoPath, branchName) {
     return `${BASE_REPO_URL}/${repoPath}/git/trees/${branchName}?recursive=true`
   },
 
+  /**
+   * @param {string} repoPath
+   * @returns {string}
+   */
   buildBranchesUrl(repoPath) {
     return `${BASE_REPO_URL}/${repoPath}/branches`
+  },
+
+  /**
+   * Takes an object and appends each key and value to the window URL as a query.
+   * Any false value is removed from the URL.
+   * ```
+   * URLUtil.updateURLSearchParams({
+   *  "repo": "user/name",
+   *  "path": null,
+   *  "file": "test.css"
+   * })
+   *
+   * ```
+   * returns `?repo=user%2Fname&file=test.css`
+   *
+   * @param {Object.<string, string?>} queryObj
+   * @returns {string}
+   */
+  updateURLSearchParams(queryObj) {
+    const prevUrl = window.location.pathname + window.location.search
+    const params = new URLSearchParams(window.location.search)
+
+    Object.keys(queryObj).forEach(key => {
+      if (queryObj[key]) {
+        params.set(key, queryObj[key])
+      } else {
+        params.delete(key)
+      }
+    })
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`
+
+    if (prevUrl !== newUrl) {
+      window.history.replaceState({}, '', newUrl)
+    }
+  },
+
+  /**
+   * Takes a key and return the value of that search param from current URL.
+   * If defaultValue is present, that's returned instead if `key` isn't found.
+   * @param {string} key
+   * @param {string} defaultValue
+   * @returns {string | any}
+   */
+  getSearchParam(key, defaultValue = null) {
+    const params = new URLSearchParams(window.location.search)
+    return params.get(key) || defaultValue
   }
 }
 

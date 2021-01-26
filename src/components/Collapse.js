@@ -2,12 +2,15 @@ import '../style/collapse.scss'
 import React, { useState, useRef, useEffect } from 'react'
 import { FiChevronRight } from 'react-icons/fi'
 import PropTypes from 'prop-types'
-import { noop } from '../scripts/util'
+import { noop, withClasses } from '../scripts/util'
 
-const Collapse = props => {
+const Collapse = React.forwardRef((props, ref) => {
   const [isOpen, setOpen] = useState(props.open)
   const contentRef = useRef(null)
-  const openClass = `is-${isOpen ? 'open' : 'closed'}`
+  const openClass = withClasses({
+    'is-open': isOpen,
+    'is-closed': !isOpen
+  })
 
   const toggle = () => {
     props.onToggle(!isOpen)
@@ -19,7 +22,7 @@ const Collapse = props => {
   }, [props.open])
 
   return (
-    <div className={`collapse ${openClass}`}>
+    <div className={`collapse ${openClass}`} ref={ref}>
       <button className="header" onClick={toggle}>
         <FiChevronRight className="toggle-icon" />
         <span>{props.title}</span>
@@ -29,7 +32,9 @@ const Collapse = props => {
       </div>
     </div>
   )
-}
+})
+
+Collapse.displayName = 'Collapse'
 
 Collapse.propTypes = {
   title: PropTypes.string.isRequired,

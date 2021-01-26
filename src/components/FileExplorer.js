@@ -4,6 +4,7 @@ import partition from 'lodash/partition'
 import PropTypes from 'prop-types'
 import TreeNode from './TreeNode'
 import { VscCollapseAll } from 'react-icons/vsc'
+import URLUtil from '../scripts/url-util'
 
 class FileExplorer extends React.PureComponent {
   constructor(props) {
@@ -16,7 +17,7 @@ class FileExplorer extends React.PureComponent {
     this.getRootNodes = this.getRootNodes.bind(this)
     this.getChildren = this.getChildren.bind(this)
     this.toggleNode = this.toggleNode.bind(this)
-    this.onSelectNode = this.onSelectNode.bind(this)
+    this.onSelectFile = this.onSelectFile.bind(this)
     this.closeAllFolders = this.closeAllFolders.bind(this)
     this.openUpToRoot = this.openUpToRoot.bind(this)
   }
@@ -45,6 +46,15 @@ class FileExplorer extends React.PureComponent {
 
     if (nodes[path].parent) {
       this.openUpToRoot(nodes[path].parent)
+    }
+  }
+
+  componentDidMount() {
+    const key = URLUtil.getSearchParam('file')
+    const node = this.state.nodes[key]
+
+    if (node) {
+      this.props.onSelectFile(node)
     }
   }
 
@@ -89,7 +99,7 @@ class FileExplorer extends React.PureComponent {
     })
   }
 
-  onSelectNode(node) {
+  onSelectFile(node) {
     if (node.type === 'file') {
       this.props.onSelectFile(node)
     }
@@ -136,7 +146,7 @@ class FileExplorer extends React.PureComponent {
               key={node.path}
               getChildren={this.getChildren}
               onToggle={this.toggleNode}
-              onSelectNode={this.onSelectNode}
+              onSelectNode={this.onSelectFile}
               activeFilePath={this.props.activeFilePath}
             />
           ))}
