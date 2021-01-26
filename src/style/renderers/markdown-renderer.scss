@@ -1,9 +1,11 @@
+@import '../mixins/media';
+
 .markdown-renderer {
   color: var(--color-text-primary);
   overflow-y: auto;
   height: 100%;
   width: 100%;
-  line-height: 1.5;
+  line-height: 1.6;
 
   .markdown-content {
     max-width: 80%;
@@ -14,6 +16,10 @@
 
     * {
       box-sizing: border-box;
+    }
+
+    @include mobile() {
+      font-size: 0.95em;
     }
   }
 

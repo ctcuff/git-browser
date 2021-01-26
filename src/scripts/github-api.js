@@ -13,6 +13,8 @@ class GitHubAPI {
    * `user/repo-name` to make a request to `/repos/user/repo-name`
    *
    * @see https://docs.github.com/en/free-pro-team/rest/reference/repos#get-a-repository
+   * @param {string} repoUrl
+   * @returns {Promise}
    */
   static getDefaultBranch(repoUrl) {
     if (!URLUtil.isGithubUrl(repoUrl)) {
@@ -54,6 +56,9 @@ class GitHubAPI {
    * and returns the tree (all files) from the given branch.
    *
    * @see https://docs.github.com/en/free-pro-team/rest/reference/git#get-a-tree
+   * @param {string} repoUrl
+   * @param {string} branch
+   * @returns {Promise}
    */
   static getTree(repoUrl, branch = 'default') {
     if (branch === 'default') {
@@ -71,6 +76,9 @@ class GitHubAPI {
   /**
    * Takes a github url: `https://github.com/user/repo/` and a
    * branch name and returns the tree (all files).
+   * @param {string} repoUrl
+   * @param {string} branch
+   * @returns {Promise}
    */
   static getBranch(repoUrl, branch) {
     const repoPath = URLUtil.extractRepoPath(repoUrl)
@@ -108,6 +116,8 @@ class GitHubAPI {
    * the base64 encoded content
    *
    * @see https://docs.github.com/en/free-pro-team/rest/reference/git#get-a-blob
+   * @param {string} url
+   * @returns {Promise}
    */
   static getFile(url) {
     return URLUtil.request(url)
@@ -135,6 +145,8 @@ class GitHubAPI {
    * and returns every branch from `/user/repo-name/branches`.
    *
    * @see https://docs.github.com/en/free-pro-team/rest/reference/repos#branches
+   * @param {string} repoUrl
+   * @returns {Promise}
    */
   static getBranches(repoUrl) {
     if (!URLUtil.isGithubUrl(repoUrl)) {

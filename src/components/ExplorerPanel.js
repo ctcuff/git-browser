@@ -41,24 +41,27 @@ class ExplorerPanel extends React.Component {
       isBranchListTruncated: false,
       panels: {
         searchRepo: {
-          isOpen: true
+          isOpen: true,
+          ref: React.createRef()
         },
         searchFiles: {
-          isOpen: false
+          isOpen: false,
+          ref: React.createRef()
         },
         code: {
-          isOpen: false
+          isOpen: false,
+          ref: React.createRef()
         },
         branches: {
-          isOpen: false
+          isOpen: false,
+          ref: React.createRef()
         },
         settings: {
-          isOpen: true
+          isOpen: true,
+          ref: React.createRef()
         }
       }
     }
-
-    this.inputRef = React.createRef()
 
     this.getRepo = this.getRepo.bind(this)
     this.getBranches = this.getBranches.bind(this)
@@ -71,6 +74,7 @@ class ExplorerPanel extends React.Component {
     this.closeExplorer = this.closeExplorer.bind(this)
     this.togglePanel = this.togglePanel.bind(this)
     this.panelButtons = this.panelButtons.bind(this)
+    this.scrollToPanel = this.scrollToPanel.bind(this)
   }
 
   componentDidMount() {
@@ -144,6 +148,7 @@ class ExplorerPanel extends React.Component {
           panels: {
             ...this.state.panels,
             code: {
+              ...this.state.panels.code,
               isOpen: true
             }
           }
@@ -173,6 +178,7 @@ class ExplorerPanel extends React.Component {
         panels: {
           ...this.state.panels,
           branches: {
+            ...this.state.panels.branches,
             isOpen: true
           }
         }
@@ -207,21 +213,36 @@ class ExplorerPanel extends React.Component {
     this.setState({ isExplorerOpen: false })
   }
 
-  togglePanel(panel, isOpen) {
+  togglePanel(panel, isOpen, scrollIntoView = false) {
     if (!this.state.panels[panel]) {
       Logger.warn('No panel with name', panel)
       return
     }
 
-    this.setState({
-      isExplorerOpen: true,
-      panels: {
-        ...this.state.panels,
-        [panel]: {
-          isOpen
+    this.setState(
+      {
+        isExplorerOpen: true,
+        panels: {
+          ...this.state.panels,
+          [panel]: {
+            ...this.state.panels[panel],
+            isOpen
+          }
+        }
+      },
+      () => {
+        if (scrollIntoView) {
+          this.scrollToPanel(panel)
         }
       }
-    })
+    )
+  }
+
+  scrollToPanel(panelName) {
+    const panel = this.state.panels[panelName].ref.current
+    if (panel) {
+      panel.scrollIntoView()
+    }
   }
 
   panelButtons() {
@@ -229,27 +250,27 @@ class ExplorerPanel extends React.Component {
       {
         icon: <AiOutlineSearch />,
         title: 'Search repository',
-        onClick: () => this.togglePanel('searchRepo', true)
+        onClick: () => this.togglePanel('searchRepo', true, true)
       },
       {
         icon: <AiOutlineFileSearch />,
         title: 'Search files',
-        onClick: () => this.togglePanel('searchFiles', true)
+        onClick: () => this.togglePanel('searchFiles', true, true)
       },
       {
         icon: <VscFiles />,
         title: 'Explorer',
-        onClick: () => this.togglePanel('code', true)
+        onClick: () => this.togglePanel('code', true, true)
       },
       {
         icon: <AiOutlineBranches />,
         title: 'Branches',
-        onClick: () => this.togglePanel('branches', true)
+        onClick: () => this.togglePanel('branches', true, true)
       },
       {
         icon: <AiOutlineSetting />,
         title: 'Settings',
-        onClick: () => this.togglePanel('settings', true)
+        onClick: () => this.togglePanel('settings', true, true)
       }
     ]
   }
@@ -300,6 +321,7 @@ class ExplorerPanel extends React.Component {
           <Collapse
             title="search repo"
             open={panels.searchRepo.isOpen}
+            ref={panels.searchRepo.ref}
             onToggle={() =>
               this.togglePanel('searchRepo', !panels.searchRepo.isOpen)
             }
@@ -318,6 +340,7 @@ class ExplorerPanel extends React.Component {
           <Collapse
             title="search file"
             open={panels.searchFiles.isOpen}
+            ref={panels.searchFiles.ref}
             onToggle={() =>
               this.togglePanel('searchFiles', !panels.searchFiles.isOpen)
             }
@@ -330,6 +353,7 @@ class ExplorerPanel extends React.Component {
           <Collapse
             title="code"
             open={panels.code.isOpen}
+            ref={panels.code.ref}
             onToggle={() => this.togglePanel('code', !panels.code.isOpen)}
           >
             <FileExplorer
@@ -341,6 +365,7 @@ class ExplorerPanel extends React.Component {
           <Collapse
             title="branches"
             open={panels.branches.isOpen}
+            ref={panels.branches.ref}
             onToggle={() =>
               this.togglePanel('branches', !panels.branches.isOpen)
             }
@@ -355,6 +380,7 @@ class ExplorerPanel extends React.Component {
           <Collapse
             title="Settings"
             open={panels.settings.isOpen}
+            ref={panels.settings.ref}
             onToggle={() =>
               this.togglePanel('settings', !panels.settings.isOpen)
             }

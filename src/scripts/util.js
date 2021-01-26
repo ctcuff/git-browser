@@ -1,6 +1,12 @@
 import languageData from '../assets/monaco-languages-parsed.json'
 import Logger from './logger'
 
+/**
+ * Takes the name of a CSS var and returns that variable as an integer
+ * @param {string} cssVar
+ * @param {HTMLElement} element
+ * @returns {number}
+ */
 const parseCSSVar = (cssVar, element = document.documentElement) => {
   const property = getComputedStyle(element).getPropertyValue(cssVar)
 
@@ -12,6 +18,11 @@ const parseCSSVar = (cssVar, element = document.documentElement) => {
   return parseInt(property.trim().replace('px', ''))
 }
 
+/**
+ * @param {string} key
+ * @param {any} value
+ * @param {HTMLElement} element
+ */
 const setCSSVar = (key, value, element = document.documentElement) => {
   element.style.setProperty(key, value)
 }
@@ -28,6 +39,13 @@ const setCSSVar = (key, value, element = document.documentElement) => {
  *    "extension": ".js"
  * }
  * ```
+ * @typedef {Object} FileInfo
+ * @property {string} language
+ * @property {string} displayName
+ * @property {string} extension
+ *
+ * @param {string} fileName
+ * @returns {FileInfo}
  */
 const getLanguageFromFileName = fileName => {
   if (languageData[fileName]) {
@@ -67,6 +85,10 @@ const getLanguageFromFileName = fileName => {
  * throws an error if the string can't be decoded. In that case,
  * it may be an image, PDF, or some other file type that
  * FileRenderer might be able to display
+ *
+ * @param {string} str
+ * @param {boolean} raw If true, force decoding with atob
+ * @returns {string}
  */
 const base64DecodeUnicode = (str, raw = false) => {
   if (raw) {
@@ -89,6 +111,9 @@ const base64DecodeUnicode = (str, raw = false) => {
 
 /**
  * Properly encodes a string since it may contain non UTF characters
+ * @param {string} str
+ * @param {boolean} raw If true, force encoding with btoa
+ * @returns {string}
  */
 const base64EncodeUnicode = (str, raw = false) => {
   if (raw) {
@@ -112,6 +137,9 @@ const base64EncodeUnicode = (str, raw = false) => {
  * ```
  * withClasses({ foo: true, bar: false, baz: true }) // returns 'foo baz'
  * ```
+ *
+ * @param {Object.<string, boolean>} classObj
+ * @returns {string}
  */
 const withClasses = classObj => {
   const classNames = Object.keys(classObj).filter(key => !!classObj[key])
