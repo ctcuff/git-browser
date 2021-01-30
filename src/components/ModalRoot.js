@@ -4,17 +4,20 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import ReactModal from 'react-modal'
 import AuthErrorModal from './modals/AuthErrorModal'
+import FullAccessModal from './modals/FullAccessModal'
 
 ReactModal.setAppElement('#app')
 
 const ModalTypes = {
   RATE_LIMIT: 'RATE_LIMIT',
-  AUTH_ERROR: 'AUTH_ERROR'
+  AUTH_ERROR: 'AUTH_ERROR',
+  FULL_ACCESS: 'FULL_ACCESS'
 }
 
 const ModalComponents = {
   RATE_LIMIT: RateLimitModal,
-  AUTH_ERROR: AuthErrorModal
+  AUTH_ERROR: AuthErrorModal,
+  FULL_ACCESS: FullAccessModal
 }
 
 // Handles orchestrating what modals should be shown depending on what

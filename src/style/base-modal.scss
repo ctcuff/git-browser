@@ -7,7 +7,7 @@
   box-shadow: 0 25px 50px 0 rgba(62, 62, 62, 0.15);
   padding: 0.5em 0;
   max-width: 30em;
-  animation: slide-up 0.4s cubic-bezier(0.38, 0.1, 0.36, 0.9);
+  animation: slide-up 0.45s cubic-bezier(0.38, 0.1, 0.36, 0.9);
 
   * {
     color: var(--color-text-primary);
@@ -45,12 +45,18 @@
   }
 
   .modal-body {
-    margin: 1.2em 0;
-    line-height: 23px;
+    margin: 1em 0;
+    line-height: 1.6em;
     text-align: center;
   }
 
-  .close-btn {
+  .modal-actions {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .action-btn {
     background-color: transparent;
     border: 1px solid var(--color-text-primary);
     border-radius: 4px;
@@ -58,6 +64,7 @@
     font-size: inherit;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    margin: 0 0.5em;
 
     @include desktop() {
       &:hover {

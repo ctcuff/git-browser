@@ -13,6 +13,8 @@ const firebase = {
   }))
 }
 
-firebase.auth.GithubAuthProvider = class {}
+firebase.auth.GithubAuthProvider = function () {
+  this.addScope = jest.fn()
+}
 
 export default firebase

@@ -84,8 +84,9 @@ class ExplorerPanel extends React.Component {
     const url = 'github.com/' + repo
 
     if (repo) {
-      this.setState({ inputValue: url })
-      this.getRepo(url, branch)
+      this.setState({ inputValue: url }, () => {
+        this.getRepo(url, branch)
+      })
     }
   }
 
@@ -101,11 +102,7 @@ class ExplorerPanel extends React.Component {
   }
 
   async getRepo(url, branch = 'default') {
-    if (
-      !url ||
-      this.state.currentRepoUrl === url ||
-      this.state.currentRepoPath === URLUtil.extractRepoPath(url)
-    ) {
+    if (!url || this.state.isLoading) {
       return
     }
 
@@ -127,17 +124,6 @@ class ExplorerPanel extends React.Component {
   }
 
   getTree(repoUrl, branch) {
-    const { currentRepoUrl, currentBranch } = this.state
-
-    if (
-      currentRepoUrl === repoUrl &&
-      (currentBranch === branch || currentBranch === 'default')
-    ) {
-      // Don't search if the repository hasn't changed, or
-      // if the branch name hasn't changed
-      return Promise.resolve()
-    }
-
     this.toggleLoading()
 
     return GitHubAPI.getTree(repoUrl, branch)

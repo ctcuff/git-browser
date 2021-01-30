@@ -14,11 +14,20 @@ const BaseModal = props => (
     shouldCloseOnOverlayClick
   >
     <div className="modal-content">
-      <h2 className="modal-title">{props.title}</h2>
+      {props.title && <h2 className="modal-title">{props.title}</h2>}
       <div className="modal-body">{props.children}</div>
-      <button className="close-btn" onClick={props.hideModal}>
-        Close
-      </button>
+      <div className="modal-actions">
+        <React.Fragment>
+          {props.actions.map((action, index) => (
+            <button className="action-btn" onClick={action.onClick} key={index}>
+              {action.text}
+            </button>
+          ))}
+        </React.Fragment>
+        <button className="action-btn" onClick={props.hideModal}>
+          Close
+        </button>
+      </div>
     </div>
   </ReactModal>
 )
@@ -34,7 +43,18 @@ BaseModal.propTypes = {
     PropTypes.arrayOf(PropTypes.node)
   ]),
   hideModal: PropTypes.func.isRequired,
-  className: PropTypes.string
+  className: PropTypes.string,
+  actions: PropTypes.arrayOf(
+    PropTypes.shape({
+      text: PropTypes.string.isRequired,
+      onClick: PropTypes.func.isRequired
+    })
+  )
+}
+
+BaseModal.defaultProps = {
+  actions: [],
+  className: ''
 }
 
 export default connect(null, mapDispatchToProps)(BaseModal)

@@ -55,6 +55,7 @@
 
   .github-icon {
     margin-right: 8px;
+    flex-shrink: 0;
   }
 
   .loading-icon {
@@ -68,9 +69,15 @@
   }
 
   .source-link {
-    font-size: 0.8em;
+    font-size: 0.85em;
     text-align: center;
     text-decoration: none;
     display: block;
+    color: var(--color-text-link);
+    cursor: pointer;
+  }
+
+  p.source-link {
+    margin-bottom: 0.5em;
   }
 }

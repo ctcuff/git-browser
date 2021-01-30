@@ -13,7 +13,13 @@ firebase.initializeApp({
   appId: process.env.APP_ID
 })
 
-const provider = new firebase.auth.GithubAuthProvider()
+// Firebase doesn't allow us to remove scope once added so we need
+// to create 2 providers
+const baseProvider = new firebase.auth.GithubAuthProvider()
+const enhancedProvider = new firebase.auth.GithubAuthProvider()
+
+// Grants access to private and public repositories.
+enhancedProvider.addScope('repo')
 
 const toggleLoading = isLoading => ({
   type: 'TOGGLE_LOADING',
@@ -27,11 +33,13 @@ const loadProfileFromStorage = payload => ({
   payload
 })
 
-const login = () => {
+const login = (su = false) => {
   return async function (dispatch, getState) {
     if (getState().user.isLoading) {
       return
     }
+
+    const provider = su ? enhancedProvider : baseProvider
 
     dispatch(toggleLoading(true))
 

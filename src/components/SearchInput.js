@@ -40,6 +40,7 @@ const SearchInput = props => {
   }
 
   useEffect(() => {
+    setInputValue(props.value)
     document.addEventListener('keypress', onEnterPress)
     return () => {
       document.removeEventListener('keypress', onEnterPress)
