@@ -3,6 +3,7 @@ import thunk from 'redux-thunk'
 import modalReducer from './reducers/modal'
 import userReducer from './reducers/user'
 import settingsReducer from './reducers/settings'
+import searchReducer from './reducers/search'
 
 const storeEnhancers =
   (process.env.DEBUG &&
@@ -13,7 +14,8 @@ const storeEnhancers =
 const reducer = combineReducers({
   modal: modalReducer,
   user: userReducer,
-  settings: settingsReducer
+  settings: settingsReducer,
+  search: searchReducer
 })
 
 const store = createStore(reducer, storeEnhancers(applyMiddleware(thunk)))

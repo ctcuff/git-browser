@@ -164,6 +164,29 @@ const URLUtil = {
   getSearchParam(key, defaultValue = null) {
     const params = new URLSearchParams(window.location.search)
     return params.get(key) || defaultValue
+  },
+
+  /**
+   * Takes a repo path (`user/repo-name`), branch, and file path and returns
+   * a URL to view that file on GitHub. If `raw` is `true`, this will return
+   * a link similar to clicking the "raw" button on github.
+   * @param {Object} params
+   * @param {string} params.repoPath
+   * @param {string} params.branch
+   * @param {string} params.filePath
+   * @param {boolean?} params.raw
+   * @returns {string}
+   */
+  buildGithubFileURL(params) {
+    const { repoPath, branch, filePath, raw = false } = params
+
+    let URL = `https://github.com/${repoPath}/blob/${branch}/${filePath}`
+
+    if (raw) {
+      URL += '?raw=true'
+    }
+
+    return URL
   }
 }
 

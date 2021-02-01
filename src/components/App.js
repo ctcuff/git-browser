@@ -206,7 +206,8 @@ class App extends React.Component {
       isTooLarge,
       canEditorRender,
       hasError,
-      wasForceRendered
+      wasForceRendered,
+      path
     } = tab
 
     if (index !== this.state.activeTabIndex) {
@@ -246,6 +247,7 @@ class App extends React.Component {
         extension={extension}
         onForceRender={this.onToggleRenderable}
         wasForceRendered={wasForceRendered}
+        filePath={path}
       />
     )
   }

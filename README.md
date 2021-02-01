@@ -10,6 +10,8 @@ Here's a list of file types that support live previews:
 - Video (mp4 and webm)
 - Audio (mp3, wav, ogg, and aac)
 - Fonts (only ttf, otf, woff, and woff2)
+- doc/docx (Experimental)
+- ppt/pptx (Experimental)
 - CSV (as well as TSV)
     - Thanks to [papaparse](https://github.com/mholt/PapaParse) 🎉
 - Markdown (as well as mdx, kinda...)

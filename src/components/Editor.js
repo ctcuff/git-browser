@@ -22,7 +22,6 @@ class Editor extends React.Component {
     '.svg',
     '.tsv'
   ])
-
   /**
    * Files that don't have to be decoded when sent to the FileRenderer
    * since they already display as text when the Editor is rendered.
@@ -45,6 +44,8 @@ class Editor extends React.Component {
     '.apng',
     '.avif',
     '.bmp',
+    '.doc',
+    '.docx',
     '.gif',
     '.glb',
     '.ico',
@@ -59,6 +60,8 @@ class Editor extends React.Component {
     '.pjp',
     '.pjpeg',
     '.png',
+    '.ppt',
+    '.pptx',
     '.ttf',
     '.wav',
     '.webm',
