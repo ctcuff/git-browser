@@ -361,13 +361,7 @@ class ExplorerPanel extends React.Component {
               key={key}
               nodes={treeData}
               onSelectFile={this.props.onSelectFile}
-              activeFilePath={
-                // Pass an empty string when closed to prevent the explorer
-                // from unnecessarily searching for the active file
-                isExplorerOpen && panels.code.isOpen
-                  ? this.props.activeFilePath
-                  : ''
-              }
+              activeFilePath={this.props.activeFilePath}
             />
           </Collapse>
           <Collapse

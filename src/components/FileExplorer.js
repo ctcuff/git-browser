@@ -19,34 +19,6 @@ class FileExplorer extends React.PureComponent {
     this.toggleNode = this.toggleNode.bind(this)
     this.onSelectFile = this.onSelectFile.bind(this)
     this.closeAllFolders = this.closeAllFolders.bind(this)
-    this.openUpToRoot = this.openUpToRoot.bind(this)
-  }
-
-  componentDidUpdate(prevProps) {
-    const activeFilePath = this.props.activeFilePath
-
-    // When the active file changes, find the new active file and open
-    // every parent folder until the root. Note that this behavior is
-    // disabled with a large number of nodes for performance reasons.
-    if (
-      activeFilePath &&
-      prevProps.activeFilePath !== activeFilePath &&
-      Object.keys(this.state.nodes).length <= 1500
-    ) {
-      this.openUpToRoot(activeFilePath)
-    }
-  }
-
-  openUpToRoot(path) {
-    const nodes = this.state.nodes
-
-    if (nodes[path].type === 'folder' && !nodes[path].isOpen) {
-      this.toggleNode(nodes[path])
-    }
-
-    if (nodes[path].parent) {
-      this.openUpToRoot(nodes[path].parent)
-    }
   }
 
   componentDidMount() {
