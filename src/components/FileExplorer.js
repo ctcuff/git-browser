@@ -19,14 +19,36 @@ class FileExplorer extends React.PureComponent {
     this.toggleNode = this.toggleNode.bind(this)
     this.onSelectFile = this.onSelectFile.bind(this)
     this.closeAllFolders = this.closeAllFolders.bind(this)
+    this.openUpToRoot = this.openUpToRoot.bind(this)
   }
 
   componentDidMount() {
     const key = URLUtil.getSearchParam('file')
     const node = this.state.nodes[key]
+    const activeFilePath = this.props.activeFilePath
 
     if (node) {
       this.props.onSelectFile(node)
+    }
+
+    if (activeFilePath) {
+      this.openUpToRoot(activeFilePath)
+    }
+  }
+
+  openUpToRoot(path) {
+    const nodes = this.state.nodes
+
+    if (!nodes[path]) {
+      return
+    }
+
+    if (nodes[path].type === 'folder' && !nodes[path].isOpen) {
+      this.toggleNode(nodes[path])
+    }
+
+    if (nodes[path].parent) {
+      this.openUpToRoot(nodes[path].parent)
     }
   }
 
