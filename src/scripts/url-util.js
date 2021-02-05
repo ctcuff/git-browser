@@ -2,11 +2,12 @@ import URI from 'urijs'
 import store from '../store'
 import { showModal } from '../store/actions/modal'
 import { ModalTypes } from '../components/ModalRoot'
+import Logger from './logger'
 
 const BASE_API_URL = 'https://api.github.com'
 const BASE_REPO_URL = BASE_API_URL + '/repos'
 
-const URLUtil = {
+class URLUtil {
   /**
    * A wrapper around fetch that makes a request to the GitHub API.
    * This rejects if the GitHub rate limit is exceeded.
@@ -14,7 +15,7 @@ const URLUtil = {
    * @param {string} url
    * @returns {Promise}
    */
-  request(url) {
+  static request(url) {
     const oauthToken = store.getState().user.accessToken
     const debugToken = process.env.OAUTH_TOKEN
     const config = {
@@ -39,26 +40,26 @@ const URLUtil = {
         })
         .catch(err => reject(err))
     })
-  },
+  }
 
   /**
    * @param {string} url
    * @returns {boolean}
    */
-  isUrlValid(url) {
+  static isUrlValid(url) {
     try {
       new URL(this.addScheme(url))
       return true
     } catch (e) {
       return false
     }
-  },
+  }
 
   /**
    * @param {string} url
    * @returns {boolean}
    */
-  isGithubUrl(url) {
+  static isGithubUrl(url) {
     if (!this.isUrlValid(url)) {
       return false
     }
@@ -66,19 +67,19 @@ const URLUtil = {
     const uri = new URI(this.addScheme(url))
 
     return uri.hostname().toLowerCase() === 'github.com'
-  },
+  }
 
   /**
    * Adds `https://` to a url if that or `http://` isn't present
    * @param {string} url
    * @returns {string}
    */
-  addScheme(url) {
+  static addScheme(url) {
     if (!url.startsWith('http') || !url.startsWith('https')) {
       return 'https://' + url
     }
     return url
-  },
+  }
 
   /**
    * Takes a github url: `https://github.com/user/repo-name`
@@ -87,7 +88,7 @@ const URLUtil = {
    * @param {string} url
    * @returns {string}
    */
-  extractRepoPath(url) {
+  static extractRepoPath(url) {
     if (!this.isUrlValid(url)) {
       throw new Error(`Invalid URL: ${url}`)
     }
@@ -100,24 +101,24 @@ const URLUtil = {
     }
 
     return `${segments[0]}/${segments[1]}`
-  },
+  }
 
   /**
    * @param {string} repoPath
    * @param {string} branchName
    * @returns {string}
    */
-  buildBranchUrl(repoPath, branchName) {
+  static buildBranchUrl(repoPath, branchName) {
     return `${BASE_REPO_URL}/${repoPath}/git/trees/${branchName}?recursive=true`
-  },
+  }
 
   /**
    * @param {string} repoPath
    * @returns {string}
    */
-  buildBranchesUrl(repoPath) {
+  static buildBranchesUrl(repoPath) {
     return `${BASE_REPO_URL}/${repoPath}/branches`
-  },
+  }
 
   /**
    * Takes an object and appends each key and value to the window URL as a query.
@@ -135,7 +136,7 @@ const URLUtil = {
    * @param {Object.<string, string?>} queryObj
    * @returns {string}
    */
-  updateURLSearchParams(queryObj) {
+  static updateURLSearchParams(queryObj) {
     const prevUrl = window.location.pathname + window.location.search
     const params = new URLSearchParams(window.location.search)
 
@@ -152,7 +153,7 @@ const URLUtil = {
     if (prevUrl !== newUrl) {
       window.history.replaceState({}, '', newUrl)
     }
-  },
+  }
 
   /**
    * Takes a key and return the value of that search param from current URL.
@@ -161,9 +162,79 @@ const URLUtil = {
    * @param {string} defaultValue
    * @returns {string | any}
    */
-  getSearchParam(key, defaultValue = null) {
+  static getSearchParam(key, defaultValue = null) {
     const params = new URLSearchParams(window.location.search)
     return params.get(key) || defaultValue
+  }
+
+  /**
+   * Takes a repo path (`user/repo-name`), branch, and file path and returns
+   * a URL to view that file on GitHub. If `raw` is `true`, this will return
+   * a link similar to clicking the "raw" button on github.
+   * @param {Object} params
+   * @param {string} params.repoPath
+   * @param {string} params.branch
+   * @param {string} params.filePath
+   * @param {boolean?} params.raw
+   * @returns {string}
+   */
+  static buildGithubFileURL(params) {
+    const { repoPath, branch, filePath, raw = false } = params
+
+    const url = raw
+      ? `https://raw.githubusercontent.com/${repoPath}/${branch}/${filePath}`
+      : `https://github.com/${repoPath}/blob/${branch}/${filePath}`
+
+    return url
+  }
+
+  /**
+   * Takes a repo path (`user/repo-name`), branch, and file path and
+   * downloads that file from github using the `raw.githubusercontent` URL
+   *
+   * @param {Object} params
+   * @param {string} params.repoPath
+   * @param {string} params.branch
+   * @param {string} params.filePath
+   */
+  static downloadGithubFile(params) {
+    const githubURL = URLUtil.buildGithubFileURL({
+      ...params,
+      raw: true
+    })
+    const parts = params.filePath.split('/')
+    const filename = parts[parts.length - 1]
+
+    return new Promise((resolve, reject) => {
+      fetch(githubURL)
+        .then(res => {
+          if (!res.ok) {
+            reject('Error downloading file')
+            return
+          }
+
+          return res.blob()
+        })
+        .then(blob => {
+          const anchor = document.createElement('a')
+          const url = URL.createObjectURL(blob)
+
+          anchor.setAttribute('href', url)
+          anchor.setAttribute('download', filename)
+          anchor.style.visibility = 'hidden'
+
+          document.body.appendChild(anchor)
+
+          anchor.click()
+          anchor.remove()
+
+          resolve()
+        })
+        .catch(err => {
+          Logger.error(err)
+          reject('Error downloading file')
+        })
+    })
   }
 }
 

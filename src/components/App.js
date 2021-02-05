@@ -357,7 +357,7 @@ class App extends React.Component {
             onCloseAllClick={this.closeAllTabs}
           >
             {openedTabs.map((tab, index) => (
-              <Tab title={tab.title} key={tab.path} hint={tab.path}>
+              <Tab title={tab.title} key={tab.path} path={tab.path}>
                 {this.renderTabContent(tab, index)}
               </Tab>
             ))}

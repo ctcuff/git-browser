@@ -39,6 +39,42 @@
     z-index: 1;
   }
 
+  .tab-file-download-alert {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    z-index: 99999;
+    color: var(--color-text-primary);
+    background-color: var(--color-modal-bg);
+    font-size: 0.9em;
+    box-shadow: 0 5px 17px 5px rgba(0, 0, 0, 0.15);
+    right: 0;
+    top: 1em;
+    padding: 0 1em;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+
+    &.is-showing {
+      transform: translateX(0%);
+      opacity: 1;
+    }
+
+    button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.4em;
+      color: inherit;
+
+      // Hack to get the text of the button vertically
+      // aligned in FireFox
+      @-moz-document url-prefix() {
+        font-family: unset;
+      }
+    }
+  }
+
   .close-all-button {
     position: sticky;
     left: 0;
@@ -85,6 +121,10 @@
 
       &:focus {
         outline: none;
+      }
+
+      @-moz-document url-prefix() {
+        font-family: unset;
       }
     }
 

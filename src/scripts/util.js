@@ -146,6 +146,31 @@ const withClasses = classObj => {
   return classNames.join(' ')
 }
 
+/**
+ * @param {string} text
+ */
+const copyToClipboard = text => {
+  // Fallback if navigator.clipboard isn't available
+  if (!navigator.clipboard) {
+    const textArea = document.createElement('textarea')
+    textArea.value = text
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+
+    try {
+      document.execCommand('copy')
+    } catch (err) {
+      Logger.error('Fallback: unable to copy', err)
+    }
+
+    document.body.removeChild(textArea)
+    return
+  }
+
+  navigator.clipboard.writeText(text).catch(err => Logger.error(err))
+}
+
 /* istanbul ignore next */
 const noop = () => {}
 
@@ -156,5 +181,6 @@ export {
   noop,
   base64DecodeUnicode,
   base64EncodeUnicode,
-  withClasses
+  withClasses,
+  copyToClipboard
 }
