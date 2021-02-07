@@ -71,7 +71,7 @@ body {
   font-size: 1em;
   font-family: var(--font-default);
   background-color: var(--color-app-bg);
-  line-height: 22px;
+  line-height: 1.4;
 
   &.is-resizing {
     user-select: none;

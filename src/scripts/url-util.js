@@ -30,8 +30,8 @@ const URLUtil = {
     return new Promise((resolve, reject) => {
       fetch(url, config)
         .then(res => {
-          if (res.statusText.toLowerCase().includes('rate limit')) {
-            reject('Rate limit exceeded')
+          if (res.headers.get('x-ratelimit-remaining') === '0') {
+            reject('rate limit exceeded')
             store.dispatch(showModal(ModalTypes.RATE_LIMIT))
           } else {
             resolve(res)
