@@ -2,6 +2,8 @@ import '../style/context-menu.scss'
 import React, { useRef, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
+const preventDefault = event => event.preventDefault()
+
 const ContextMenu = props => {
   // Sometimes, repositioning the menu causes it to flicker then
   // jump to it's new position. To fix this, we need to hide the
@@ -13,6 +15,13 @@ const ContextMenu = props => {
     y: props.coords.y
   })
   const { isOpen, options } = props
+
+  const onOptionClick = option => {
+    if (!option.disabled) {
+      option.onClick()
+    }
+    props.onOptionClick()
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -47,24 +56,35 @@ const ContextMenu = props => {
   }
 
   return (
-    <div
-      className="context-menu"
-      onContextMenu={event => event.preventDefault()}
-      ref={containerRef}
-      style={{
-        left: coords.x,
-        top: coords.y,
-        visibility: !hasAdjusted ? 'hidden' : 'visible'
-      }}
-    >
-      <ul className="menu">
-        {options.map((option, index) => (
-          <li key={index} onClick={option.onClick} className="menu-option">
-            {option.title}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <React.Fragment>
+      <div
+        className="context-menu-overlay"
+        onMouseDown={props.onOverlayClick}
+        onContextMenu={preventDefault}
+      />
+      <div
+        className="context-menu"
+        onContextMenu={preventDefault}
+        ref={containerRef}
+        style={{
+          left: coords.x,
+          top: coords.y,
+          visibility: !hasAdjusted ? 'hidden' : 'visible'
+        }}
+      >
+        <ul className="menu">
+          {options.map((option, index) => (
+            <li
+              key={index}
+              onClick={onOptionClick.bind(this, option)}
+              className={`menu-option ${option.disabled ? 'disabled' : ''}`}
+            >
+              {option.title}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </React.Fragment>
   )
 }
 
@@ -77,9 +97,20 @@ ContextMenu.propTypes = {
   options: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
-      onClick: PropTypes.func.isRequired
+      onClick: PropTypes.func.isRequired,
+      disabled: PropTypes.bool
     })
-  ).isRequired
+  ).isRequired,
+  onOverlayClick: PropTypes.func.isRequired,
+  /**
+   * A helper callback that makes it easier to close the
+   * menu when any of the options are clicked
+   */
+  onOptionClick: PropTypes.func
+}
+
+ContextMenu.defaultProps = {
+  onOptionClick: () => {}
 }
 
 export default ContextMenu

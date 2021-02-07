@@ -5,6 +5,7 @@ import { Tabs, TabList, TabPanel, Tab as ReactTab } from 'react-tabs'
 import PropTypes from 'prop-types'
 import SimpleBar from 'simplebar-react'
 import { VscCloseAll } from 'react-icons/vsc'
+import { AiOutlineMenu } from 'react-icons/ai'
 import ContextMenu from './ContextMenu'
 import { connect } from 'react-redux'
 import URLUtil from '../scripts/url-util'
@@ -16,11 +17,11 @@ const Tab = props => <React.Fragment>{props.children}</React.Fragment>
 
 const TabView = props => {
   const { onTabClosed, onSelectTab, activeTabIndex, repoPath, branch } = props
-  const tabs = props.children
   const [isContextMenuOpen, toggleContextMenu] = useState(false)
   const [contextMenuCoords, setContextMenuCoords] = useState({ x: 0, y: 0 })
   const [menuTabIndex, setMenuTabIndex] = useState(0)
   const [isDownloadAlertShowing, setShowDownloadAlert] = useState(false)
+  const tabs = props.children
 
   const onSelect = (index, prevIndex, event) => {
     // Clicking anywhere on the tab fires the tab's onSelect
@@ -68,7 +69,7 @@ const TabView = props => {
         // Prevents the alert message from flickering if it closes too fast
         setTimeout(() => {
           setShowDownloadAlert(false)
-        }, 3000)
+        }, 5000)
       })
   }
 
@@ -88,20 +89,30 @@ const TabView = props => {
     {
       title: 'Close tab',
       onClick: () => onTabClosed(menuTabIndex)
+    },
+    {
+      title: 'Close other tabs',
+      disabled: tabs.length <= 1,
+      onClick: props.onCloseOtherTabsClick
     }
   ]
 
   useEffect(() => {
     const callback = toggleContextMenu.bind(this, false)
-    document.addEventListener('click', callback)
     document.addEventListener('keypress', callback)
     document.addEventListener('blur', callback)
     return () => {
-      document.removeEventListener('click', callback)
       document.removeEventListener('keypress', callback)
       document.removeEventListener('blur', callback)
     }
   }, [])
+
+  useEffect(() => {
+    // Sometimes clicking "Close tab" keeps the context menu open when
+    // another tab is opened so we need to make sure the context menu
+    // remains closed when tabs are opened/closed
+    toggleContextMenu(false)
+  }, [tabs.length])
 
   if (tabs.length <= 0) {
     return null
@@ -113,6 +124,8 @@ const TabView = props => {
         isOpen={isContextMenuOpen}
         coords={contextMenuCoords}
         options={menuOptions}
+        onOverlayClick={toggleContextMenu.bind(this, false)}
+        onOptionClick={toggleContextMenu.bind(this, false)}
       />
       <div
         className={`tab-file-download-alert ${
@@ -160,6 +173,12 @@ const TabView = props => {
           className="tab-panel"
           key={index}
         >
+          <button
+            className="tab-context-menu-toggle"
+            onClick={onContextMenu.bind(this, index)}
+          >
+            <AiOutlineMenu />
+          </button>
           {tab.props.children}
         </TabPanel>
       ))}
@@ -177,7 +196,7 @@ Tab.propTypes = {
 }
 
 TabView.propTypes = {
-  // Make sure the tab view only has tabs as direct children
+  // Makes sure the TabView only has tabs as direct children
   children: PropTypes.oneOfType([
     PropTypes.shape({
       type: PropTypes.oneOf([Tab])
@@ -194,7 +213,8 @@ TabView.propTypes = {
   onCloseAllClick: PropTypes.func.isRequired,
   repoPath: PropTypes.string,
   branch: PropTypes.string,
-  showModal: PropTypes.func.isRequired
+  showModal: PropTypes.func.isRequired,
+  onCloseOtherTabsClick: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({

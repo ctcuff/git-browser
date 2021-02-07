@@ -43,6 +43,7 @@ class App extends React.Component {
     this.onToggleRenderable = this.onToggleRenderable.bind(this)
     this.onSearchFinished = this.onSearchFinished.bind(this)
     this.decodeTabContent = this.decodeTabContent.bind(this)
+    this.onCloseOtherTabsClick = this.onCloseOtherTabsClick.bind(this)
 
     // All tabs get cleared when a load finishes. This flag tells the
     // component not to clear tabs if the ?file="" query is in the URL
@@ -312,6 +313,22 @@ class App extends React.Component {
     })
   }
 
+  onCloseOtherTabsClick() {
+    const { openedTabs, activeTabIndex } = this.state
+
+    if (openedTabs.length <= 1) {
+      return
+    }
+
+    const tab = openedTabs[activeTabIndex]
+
+    this.setState({
+      openedTabs: [tab],
+      activeTabIndex: 0,
+      openedFilePaths: new Set([tab.path])
+    })
+  }
+
   closeAllTabs() {
     URLUtil.updateURLSearchParams({ file: null })
     this.setState({
@@ -374,6 +391,7 @@ class App extends React.Component {
             activeTabIndex={activeTabIndex}
             onSelectTab={this.setActiveTabIndex}
             onCloseAllClick={this.closeAllTabs}
+            onCloseOtherTabsClick={this.onCloseOtherTabsClick}
           >
             {openedTabs.map((tab, index) => (
               <Tab title={tab.title} key={tab.path} path={tab.path}>
