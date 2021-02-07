@@ -86,8 +86,9 @@ class ExplorerPanel extends React.Component {
     const url = 'github.com/' + repo
 
     if (repo) {
-      this.setState({ inputValue: url })
-      this.getRepo(url, branch)
+      this.setState({ inputValue: url }, () => {
+        this.getRepo(url, branch)
+      })
     }
   }
 
@@ -105,11 +106,7 @@ class ExplorerPanel extends React.Component {
   async getRepo(url, branch = 'default') {
     const extractedPath = URLUtil.extractRepoPath(url)
 
-    if (
-      !url ||
-      this.state.currentRepoUrl === url ||
-      this.state.currentRepoPath === extractedPath
-    ) {
+    if (!url) {
       return
     }
 

@@ -205,8 +205,10 @@ class CSVRenderer extends React.Component {
             placeholder="Search this file..."
             onChange={this.onChange}
             value={inputValue}
-            autoCapitalize="false"
-            autoComplete="false"
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck="false"
+            autoCapitalize="none"
           />
         </div>
         {errors.has(PARSE_ERROR) && (
