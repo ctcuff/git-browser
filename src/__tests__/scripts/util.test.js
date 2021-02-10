@@ -1,5 +1,6 @@
 import * as util from 'src/scripts/util'
 import monacoLanguages from 'src/assets/monaco-languages-parsed.json'
+import Logger from 'src/scripts/logger'
 
 describe('util', () => {
   test('getLanguageFromFileName returns correct extension', () => {
@@ -55,7 +56,7 @@ describe('util', () => {
     ).toEqual('100')
   })
 
-  test('encodes/decodes correctly or throws error', () => {
+  test('base64 encodes/decodes correctly or throws error', () => {
     const message = 'message √√√'
     const encodedMessage = util.base64EncodeUnicode(message)
 
@@ -63,6 +64,11 @@ describe('util', () => {
     expect(() => {
       util.base64DecodeUnicode('not a base 64 string')
     }).toThrowError()
+
+    expect(util.base64EncodeUnicode('message', true)).toEqual(btoa('message'))
+    expect(util.base64DecodeUnicode('bWVzc2FnZQ==', true)).toEqual(
+      atob('bWVzc2FnZQ==')
+    )
   })
 
   test('withClasses builds class string', () => {
@@ -74,5 +80,30 @@ describe('util', () => {
     })
 
     expect(classes).toEqual('bar quux')
+  })
+
+  test('copyToClipboard copies value to clipboard', () => {
+    const loggerSpy = jest.spyOn(Logger, 'error')
+
+    global.document.execCommand = jest.fn()
+    global.navigator.clipboard = null
+
+    util.copyToClipboard('message')
+
+    global.document.execCommand.mockImplementation(() => {
+      throw new Error()
+    })
+
+    util.copyToClipboard('message')
+
+    global.navigator.clipboard = {
+      writeText: jest.fn(() => Promise.resolve())
+    }
+
+    util.copyToClipboard('message')
+
+    expect(loggerSpy).toHaveBeenCalled()
+    expect(document.execCommand).toHaveBeenCalledTimes(2)
+    expect(navigator.clipboard.writeText).toHaveBeenCalled()
   })
 })

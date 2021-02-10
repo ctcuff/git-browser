@@ -1,8 +1,7 @@
 const initialState = {
-  branch: '',
   // This will be the string: 'user/repo-name'
   repoPath: '',
-  isLoading: false
+  branch: ''
 }
 
 const reducer = (state = initialState, action) => {
