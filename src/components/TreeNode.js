@@ -36,10 +36,10 @@ const renderIcon = (type, isOpen) => {
   }
 
   if (type === 'folder' && isOpen) {
-    return <FaFolderOpen color="#79b8ff" />
+    return <FaFolderOpen className="folder-icon" />
   }
 
-  return <FaFolder color="#79b8ff" />
+  return <FaFolder className="folder-icon" />
 }
 
 const renderToggleIcon = (type, isOpen) => {
