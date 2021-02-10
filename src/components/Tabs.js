@@ -19,6 +19,7 @@ const TabView = props => {
   const { onTabClosed, onSelectTab, activeTabIndex, repoPath, branch } = props
   const [isContextMenuOpen, toggleContextMenu] = useState(false)
   const [contextMenuCoords, setContextMenuCoords] = useState({ x: 0, y: 0 })
+  // The index of the tab where the context menu was activated
   const [menuTabIndex, setMenuTabIndex] = useState(0)
   const [isDownloadAlertShowing, setShowDownloadAlert] = useState(false)
   const tabs = props.children
@@ -93,7 +94,7 @@ const TabView = props => {
     {
       title: 'Close other tabs',
       disabled: tabs.length <= 1,
-      onClick: props.onCloseOtherTabsClick
+      onClick: () => props.onCloseOtherTabsClick(menuTabIndex)
     }
   ]
 

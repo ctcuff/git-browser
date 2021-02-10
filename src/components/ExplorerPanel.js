@@ -159,10 +159,14 @@ class ExplorerPanel extends React.Component {
           }
         })
 
+        const repoPath = URLUtil.extractRepoPath(repoUrl)
+
         URLUtil.updateURLSearchParams({
-          repo: URLUtil.extractRepoPath(repoUrl),
+          repo: repoPath,
           branch
         })
+
+        document.title = `Git Browser - ${repoPath}`
       })
       .catch(err => {
         const searchErrorMessage = err.message || err

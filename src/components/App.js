@@ -206,15 +206,7 @@ class App extends React.Component {
   }
 
   findTabIndex(path) {
-    const openedTabs = this.state.openedTabs
-
-    for (let i = 0; i < openedTabs.length; i++) {
-      if (openedTabs[i].path === path) {
-        return i
-      }
-    }
-
-    return -1
+    return this.state.openedTabs.findIndex(tab => tab.path === path)
   }
 
   renderTabContent(tab, index) {
@@ -313,14 +305,14 @@ class App extends React.Component {
     })
   }
 
-  onCloseOtherTabsClick() {
-    const { openedTabs, activeTabIndex } = this.state
+  onCloseOtherTabsClick(index) {
+    const openedTabs = this.state.openedTabs
 
     if (openedTabs.length <= 1) {
       return
     }
 
-    const tab = openedTabs[activeTabIndex]
+    const tab = openedTabs[index]
 
     this.setState({
       openedTabs: [tab],
