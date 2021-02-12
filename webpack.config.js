@@ -65,14 +65,20 @@ module.exports = env => {
     entry: path.resolve(__dirname, 'src', 'index.js'),
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: 'bundle.js'
+      filename: 'bundle.js',
+      publicPath: '/'
     },
     devServer: {
       contentBase: path.resolve(__dirname, 'public'),
       open: false,
       clientLogLevel: 'silent',
       port: 9000,
-      hot: true
+      hot: true,
+      // Allows any url to be visited without throwing a 404 in dev mode
+      historyApiFallback: {
+        index: '/',
+        disableDotRule: true
+      }
     },
     module: {
       rules: [

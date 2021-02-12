@@ -137,17 +137,24 @@ const URLUtil = {
    */
   updateURLSearchParams(queryObj) {
     const prevUrl = window.location.pathname + window.location.search
-    const params = new URLSearchParams(window.location.search)
+    const searchParams = new URLSearchParams(window.location.search)
+    let newUrl = window.location.pathname
 
     Object.keys(queryObj).forEach(key => {
       if (queryObj[key]) {
-        params.set(key, queryObj[key])
+        searchParams.set(key, queryObj[key])
       } else {
-        params.delete(key)
+        searchParams.delete(key)
       }
     })
 
-    const newUrl = `${window.location.pathname}?${params.toString()}`
+    const params = searchParams.toString()
+
+    // Make sure we don't append a naked `?` to the end of the URL
+    // if there are no search params
+    if (params) {
+      newUrl += `?${params}`
+    }
 
     if (prevUrl !== newUrl) {
       window.history.replaceState({}, '', newUrl)
@@ -164,6 +171,20 @@ const URLUtil = {
   getSearchParam(key, defaultValue = null) {
     const params = new URLSearchParams(window.location.search)
     return params.get(key) || defaultValue
+  },
+
+  /**
+   * Takes a path name and replaces the current URL path name
+   * @param {string} path
+   */
+  updateURLPath(path) {
+    // Adding a leading / to the path replaces the entire URL
+    // pathname with `path`
+    if (!path.startsWith('/')) {
+      path = '/' + path
+    }
+
+    window.history.replaceState({}, '', path)
   }
 }
 

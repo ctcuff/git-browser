@@ -148,4 +148,12 @@ describe('URLUtil', () => {
       'someDefaultValue'
     )
   })
+
+  test('updateURLPath updates URL path name', () => {
+    URLUtil.updateURLPath('/some/path')
+    expect(window.location.pathname).toEqual('/some/path')
+
+    URLUtil.updateURLPath('some/path')
+    expect(window.location.pathname).toEqual('/some/path')
+  })
 })

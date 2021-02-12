@@ -15,7 +15,7 @@ const theme = localStorage.getItem('theme')
 const query = window.matchMedia('(prefers-color-scheme: dark)')
 
 const updateFavicon = isDark => {
-  const link = isDark ? './favicon-light.ico' : './favicon-dark.ico'
+  const link = isDark ? '/favicon-light.ico' : '/favicon-dark.ico'
   document.querySelector('link[rel="icon"]').setAttribute('href', link)
 }
 
