@@ -151,7 +151,7 @@ class FileExplorer extends React.PureComponent {
 }
 
 FileExplorer.propTypes = {
-  onSelectFile: PropTypes.func.isRequired,
+  onSelectFile: PropTypes.func,
   nodes: PropTypes.objectOf(
     PropTypes.shape({
       type: PropTypes.oneOf(['file', 'folder']),
@@ -162,12 +162,14 @@ FileExplorer.propTypes = {
     })
   ),
   repoName: PropTypes.string,
-  activeFilePath: PropTypes.string.isRequired
+  activeFilePath: PropTypes.string
 }
 
 FileExplorer.defaultProps = {
   nodes: {},
-  repoName: ''
+  repoName: '',
+  activeFilePath: '',
+  onSelectFile: () => {}
 }
 
 export default FileExplorer

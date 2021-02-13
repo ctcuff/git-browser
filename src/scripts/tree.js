@@ -54,7 +54,7 @@ class Tree {
       // If this file/folder is contained in a folder, split the path
       // to try and find the name of the parent folder. For example:
       // `src/components/App.js` => `components`
-      const parts = path.split('/')
+      const parts = path.split('/').filter(str => !!str.trim())
       const parentPath = parts.splice(0, parts.length - 1).join('/')
       const treeData = {
         parent: null,
@@ -86,10 +86,11 @@ class Tree {
 
       // If the file/folder had a parent, make sure that file/folder
       // gets added to the parent's children
-      if (parentPath) {
+      if (parentPath && tree[parentPath]) {
         tree[parentPath].children.push(path)
         tree[path].parent = parentPath
       } else {
+        // This file doesn't have a parent so it must be in the root
         tree[path].isRoot = true
       }
     }

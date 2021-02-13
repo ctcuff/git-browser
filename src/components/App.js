@@ -93,6 +93,8 @@ class App extends React.Component {
       return
     }
 
+    URLUtil.updateURLSearchParams({ file: node.path })
+
     const initialTabState = {
       isLoading: true,
       index: openedTabs.length,
@@ -260,7 +262,7 @@ class App extends React.Component {
     ) : (
       <FileRenderer
         content={content}
-        title={title}
+        fileName={title}
         extension={extension}
         onForceRender={this.onToggleRenderable}
         wasForceRendered={wasForceRendered}
