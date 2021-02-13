@@ -8,7 +8,6 @@ describe('store', () => {
   })
 
   test('adds dev extension when in debug mode', () => {
-    process.env.DEBUG = 'true'
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ = jest.fn()
 
     require('src/store')

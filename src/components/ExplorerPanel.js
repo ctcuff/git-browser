@@ -23,6 +23,8 @@ import {
   AiOutlineSetting
 } from 'react-icons/ai'
 import { VscFiles } from 'react-icons/vsc'
+import { setRepoData } from '../store/actions/search'
+import { connect } from 'react-redux'
 
 class ExplorerPanel extends React.Component {
   constructor(props) {
@@ -102,6 +104,8 @@ class ExplorerPanel extends React.Component {
   }
 
   async getRepo(url, branch = 'default') {
+    const extractedPath = URLUtil.extractRepoPath(url)
+
     if (!url) {
       return
     }
@@ -118,6 +122,10 @@ class ExplorerPanel extends React.Component {
 
       this.setState({ currentRepoPath: url })
       this.props.onSearchFinished(false)
+      this.props.setRepoData({
+        repoPath: extractedPath,
+        branch: this.state.currentBranch
+      })
     } catch (err) {
       this.props.onSearchFinished(true)
     }
@@ -151,10 +159,14 @@ class ExplorerPanel extends React.Component {
           }
         })
 
+        const repoPath = URLUtil.extractRepoPath(repoUrl)
+
         URLUtil.updateURLSearchParams({
-          repo: URLUtil.extractRepoPath(repoUrl),
+          repo: repoPath,
           branch
         })
+
+        document.title = `Git Browser - ${repoPath}`
       })
       .catch(err => {
         const searchErrorMessage = err.message || err
@@ -191,7 +203,10 @@ class ExplorerPanel extends React.Component {
     this.props.onSearchStarted()
 
     this.getTree(branch.repoUrl, branch.name)
-      .then(() => this.props.onSearchFinished(false))
+      .then(() => {
+        this.props.onSearchFinished(false)
+        this.props.setRepoData({ branch: branch.name })
+      })
       .catch(err => {
         Logger.error(err)
         this.props.onSearchFinished(true)
@@ -392,11 +407,16 @@ class ExplorerPanel extends React.Component {
   }
 }
 
+const mapDispatchToProps = {
+  setRepoData
+}
+
 ExplorerPanel.propTypes = {
   onSelectFile: PropTypes.func.isRequired,
   onSearchStarted: PropTypes.func.isRequired,
   onSearchFinished: PropTypes.func.isRequired,
+  setRepoData: PropTypes.func.isRequired,
   activeFilePath: PropTypes.string.isRequired
 }
 
-export default ExplorerPanel
+export default connect(null, mapDispatchToProps)(ExplorerPanel)

@@ -41,6 +41,9 @@ APP_ID=
 3. Install dependencies by running `yarn` in the root directory
 4. Run `yarn dev` and visit localhost:9000 in your browser
 
+## Running Tests
+Run `yarn test` or `yarn test --coverage`. If you'd like to run tests without output from the logger, add the `--silent` flag.
+
 # Live examples
 <p align="center">Wanna preview a GLB/GLTF model without downloading it? Sure! <a href="https://gitbrowser.io/?repo=google%2Fmodel-viewer&branch=default&file=packages%2Fshared-assets%2Fmodels%2FAstronaut.glb">View model</a></p>
 <img width="1648" alt="Screen Shot 2021-01-26 at 12 25 12 AM" src="https://user-images.githubusercontent.com/7400747/105804293-6c6ba500-5f6d-11eb-8698-5d49f643d814.png">
