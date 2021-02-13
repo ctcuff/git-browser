@@ -20,10 +20,19 @@ class ZipRenderer extends React.Component {
     this.importLibrary = this.importLibrary.bind(this)
     this.init = this.init.bind(this)
     this.parseZip = this.parseZip.bind(this)
+    this.decodeContent = this.decodeContent.bind(this)
+
+    this.rawDecodeWorker = new Worker('../../scripts/encode-decode-worker.js', {
+      type: 'module'
+    })
   }
 
   componentDidMount() {
     this.init()
+  }
+
+  componentWillUnmount() {
+    this.rawDecodeWorker.terminate()
   }
 
   async init() {
@@ -34,7 +43,9 @@ class ZipRenderer extends React.Component {
 
     try {
       await this.importLibrary()
-      const tree = await this.parseZip(this.props.content)
+
+      const data = await this.decodeContent(this.props.content)
+      const tree = await this.parseZip(data)
 
       this.setState({
         tree,
@@ -52,37 +63,55 @@ class ZipRenderer extends React.Component {
 
   async importLibrary() {
     try {
-      const JSZip = await import('jszip')
-      this.JSZip = JSZip.default
+      // Need to import from the dist directory so it'll work with webpack
+      // https://github.com/gildas-lormeau/zip.js/issues/212#issuecomment-769708718
+      this.zip = await import('@zip.js/zip.js/dist/zip-full')
     } catch (err) {
-      Logger.error('Error importing JSZip', err)
+      Logger.error('Error importing zip library', err)
     }
   }
 
   async parseZip(content) {
-    const { files } = await this.JSZip.loadAsync(content, {
-      base64: true,
-      createFolders: true
-    })
+    // 'content' is a base64 string decoded with atob. We need to
+    // turn that into a Uint8Array so that the zip can be parsed by zip.js
+    const { ZipReader, Uint8ArrayReader } = this.zip
+    const bytes = new Array(content.length)
 
-    const treeData = []
+    for (let i = 0; i < content.length; i++) {
+      bytes[i] = content.charCodeAt(i)
+    }
 
-    Object.keys(files).forEach(key => {
-      const file = files[key]
+    const byteArray = new Uint8Array(bytes)
+    const uintReader = new Uint8ArrayReader(byteArray)
+    const reader = new ZipReader(uintReader, { useWebWorkers: true })
+
+    const entries = await reader.getEntries()
+
+    const treeData = entries.map(({ filename, directory }) => {
       // Folders that end with '/' aren't parsed correctly
-      // by Tree.treeify so we need to remove it
-      const fileName = file.name.endsWith('/')
-        ? file.name.slice(0, -1)
-        : file.name
+      // by Tree.treeify so we need to remove any trailing '/'
+      const path = filename.endsWith('/') ? filename.slice(0, -1) : filename
 
-      treeData.push({
-        path: fileName,
-        type: file.dir ? 'tree' : 'blob',
-        open: true
-      })
+      return {
+        path,
+        type: directory ? 'tree' : 'blob'
+      }
     })
 
     return Tree.treeify(treeData)
+  }
+
+  decodeContent(content) {
+    this.rawDecodeWorker.postMessage({
+      message: content,
+      raw: true,
+      type: 'decode'
+    })
+
+    return new Promise((resolve, reject) => {
+      this.rawDecodeWorker.onmessage = event => resolve(event.data)
+      this.rawDecodeWorker.onerror = () => reject('Error decoding content')
+    })
   }
 
   render() {
@@ -103,7 +132,7 @@ class ZipRenderer extends React.Component {
     }
 
     if (Object.keys(tree).length === 0) {
-      return <ErrorOverlay message="This zip is empty" showIcon={false} />
+      return <ErrorOverlay message="This zip is empty." />
     }
 
     return (
