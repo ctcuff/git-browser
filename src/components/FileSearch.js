@@ -76,6 +76,7 @@ const FileSearch = props => {
             key={index}
             node={filteredTreeData[key]}
             onSelectNode={props.onSelectFile}
+            activeFilePath={props.activeFilePath}
           />
         ))}
       </React.Fragment>
@@ -85,6 +86,7 @@ const FileSearch = props => {
 
 FileSearch.propTypes = {
   onSelectFile: PropTypes.func.isRequired,
+  activeFilePath: PropTypes.string.isRequired,
   treeData: PropTypes.objectOf(
     PropTypes.shape({
       type: PropTypes.oneOf(['file', 'folder']),

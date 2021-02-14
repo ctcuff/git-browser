@@ -1,20 +1,23 @@
 import React from 'react'
-import RateLimitModal from './modals/RateLimitModal'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import ReactModal from 'react-modal'
+import RateLimitModal from './modals/RateLimitModal'
 import AuthErrorModal from './modals/AuthErrorModal'
+import FileDownloadErrorModal from './modals/FileDownloadErrorModal'
 
 ReactModal.setAppElement('#app')
 
 const ModalTypes = {
   RATE_LIMIT: 'RATE_LIMIT',
-  AUTH_ERROR: 'AUTH_ERROR'
+  AUTH_ERROR: 'AUTH_ERROR',
+  FILE_DOWNLOAD_ERROR: 'FILE_DOWNLOAD_ERROR'
 }
 
 const ModalComponents = {
   RATE_LIMIT: RateLimitModal,
-  AUTH_ERROR: AuthErrorModal
+  AUTH_ERROR: AuthErrorModal,
+  FILE_DOWNLOAD_ERROR: FileDownloadErrorModal
 }
 
 // Handles orchestrating what modals should be shown depending on what

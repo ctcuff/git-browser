@@ -1,0 +1,42 @@
+.context-menu {
+  position: fixed;
+  z-index: 99999;
+  font-family: var(--font-default);
+  color: var(--color-text-primary);
+  background-color: var(--color-modal-bg);
+  font-size: 0.9em;
+  box-shadow: 0 5px 17px 5px rgba(0, 0, 0, 0.15);
+  user-select: none;
+}
+
+.menu {
+  padding: 0.5em 0;
+  margin: 0;
+}
+
+.context-menu-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  opacity: 0;
+}
+
+.menu-option {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.5em 1.5em;
+  white-space: nowrap;
+
+  &:hover:not(&.disabled) {
+    color: #f6f6f6;
+    background-color: rgb(10, 67, 183);
+  }
+
+  &.disabled {
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+  }
+}

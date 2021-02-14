@@ -12,6 +12,7 @@ import AsciiDocRenderer from './renderers/AsciiDocRenderer'
 import GLBRenderer from './renderers/GLBRenderer'
 import FontRenderer from './renderers/FontRenderer'
 import EmbeddedDocRenderer from './renderers/EmbeddedDocRenderer'
+import ZipRenderer from './renderers/ZipRenderer'
 import { VscCode } from 'react-icons/vsc'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
@@ -107,7 +108,14 @@ class FileRenderer extends React.Component {
   }
 
   getComponent() {
-    const { content, title, extension, repoPath, branch, filePath } = this.props
+    const {
+      content,
+      fileName,
+      extension,
+      repoPath,
+      branch,
+      filePath
+    } = this.props
     const decodedContent = this.state.decodedContent
     const fileURL = URLUtil.buildGithubFileURL({
       repoPath,
@@ -145,7 +153,11 @@ class FileRenderer extends React.Component {
       case '.ico':
       case '.bmp':
         return (
-          <ImageRenderer content={content} extension={extension} alt={title} />
+          <ImageRenderer
+            content={content}
+            extension={extension}
+            alt={fileName}
+          />
         )
       case '.pdf':
         return <PDFRenderer content={content} />
@@ -166,6 +178,8 @@ class FileRenderer extends React.Component {
       case '.woff':
       case '.woff2':
         return <FontRenderer content={content} extension={extension} />
+      case '.zip':
+        return <ZipRenderer content={content} />
       case '.md':
       case '.mdx':
         return <MarkdownRenderer content={decodedContent} />
@@ -190,8 +204,8 @@ class FileRenderer extends React.Component {
 
   renderUnsupported() {
     const message = `
-    This file wasn't displayed because it's either binary
-    or uses an unknown text encoding.
+      This file wasn't displayed because it's either binary
+      or uses an unknown text encoding.
     `
     return (
       <ErrorOverlay
@@ -280,7 +294,7 @@ const mapStateToProps = state => ({
 FileRenderer.propTypes = {
   // "content" will be a base64 encoded string
   content: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  fileName: PropTypes.string.isRequired,
   extension: PropTypes.string.isRequired,
   onForceRender: PropTypes.func.isRequired,
   wasForceRendered: PropTypes.bool,

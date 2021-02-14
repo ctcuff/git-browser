@@ -18,7 +18,7 @@ class Tree {
           "src/scss",
           "src/util"
         ],
-        "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/358553e5a2ee066d0bb0f52e4033456921a83c3f",
+        "url": "blob-link-here",
         "isRoot": true
       },
       "src/App.vue": {
@@ -26,7 +26,8 @@ class Tree {
         "name": "App.vue",
         "size": 2487,
         "path": "src/App.vue",
-        "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/2e6719d25b30a897967c849672ccee435f5c6ae9"
+        "url": "blob-link-here",
+        "parent": "src"
       },
       .
       .
@@ -53,26 +54,31 @@ class Tree {
       // If this file/folder is contained in a folder, split the path
       // to try and find the name of the parent folder. For example:
       // `src/components/App.js` => `components`
-      const parts = path.split('/')
-      const parent = parts.splice(0, parts.length - 1).join('/')
+      const parts = path.split('/').filter(str => !!str.trim())
+      const parentPath = parts.splice(0, parts.length - 1).join('/')
+      const treeData = {
+        parent: null,
+        path,
+        url
+      }
 
       switch (type) {
         case 'blob':
           tree[path] = {
+            ...treeData,
             type: 'file',
             name: parts[parts.length - 1],
             size,
-            path,
             url
           }
           break
         case 'tree':
+          // Make sure we don't add folders we've seen before
           if (!tree[path]) {
             tree[path] = {
-              path,
+              ...treeData,
               type: 'folder',
-              children: [],
-              url
+              children: []
             }
           }
           break
@@ -80,9 +86,11 @@ class Tree {
 
       // If the file/folder had a parent, make sure that file/folder
       // gets added to the parent's children
-      if (parent) {
-        tree[parent].children.push(path)
+      if (parentPath && tree[parentPath]) {
+        tree[parentPath].children.push(path)
+        tree[path].parent = parentPath
       } else {
+        // This file doesn't have a parent so it must be in the root
         tree[path].isRoot = true
       }
     }

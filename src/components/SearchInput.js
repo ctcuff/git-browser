@@ -21,7 +21,7 @@ const SearchInput = props => {
   }
 
   const onChange = event => {
-    const value = event.currentTarget.value.trim()
+    const value = event.currentTarget.value
     setInputValue(value)
     props.onChange(value)
   }
@@ -46,7 +46,6 @@ const SearchInput = props => {
     }
   }, [onEnterPress])
 
-  // Re-render on changes in state
   useEffect(() => {
     setHasError(props.hasError)
     setErrorMessage(props.errorMessage)
@@ -55,6 +54,10 @@ const SearchInput = props => {
   useEffect(() => {
     setLoading(props.isLoading)
   }, [props.isLoading])
+
+  useEffect(() => {
+    setInputValue(props.value)
+  }, [props.value])
 
   return (
     <div className={`search-input ${props.className}`}>
@@ -68,6 +71,7 @@ const SearchInput = props => {
           autoComplete="off"
           autoCorrect="off"
           spellCheck="false"
+          autoCapitalize="none"
         />
         <button
           className="search-button"

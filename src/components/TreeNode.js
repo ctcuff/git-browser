@@ -3,7 +3,7 @@ import React from 'react'
 import { FaRegFile, FaFolder, FaFolderOpen } from 'react-icons/fa'
 import { FiChevronRight, FiChevronDown } from 'react-icons/fi'
 import PropTypes from 'prop-types'
-import { noop } from '../scripts/util'
+import { noop, withClasses } from '../scripts/util'
 import URLUtil from '../scripts/url-util'
 
 const getPaddingLeft = (level, type) => {
@@ -26,7 +26,7 @@ const getPaddingLeft = (level, type) => {
 }
 
 const getNodeLabel = node => {
-  const path = node.path.split('/')
+  const path = node.path.split('/').filter(str => !!str.trim())
   return path[path.length - 1]
 }
 
@@ -36,10 +36,10 @@ const renderIcon = (type, isOpen) => {
   }
 
   if (type === 'folder' && isOpen) {
-    return <FaFolderOpen color="#79b8ff" />
+    return <FaFolderOpen className="folder-icon" />
   }
 
-  return <FaFolder color="#79b8ff" />
+  return <FaFolder className="folder-icon" />
 }
 
 const renderToggleIcon = (type, isOpen) => {
@@ -54,20 +54,23 @@ const onSelectNode = (node, props) => {
   if (node.type === 'folder') {
     props.onToggle(node)
   } else {
-    URLUtil.updateURLSearchParams({ file: node.path })
     props.onSelectNode(node)
   }
 }
 
 const TreeNode = props => {
-  const { node, getChildren, level, showPath, className } = props
+  const { node, getChildren, level, showPath, activeFilePath } = props
   const children = getChildren(node)
   const nodeLabel = getNodeLabel(node)
+  const classes = withClasses({
+    [props.className]: true,
+    'is-active': node.path === activeFilePath
+  })
 
   return (
     <React.Fragment>
       <div
-        className={`tree-node ${className}`}
+        className={`tree-node ${classes}`}
         title={node.path}
         style={{ paddingLeft: getPaddingLeft(level, node.type) }}
         onClick={onSelectNode.bind(this, node, props)}
@@ -109,14 +112,16 @@ TreeNode.propTypes = {
   onToggle: PropTypes.func,
   onSelectNode: PropTypes.func.isRequired,
   showPath: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
+  activeFilePath: PropTypes.string
 }
 
 TreeNode.defaultProps = {
   level: 0,
   onToggle: noop,
   getChildren: noop,
-  className: ''
+  className: '',
+  activeFilePath: ''
 }
 
 export default TreeNode

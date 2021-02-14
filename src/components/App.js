@@ -27,7 +27,8 @@ class App extends React.Component {
       openedFilePaths: new Set(),
       openedTabs: [],
       activeTabIndex: 0,
-      isLoading: false
+      isLoading: false,
+      activeFilePath: ''
     }
 
     this.onSelectFile = this.onSelectFile.bind(this)
@@ -42,6 +43,7 @@ class App extends React.Component {
     this.onToggleRenderable = this.onToggleRenderable.bind(this)
     this.onSearchFinished = this.onSearchFinished.bind(this)
     this.decodeTabContent = this.decodeTabContent.bind(this)
+    this.onCloseOtherTabsClick = this.onCloseOtherTabsClick.bind(this)
 
     // All tabs get cleared when a load finishes. This flag tells the
     // component not to clear tabs if the ?file="" query is in the URL
@@ -62,6 +64,22 @@ class App extends React.Component {
     window.removeEventListener('resize', this.updateViewport)
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { openedTabs, activeTabIndex } = this.state
+
+    if (
+      prevState.openedTabs.length === openedTabs.length &&
+      prevState.activeTabIndex === activeTabIndex
+    ) {
+      return
+    }
+
+    const activeFilePath =
+      openedTabs.length > 0 ? openedTabs[activeTabIndex].path : ''
+
+    this.setState({ activeFilePath })
+  }
+
   updateViewport() {
     // Updates the --vh variable used in the height mixin
     setCSSVar('--vh', window.innerHeight * 0.01 + 'px')
@@ -75,6 +93,8 @@ class App extends React.Component {
       this.setActiveTabIndex(this.findTabIndex(node.path))
       return
     }
+
+    URLUtil.updateURLSearchParams({ file: node.path })
 
     const initialTabState = {
       isLoading: true,
@@ -94,7 +114,8 @@ class App extends React.Component {
       {
         openedFilePaths: new Set(openedFilePaths.add(node.path)),
         activeTabIndex: openedTabs.length,
-        openedTabs: [...openedTabs, initialTabState]
+        openedTabs: [...openedTabs, initialTabState],
+        activeFilePath: node.path
       },
       () => this.loadFile(node)
     )
@@ -187,15 +208,7 @@ class App extends React.Component {
   }
 
   findTabIndex(path) {
-    const openedTabs = this.state.openedTabs
-
-    for (let i = 0; i < openedTabs.length; i++) {
-      if (openedTabs[i].path === path) {
-        return i
-      }
-    }
-
-    return -1
+    return this.state.openedTabs.findIndex(tab => tab.path === path)
   }
 
   renderTabContent(tab, index) {
@@ -243,7 +256,7 @@ class App extends React.Component {
     ) : (
       <FileRenderer
         content={content}
-        title={title}
+        fileName={title}
         extension={extension}
         onForceRender={this.onToggleRenderable}
         wasForceRendered={wasForceRendered}
@@ -296,6 +309,22 @@ class App extends React.Component {
     })
   }
 
+  onCloseOtherTabsClick(index) {
+    const openedTabs = this.state.openedTabs
+
+    if (openedTabs.length <= 1) {
+      return
+    }
+
+    const tab = openedTabs[index]
+
+    this.setState({
+      openedTabs: [tab],
+      activeTabIndex: 0,
+      openedFilePaths: new Set([tab.path])
+    })
+  }
+
   closeAllTabs() {
     URLUtil.updateURLSearchParams({ file: null })
     this.setState({
@@ -335,7 +364,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { activeTabIndex, openedTabs, isLoading } = this.state
+    const { activeTabIndex, openedTabs, isLoading, activeFilePath } = this.state
 
     return (
       <div className="app">
@@ -343,6 +372,7 @@ class App extends React.Component {
           onSelectFile={this.onSelectFile}
           onSearchFinished={this.onSearchFinished}
           onSearchStarted={this.toggleLoadingOverlay}
+          activeFilePath={activeFilePath}
         />
         <div className="right">
           {isLoading && (
@@ -357,9 +387,10 @@ class App extends React.Component {
             activeTabIndex={activeTabIndex}
             onSelectTab={this.setActiveTabIndex}
             onCloseAllClick={this.closeAllTabs}
+            onCloseOtherTabsClick={this.onCloseOtherTabsClick}
           >
             {openedTabs.map((tab, index) => (
-              <Tab title={tab.title} key={tab.path} hint={tab.path}>
+              <Tab title={tab.title} key={tab.path} path={tab.path}>
                 {this.renderTabContent(tab, index)}
               </Tab>
             ))}

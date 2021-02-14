@@ -1,8 +1,7 @@
 const initialState = {
-  branch: '',
   // This will be the string: 'user/repo-name'
   repoPath: '',
-  isLoading: false
+  branch: ''
 }
 
 const reducer = (state = initialState, action) => {
@@ -11,8 +10,8 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_REPO_DATA':
       return {
-        repoPath: payload.repoPath,
-        branch: payload.branch
+        repoPath: payload.repoPath || state.repoPath,
+        branch: payload.branch || state.branch
       }
     default:
       return state
