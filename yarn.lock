@@ -1818,6 +1818,11 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
+"@zip.js/zip.js@^2.2.14":
+  version "2.2.14"
+  resolved "https://registry.yarnpkg.com/@zip.js/zip.js/-/zip.js-2.2.14.tgz#a7c3ac78270eaab5dcf6a8d0ecd29ed195407974"
+  integrity sha512-sSIxDkVDWPtx67uYK7LJJHw+o0RR2RjBjfg/iF7X6PPyyUKakihPbKZheeSWKzyrCLADWkezmIeJYPXDqLLbHw==
+
 abab@^2.0.3:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.5.tgz#c0b678fb32d60fc1219c784d6a826fe385aeb79a"

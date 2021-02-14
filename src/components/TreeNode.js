@@ -26,7 +26,7 @@ const getPaddingLeft = (level, type) => {
 }
 
 const getNodeLabel = node => {
-  const path = node.path.split('/')
+  const path = node.path.split('/').filter(str => !!str.trim())
   return path[path.length - 1]
 }
 
@@ -54,7 +54,6 @@ const onSelectNode = (node, props) => {
   if (node.type === 'folder') {
     props.onToggle(node)
   } else {
-    URLUtil.updateURLSearchParams({ file: node.path })
     props.onSelectNode(node)
   }
 }
@@ -114,14 +113,15 @@ TreeNode.propTypes = {
   onSelectNode: PropTypes.func.isRequired,
   showPath: PropTypes.bool,
   className: PropTypes.string,
-  activeFilePath: PropTypes.string.isRequired
+  activeFilePath: PropTypes.string
 }
 
 TreeNode.defaultProps = {
   level: 0,
   onToggle: noop,
   getChildren: noop,
-  className: ''
+  className: '',
+  activeFilePath: ''
 }
 
 export default TreeNode

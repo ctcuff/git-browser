@@ -64,7 +64,8 @@ class Editor extends React.Component {
     '.webm',
     '.webp',
     '.woff',
-    '.woff2'
+    '.woff2',
+    '.zip'
   ])
 
   constructor(props) {
