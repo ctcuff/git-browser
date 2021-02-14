@@ -12,7 +12,7 @@ class GitHubAPI {
    * Takes a github url: `https://github.com/user/repo-name`, and extracts
    * `user/repo-name` to make a request to `/repos/user/repo-name`
    *
-   * @see https://docs.github.com/en/free-pro-team/rest/reference/repos#get-a-repository
+   * @see https://docs.github.com/rest/reference/repos#get-a-repository
    * @param {string} repoUrl
    * @returns {Promise}
    */
@@ -55,7 +55,7 @@ class GitHubAPI {
    * Takes a github url: `https://github.com/user/repo/`,
    * and returns the tree (all files) from the given branch.
    *
-   * @see https://docs.github.com/en/free-pro-team/rest/reference/git#get-a-tree
+   * @see https://docs.github.com/rest/reference/git#get-a-tree
    * @param {string} repoUrl
    * @param {string} branch
    * @returns {Promise}
@@ -115,7 +115,7 @@ class GitHubAPI {
    * Takes the url from a node in the git tree and returns
    * the base64 encoded content
    *
-   * @see https://docs.github.com/en/free-pro-team/rest/reference/git#get-a-blob
+   * @see https://docs.github.com/rest/reference/git#get-a-blob
    * @param {string} url
    * @returns {Promise}
    */
@@ -144,7 +144,7 @@ class GitHubAPI {
    * Takes a github url: `https://github.com/user/repo-name`,
    * and returns every branch from `/user/repo-name/branches`.
    *
-   * @see https://docs.github.com/en/free-pro-team/rest/reference/repos#branches
+   * @see https://docs.github.com/rest/reference/repos#branches
    * @param {string} repoUrl
    * @returns {Promise}
    */

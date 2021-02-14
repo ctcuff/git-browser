@@ -8,8 +8,6 @@ describe('Logger', () => {
   })
 
   test('writes messages in debug mode', () => {
-    process.env.DEBUG = 'true'
-
     const Logger = require('src/scripts/logger').default
     const log = jest.spyOn(console, 'log')
     const warn = jest.spyOn(console, 'warn')

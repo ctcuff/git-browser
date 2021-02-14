@@ -8,8 +8,7 @@ describe('settings actions', () => {
         <link title="theme-light">
         <link title="theme-dark" disabled>
       </head>
-      <body class="theme-light">
-      </body>
+      <body class="theme-light"></body>
     `
   })
 
