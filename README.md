@@ -19,7 +19,7 @@ Here's a list of file types that support live previews:
 - AsciiDoc
     - Thanks to [Asciidoctor](https://github.com/asciidoctor/asciidoctor.js) 🎉
 - Zip
-    - Thanks to [zip.js](https://gildas-lormeau.github.io/zip.js/) 🎉
+    - Thanks to [zip.js](https://github.com/gildas-lormeau/zip.js) 🎉
 - Jupyter Notebook (Experimental)
     - Thanks to [notebookjs](https://github.com/jsvine/notebookjs) 🎉
 - GLTF/GLB Models (Experimental)
