@@ -19,7 +19,15 @@ const updateFavicon = isDark => {
   document.querySelector('link[rel="icon"]').setAttribute('href', link)
 }
 
-query.addEventListener('change', event => updateFavicon(event.matches))
+query.addEventListener('change', event => {
+  updateFavicon(event.matches)
+
+  if (event.matches) {
+    store.dispatch(setTheme('theme-dark'))
+  } else {
+    store.dispatch(setTheme('theme-light'))
+  }
+})
 
 if (theme) {
   store.dispatch(setTheme(theme))
