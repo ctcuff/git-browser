@@ -1,5 +1,5 @@
 import '../style/settings.scss'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { VscGithub } from 'react-icons/vsc'
@@ -9,17 +9,17 @@ import { setTheme } from '../store/actions/settings'
 const Settings = props => {
   const { isLoggedIn, username, isLoading } = props
   const action = isLoggedIn ? props.logout : props.login
+  const [currentTheme, setCurrentTheme] = useState('theme-auto')
 
-  const toggleTheme = () => {
-    const isDark = document.body.className === 'theme-dark'
-    const theme = isDark ? 'theme-light' : 'theme-dark'
-
+  const toggleTheme = theme => {
+    setCurrentTheme(theme)
     props.setTheme(theme)
   }
 
   useEffect(() => {
     const profile = JSON.parse(localStorage.getItem('profile'))
-
+    setCurrentTheme(localStorage.getItem('theme'))
+    console.log(currentTheme)
     if (profile) {
       props.loadProfileFromStorage({
         accessToken: profile.accessToken,
@@ -30,9 +30,32 @@ const Settings = props => {
 
   return (
     <div className="settings">
-      <button className="theme-toggle-btn" onClick={toggleTheme}>
-        {props.theme === 'theme-dark' ? 'Light mode' : 'Dark mode'}
-      </button>
+      <div className="segmented-btn">
+        <button
+          className={`theme-toggle-btn ${
+            currentTheme === 'theme-dark' ? 'selected' : ''
+          }`}
+          onClick={() => toggleTheme('theme-dark')}
+        >
+          Dark
+        </button>
+        <button
+          className={`theme-toggle-btn ${
+            currentTheme === 'theme-light' ? 'selected' : ''
+          }`}
+          onClick={() => toggleTheme('theme-light')}
+        >
+          Light
+        </button>
+        <button
+          className={`theme-toggle-btn ${
+            currentTheme === 'theme-auto' ? 'selected' : ''
+          }`}
+          onClick={() => toggleTheme('theme-auto')}
+        >
+          Auto
+        </button>
+      </div>
       <button
         className={`login-btn ${isLoading ? 'is-loading' : ''}`}
         onClick={action}
@@ -83,7 +106,7 @@ Settings.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   loadProfileFromStorage: PropTypes.func.isRequired,
   setTheme: PropTypes.func.isRequired,
-  theme: PropTypes.oneOf(['theme-dark', 'theme-light']).isRequired
+  theme: PropTypes.oneOf(['theme-dark', 'theme-light', 'theme-auto']).isRequired
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings)

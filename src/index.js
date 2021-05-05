@@ -22,6 +22,10 @@ const updateFavicon = isDark => {
 query.addEventListener('change', event => {
   updateFavicon(event.matches)
 
+  if (localStorage.getItem('theme') !== 'theme-auto') {
+    return
+  }
+
   if (event.matches) {
     store.dispatch(setTheme('theme-dark'))
   } else {

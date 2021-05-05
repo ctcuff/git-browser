@@ -9,10 +9,21 @@ const setTheme = theme => {
 
   localStorage.setItem('theme', theme)
 
-  body.classList.toggle(body.className)
-  body.classList.add(theme)
+  let reifiedTheme = theme
+  if (theme === 'theme-auto') {
+    const query = window.matchMedia('(prefers-color-scheme: dark)').matches
+    if (query) {
+      reifiedTheme = 'theme-dark'
+      return
+    }
 
-  switch (theme) {
+    reifiedTheme = 'theme-light'
+  }
+
+  body.classList.toggle(body.className)
+  body.classList.add(reifiedTheme)
+
+  switch (reifiedTheme) {
     case 'theme-light':
       darkStyle.setAttribute('disabled', 'disabled')
       lightStyle.removeAttribute('disabled')

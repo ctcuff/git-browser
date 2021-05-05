@@ -37,6 +37,14 @@
         background-color: var(--color-list-item-hover);
       }
     }
+
+    &.selected {
+      background-color: blue;
+    }
+  }
+
+  .segmented-btn {
+    display: flex;
   }
 
   .theme-toggle-btn {
