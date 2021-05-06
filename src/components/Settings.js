@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { VscGithub } from 'react-icons/vsc'
 import { login, logout, loadProfileFromStorage } from '../store/actions/user'
-import { setTheme } from '../store/actions/settings'
+import { setPreferredTheme, setTheme } from '../store/actions/settings'
 
 const Settings = props => {
   const { isLoggedIn, username, isLoading } = props
@@ -14,12 +14,21 @@ const Settings = props => {
   const toggleTheme = theme => {
     setCurrentTheme(theme)
     props.setTheme(theme)
+
+    if (theme === 'theme-auto') {
+      const query = window.matchMedia('(prefers-color-scheme: dark)')
+
+      if (query.matches) {
+        props.setPreferredTheme('theme-dark')
+      } else {
+        props.setPreferredTheme('theme-light')
+      }
+    }
   }
 
   useEffect(() => {
     const profile = JSON.parse(localStorage.getItem('profile'))
     setCurrentTheme(localStorage.getItem('theme'))
-    console.log(currentTheme)
     if (profile) {
       props.loadProfileFromStorage({
         accessToken: profile.accessToken,
@@ -87,7 +96,8 @@ const mapDispatchToProps = {
   login,
   logout,
   loadProfileFromStorage,
-  setTheme
+  setTheme,
+  setPreferredTheme
 }
 
 const mapStateToProps = state => ({
@@ -95,7 +105,7 @@ const mapStateToProps = state => ({
   username: state.user.username,
   isLoading: state.user.isLoading,
   rateLimit: state.user.rateLimit,
-  theme: state.settings.theme
+  theme: state.settings
 })
 
 Settings.propTypes = {
@@ -106,7 +116,11 @@ Settings.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   loadProfileFromStorage: PropTypes.func.isRequired,
   setTheme: PropTypes.func.isRequired,
-  theme: PropTypes.oneOf(['theme-dark', 'theme-light', 'theme-auto']).isRequired
+  setPreferredTheme: PropTypes.func.isRequired,
+  theme: PropTypes.shape({
+    userTheme: PropTypes.oneOf[('theme-dark', 'theme-light', 'theme-auto')],
+    preferredTheme: PropTypes.oneOf[('theme-dark', 'theme-light')]
+  })
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings)
