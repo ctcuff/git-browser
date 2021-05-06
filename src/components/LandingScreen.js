@@ -33,7 +33,7 @@ const LandingScreen = ({ theme }) => {
 }
 
 LandingScreen.propTypes = {
-  theme: PropTypes.oneOf(['theme-dark', 'theme-light'])
+  theme: PropTypes.oneOf(['theme-dark', 'theme-light', 'theme-auto'])
 }
 
 const mapStateToProps = state => ({
