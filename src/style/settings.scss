@@ -39,12 +39,23 @@
     }
 
     &.selected {
-      background-color: blue;
+      color: white;
+      border-radius: 0;
+      background-color: var(--color-selected);
     }
   }
 
   .segmented-btn {
+    border: 1px solid var(--color-border);
     display: flex;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.8em;
+
+    & > button {
+      margin-bottom: 0;
+      border-radius: 0 !important;
+    }
   }
 
   .theme-toggle-btn {
