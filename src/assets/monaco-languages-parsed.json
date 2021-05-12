@@ -939,5 +939,15 @@
     "language": "xml",
     "displayName": "Storyboard",
     "extension": ".storyboard"
+  },
+  ".inc": {
+    "language": "php",
+    "displayName": "PHP",
+    "extension": ".inc"
+  },
+  ".ejs": {
+    "language": "html",
+    "displayName": "Embedded Javascript",
+    "extension": ".ejs"
   }
 }
