@@ -1,6 +1,10 @@
 const initialState = {
-  userTheme: 'theme-light',
-  preferredTheme: 'theme-light'
+  theme: {
+    // The theme the user has currently selected
+    userTheme: 'theme-light',
+    // The theme of their system
+    preferredTheme: 'theme-light'
+  }
 }
 
 const reducer = (state = initialState, action) => {
@@ -9,13 +13,17 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_THEME':
       return {
-        userTheme: payload.userTheme,
-        preferredTheme: state.preferredTheme
+        theme: {
+          ...state.theme,
+          userTheme: payload.userTheme
+        }
       }
     case 'SET_PREFERRED_THEME':
       return {
-        userTheme: state.userTheme,
-        preferredTheme: payload.preferredTheme
+        theme: {
+          ...state.theme,
+          preferredTheme: payload.preferredTheme
+        }
       }
     default:
       return state

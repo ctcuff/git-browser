@@ -42,6 +42,7 @@ const Settings = props => {
   useEffect(() => {
     const profile = JSON.parse(localStorage.getItem('profile'))
     setCurrentTheme(localStorage.getItem('theme'))
+
     if (profile) {
       props.loadProfileFromStorage({
         accessToken: profile.accessToken,
@@ -70,6 +71,7 @@ const Settings = props => {
           Light
         </button>
         <button
+          title="Set the theme based on your system"
           className={`theme-toggle-btn ${
             currentTheme === 'theme-auto' ? 'selected' : ''
           }`}
@@ -138,9 +140,7 @@ const mapDispatchToProps = {
 const mapStateToProps = state => ({
   isLoggedIn: state.user.isLoggedIn,
   username: state.user.username,
-  isLoading: state.user.isLoading,
-  rateLimit: state.user.rateLimit,
-  theme: state.settings
+  isLoading: state.user.isLoading
 })
 
 Settings.propTypes = {
@@ -152,11 +152,7 @@ Settings.propTypes = {
   loadProfileFromStorage: PropTypes.func.isRequired,
   setTheme: PropTypes.func.isRequired,
   showModal: PropTypes.func.isRequired,
-  setPreferredTheme: PropTypes.func.isRequired,
-  theme: PropTypes.shape({
-    userTheme: PropTypes.oneOf[('theme-dark', 'theme-light', 'theme-auto')],
-    preferredTheme: PropTypes.oneOf[('theme-dark', 'theme-light')]
-  })
+  setPreferredTheme: PropTypes.func.isRequired
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings)

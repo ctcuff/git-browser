@@ -139,7 +139,10 @@ class ZipRenderer extends React.Component {
       <div className="zip-renderer">
         <div className="container">
           <h2>Zip Explorer</h2>
-          <p>Here&apos;s what this zip contains</p>
+          <p>
+            Here&apos;s what this zip contains (note that this is only a
+            preview)
+          </p>
           <FileExplorer nodes={tree} updateURLOnClick={false} />
         </div>
       </div>

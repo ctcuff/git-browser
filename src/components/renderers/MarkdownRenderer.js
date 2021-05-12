@@ -200,11 +200,11 @@ MarkdownRenderer.propTypes = {
   theme: PropTypes.shape({
     userTheme: PropTypes.oneOf(['theme-light', 'theme-dark', 'theme-auto']),
     preferredTheme: PropTypes.oneOf(['theme-light', 'theme-dark'])
-  })
+  }).isRequired
 }
 
 const mapStateToProps = state => ({
-  theme: state.settings
+  theme: state.settings.theme
 })
 
 export default connect(mapStateToProps)(MarkdownRenderer)

@@ -256,12 +256,12 @@ Editor.propTypes = {
   theme: PropTypes.shape({
     userTheme: PropTypes.oneOf(['theme-light', 'theme-dark', 'theme-auto']),
     preferredTheme: PropTypes.oneOf(['theme-light', 'theme-dark'])
-  }),
+  }).isRequired,
   onForceRender: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
-  theme: state.settings
+  theme: state.settings.theme
 })
 
 export default connect(mapStateToProps)(Editor)

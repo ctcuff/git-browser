@@ -3,8 +3,10 @@ import settingsReducer from 'src/store/reducers/settings'
 describe('settings reducer', () => {
   test('returns initial state', () => {
     expect(settingsReducer(undefined, {})).toEqual({
-      userTheme: 'theme-light',
-      preferredTheme: 'theme-light'
+      theme: {
+        userTheme: 'theme-light',
+        preferredTheme: 'theme-light'
+      }
     })
   })
 
@@ -17,7 +19,9 @@ describe('settings reducer', () => {
     }
 
     expect(settingsReducer({}, action)).toEqual({
-      userTheme: action.payload.userTheme
+      theme: {
+        userTheme: action.payload.userTheme
+      }
     })
   })
 
@@ -30,7 +34,9 @@ describe('settings reducer', () => {
     }
 
     expect(settingsReducer({}, action)).toEqual({
-      preferredTheme: action.payload.preferredTheme
+      theme: {
+        preferredTheme: action.payload.preferredTheme
+      }
     })
   })
 })

@@ -54,7 +54,7 @@ LandingScreen.propTypes = {
 }
 
 const mapStateToProps = state => ({
-  theme: state.settings
+  theme: state.settings.theme
 })
 
 export default connect(mapStateToProps)(LandingScreen)
