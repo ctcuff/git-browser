@@ -4,7 +4,6 @@ import { FaRegFile, FaFolder, FaFolderOpen } from 'react-icons/fa'
 import { FiChevronRight, FiChevronDown } from 'react-icons/fi'
 import PropTypes from 'prop-types'
 import { noop, withClasses } from '../scripts/util'
-import URLUtil from '../scripts/url-util'
 
 const getPaddingLeft = (level, type) => {
   const defaultPadding = 20

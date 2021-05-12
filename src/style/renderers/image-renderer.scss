@@ -8,11 +8,11 @@
   justify-self: center;
   align-items: center;
 
-  &.has-grid.light-grid {
+  &.has-grid.theme-light {
     background-image: url('../../assets/img/checker-theme-light.svg');
   }
 
-  &.has-grid.dark-grid {
+  &.has-grid.theme-dark {
     background-image: url('../../assets/img/checker-theme-dark.svg');
   }
 

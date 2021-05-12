@@ -1,12 +1,11 @@
 import '../../style/renderers/image-renderer.scss'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import Logger from '../../scripts/logger'
 import { GrGrid } from 'react-icons/gr'
 import { connect } from 'react-redux'
-import { withClasses } from '../../scripts/util'
 
 const getMimeType = extension => {
   let type = ''
@@ -47,12 +46,8 @@ const ImageRenderer = props => {
   const [isLoading, setLoading] = useState(true)
   const [hasError, setError] = useState(false)
   const [hasGrid, toggleGrid] = useState(false)
+  const [gridClass, setGridClass] = useState('')
   const mimeType = getMimeType(extension)
-  const classes = withClasses({
-    'has-grid': hasGrid,
-    'dark-grid': theme === 'theme-dark',
-    'light-grid': theme === 'theme-light'
-  })
 
   const onImageLoaded = () => {
     setLoading(false)
@@ -72,6 +67,15 @@ const ImageRenderer = props => {
     toggleGrid(!hasGrid)
   }
 
+  useEffect(() => {
+    const { userTheme, preferredTheme } = theme
+
+    // Need to set the theme of the background grid when the theme changes.
+    // If the theme is auto, we'll use the user's preferred theme based on
+    // their system settings.
+    setGridClass(userTheme === 'theme-auto' ? preferredTheme : userTheme)
+  }, [theme])
+
   if (hasError) {
     return (
       <ErrorOverlay
@@ -83,7 +87,7 @@ const ImageRenderer = props => {
   }
 
   return (
-    <div className={`image-renderer ${classes}`}>
+    <div className={`image-renderer ${hasGrid ? 'has-grid' : ''} ${gridClass}`}>
       {isLoading && <LoadingOverlay text="Rendering image..." />}
       <img
         src={`data:${mimeType};base64,${content}`}
@@ -125,11 +129,14 @@ ImageRenderer.propTypes = {
     // MIME Type: image/x-icon
     '.ico'
   ]).isRequired,
-  theme: PropTypes.oneOf(['theme-light', 'theme-dark']).isRequired
+  theme: PropTypes.shape({
+    userTheme: PropTypes.oneOf[('theme-dark', 'theme-light', 'theme-auto')],
+    preferredTheme: PropTypes.oneOf[('theme-dark', 'theme-light')]
+  })
 }
 
 const mapStateToProps = state => ({
-  theme: state.settings.theme
+  theme: state.settings
 })
 
 export default connect(mapStateToProps)(ImageRenderer)
