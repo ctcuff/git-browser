@@ -88,7 +88,7 @@ class JupyterRenderer extends React.Component {
 
     nb.ansi = text => Anser.ansiToText(text)
     nb.highlighter = (text, pre, code, lang) => {
-      return this.highlighter(text, lang || 'txt')
+      return this.highlighter(text, lang || 'python')
     }
     nb.markdown = str => {
       const md = new MarkdownIt({

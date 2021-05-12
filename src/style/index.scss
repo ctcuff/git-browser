@@ -35,6 +35,9 @@
 
   --color-scrollbar: rgba(0, 0, 0, 0.45);
   --color-scrollbar-native: #bebebe;
+
+  --color-folder: #79b8ff;
+  --color-selected: #0366d6;
 }
 
 .theme-dark {
@@ -64,6 +67,9 @@
 
   --color-scrollbar: rgb(146, 146, 146);
   --color-scrollbar-native: #696969;
+
+  --color-folder: #6e7681;
+  --color-selected: #58a6ff;
 }
 
 body {
@@ -71,7 +77,8 @@ body {
   font-size: 1em;
   font-family: var(--font-default);
   background-color: var(--color-app-bg);
-  line-height: 22px;
+  color: var(--color-text-primary);
+  line-height: 1.4;
 
   &.is-resizing {
     user-select: none;

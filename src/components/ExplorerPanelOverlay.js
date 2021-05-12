@@ -2,8 +2,8 @@ import '../style/explorer-panel-overlay.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
 
-// Covers the explorer panel when the explorer is closed.
-// This prevents x overflow and hides the panel's squished content
+// Covers the explorer panel when the explorer is closed
+// and adds button actions that toggle jump to each menu section
 const ExplorerPanelOverlay = props => (
   <div className="explorer-panel-overlay">
     {props.panelActions.map((action, index) => (

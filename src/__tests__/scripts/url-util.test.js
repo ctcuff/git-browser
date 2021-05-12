@@ -1,11 +1,23 @@
 import store from 'src/store'
 import URLUtil from 'src/scripts/url-util'
 
-const mockResp = {
-  statusText: ''
+const defaultResp = {
+  statusText: '',
+  headers: new Headers({
+    'x-ratelimit-remaining': '5000'
+  }),
+  blob: jest.fn(() => new Blob(['mock-text'])),
+  ok: true
 }
 
 describe('URLUtil', () => {
+  let mockResp
+
+  beforeEach(() => {
+    mockResp = { ...defaultResp }
+    global.URL.createObjectURL = jest.fn()
+  })
+
   afterEach(() => {
     jest.restoreAllMocks()
   })
@@ -59,10 +71,10 @@ describe('URLUtil', () => {
   })
 
   test('request handles rate limit and other errors', async () => {
-    mockResp.statusText = 'some rate limit error'
+    mockResp.headers.set('x-ratelimit-remaining', '0')
     global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
 
-    expect(URLUtil.request('test')).rejects.toEqual('Rate limit exceeded')
+    expect(URLUtil.request('test')).rejects.toEqual('rate limit exceeded')
 
     global.fetch = jest.fn().mockReturnValue(Promise.reject('mockError'))
 
@@ -147,5 +159,72 @@ describe('URLUtil', () => {
     expect(URLUtil.getSearchParam('foo', 'someDefaultValue')).toEqual(
       'someDefaultValue'
     )
+  })
+
+  test('updateURLPath updates URL path name', () => {
+    URLUtil.updateURLPath('/some/path')
+    expect(window.location.pathname).toEqual('/some/path')
+
+    URLUtil.updateURLPath('some/path')
+    expect(window.location.pathname).toEqual('/some/path')
+  })
+
+  test('buildGithubFileURL builds correct URL', () => {
+    const opts = {
+      repoPath: 'user/repo',
+      branch: 'main',
+      filePath: 'src/test.js'
+    }
+    const url = URLUtil.buildGithubFileURL(opts)
+    const rawUrl = URLUtil.buildGithubFileURL({
+      ...opts,
+      raw: true
+    })
+
+    expect(url).toEqual(`https://github.com/user/repo/blob/main/src/test.js`)
+    expect(rawUrl).toEqual(
+      `https://raw.githubusercontent.com/user/repo/main/src/test.js`
+    )
+  })
+
+  test('downloadGithubFile downloads file contents', async () => {
+    const spy = jest.spyOn(URL, 'createObjectURL')
+    global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
+
+    await URLUtil.downloadGithubFile({
+      repoPath: 'user/repo',
+      branch: 'main',
+      filePath: 'src/test.js'
+    })
+
+    expect(spy).toHaveBeenCalled()
+  })
+
+  test('downloadGithubFile handles download error', async () => {
+    const urlSpy = jest.spyOn(URL, 'createObjectURL')
+
+    mockResp.ok = false
+
+    global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
+
+    expect(async () => {
+      return await URLUtil.downloadGithubFile({
+        repoPath: 'user/repo',
+        branch: 'main',
+        filePath: 'src/test.js'
+      })
+    }).rejects.toEqual('Error downloading file')
+
+    global.fetch = jest.fn().mockReturnValue(Promise.reject())
+
+    expect(async () => {
+      return await URLUtil.downloadGithubFile({
+        repoPath: 'user/repo',
+        branch: 'main',
+        filePath: 'src/test.js'
+      })
+    }).rejects.toEqual('Error downloading file')
+
+    expect(urlSpy).not.toHaveBeenCalled()
   })
 })

@@ -8,8 +8,7 @@ describe('settings actions', () => {
         <link title="theme-light">
         <link title="theme-dark" disabled>
       </head>
-      <body class="theme-light">
-      </body>
+      <body class="theme-light"></body>
     `
   })
 
@@ -18,7 +17,17 @@ describe('settings actions', () => {
     expect(actions.setTheme(theme)).toEqual({
       type: 'SET_THEME',
       payload: {
-        theme
+        userTheme: theme
+      }
+    })
+  })
+
+  test('setPreferredTheme creates action to set browser preffered theme', () => {
+    const theme = 'MOCK_THEME'
+    expect(actions.setPreferredTheme(theme)).toEqual({
+      type: 'SET_PREFERRED_THEME',
+      payload: {
+        preferredTheme: theme
       }
     })
   })
@@ -42,6 +51,13 @@ describe('settings actions', () => {
     expect(darkStyle.getAttribute('disabled')).toEqual('disabled')
     expect(body.className).toEqual('theme-light')
     expect(localStorage.getItem('theme')).toEqual('theme-light')
+
+    actions.setTheme('theme-auto')
+
+    expect(lightStyle.getAttribute('disabled')).toEqual(null)
+    expect(darkStyle.getAttribute('disabled')).toEqual('disabled')
+    expect(body.className).toEqual('theme-light')
+    expect(localStorage.getItem('theme')).toEqual('theme-auto')
 
     actions.setTheme('invalid-theme')
 

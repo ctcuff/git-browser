@@ -56,9 +56,10 @@
 
     svg {
       height: 100%;
-      font-size: 1.3em;
+      font-size: 1.7em;
 
       @include mobile() {
+        font-size: 1.3em;
         margin-right: 0.5em;
       }
     }

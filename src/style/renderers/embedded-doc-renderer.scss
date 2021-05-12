@@ -1,0 +1,15 @@
+.embedded-doc-renderer {
+  width: 100%;
+  height: 100%;
+
+  .doc-loading-overlay {
+    position: absolute;
+    z-index: -1;
+  }
+
+  iframe {
+    border: none;
+    width: 100%;
+    height: 100%;
+  }
+}

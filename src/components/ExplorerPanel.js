@@ -23,6 +23,8 @@ import {
   AiOutlineSetting
 } from 'react-icons/ai'
 import { VscFiles } from 'react-icons/vsc'
+import { setRepoData } from '../store/actions/search'
+import { connect } from 'react-redux'
 
 class ExplorerPanel extends React.Component {
   constructor(props) {
@@ -75,15 +77,21 @@ class ExplorerPanel extends React.Component {
     this.togglePanel = this.togglePanel.bind(this)
     this.panelButtons = this.panelButtons.bind(this)
     this.scrollToPanel = this.scrollToPanel.bind(this)
+
+    this.mountedWithFile = false
   }
 
   componentDidMount() {
     // Get the repo and branch queries from the URL and make a search
-    const repo = URLUtil.getSearchParam('repo')
+    const url = 'github.com' + window.location.pathname
+    const repo = URLUtil.extractRepoPath(url)
     const branch = URLUtil.getSearchParam('branch', 'default')
-    const url = 'github.com/' + repo
 
     if (repo) {
+      // Clean the URL to remove unnecessary paths
+      URLUtil.updateURLPath(repo + window.location.search)
+
+      this.mountedWithFile = true
       this.setState({ inputValue: url }, () => {
         this.getRepo(url, branch)
       })
@@ -102,7 +110,9 @@ class ExplorerPanel extends React.Component {
   }
 
   async getRepo(url, branch = 'default') {
-    if (!url || this.state.isLoading) {
+    const extractedPath = URLUtil.extractRepoPath(url)
+
+    if (!url) {
       return
     }
 
@@ -118,6 +128,10 @@ class ExplorerPanel extends React.Component {
 
       this.setState({ currentRepoPath: url })
       this.props.onSearchFinished(false)
+      this.props.setRepoData({
+        repoPath: extractedPath,
+        branch: this.state.currentBranch
+      })
     } catch (err) {
       this.props.onSearchFinished(true)
     }
@@ -140,10 +154,18 @@ class ExplorerPanel extends React.Component {
           }
         })
 
-        URLUtil.updateURLSearchParams({
-          repo: URLUtil.extractRepoPath(repoUrl),
-          branch
-        })
+        const repoPath = URLUtil.extractRepoPath(repoUrl)
+
+        // Small hack: because this component may be mounted with the repo
+        // path in the URL, we need to make sure we don't reset that URL
+        // on load since that URL might contain a file path
+        if (!this.mountedWithFile) {
+          URLUtil.updateURLPath(repoPath)
+        }
+
+        URLUtil.updateURLSearchParams({ branch: res.branch })
+        document.title = `Git Browser - ${repoPath}`
+        this.mountedWithFile = false
       })
       .catch(err => {
         const searchErrorMessage = err.message || err
@@ -180,7 +202,10 @@ class ExplorerPanel extends React.Component {
     this.props.onSearchStarted()
 
     this.getTree(branch.repoUrl, branch.name)
-      .then(() => this.props.onSearchFinished(false))
+      .then(() => {
+        this.props.onSearchFinished(false)
+        this.props.setRepoData({ branch: branch.name })
+      })
       .catch(err => {
         Logger.error(err)
         this.props.onSearchFinished(true)
@@ -334,6 +359,7 @@ class ExplorerPanel extends React.Component {
             <FileSearch
               treeData={treeData}
               onSelectFile={this.props.onSelectFile}
+              activeFilePath={this.props.activeFilePath}
             />
           </Collapse>
           <Collapse
@@ -343,9 +369,10 @@ class ExplorerPanel extends React.Component {
             onToggle={() => this.togglePanel('code', !panels.code.isOpen)}
           >
             <FileExplorer
-              onSelectFile={this.props.onSelectFile}
-              nodes={treeData}
               key={key}
+              nodes={treeData}
+              onSelectFile={this.props.onSelectFile}
+              activeFilePath={this.props.activeFilePath}
             />
           </Collapse>
           <Collapse
@@ -379,10 +406,16 @@ class ExplorerPanel extends React.Component {
   }
 }
 
+const mapDispatchToProps = {
+  setRepoData
+}
+
 ExplorerPanel.propTypes = {
   onSelectFile: PropTypes.func.isRequired,
   onSearchStarted: PropTypes.func.isRequired,
-  onSearchFinished: PropTypes.func.isRequired
+  onSearchFinished: PropTypes.func.isRequired,
+  setRepoData: PropTypes.func.isRequired,
+  activeFilePath: PropTypes.string.isRequired
 }
 
-export default ExplorerPanel
+export default connect(null, mapDispatchToProps)(ExplorerPanel)

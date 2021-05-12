@@ -4,13 +4,16 @@ Git Browser is a different way of viewing GitHub repositories in your browser. H
 # Features
 Similar to GitHub, this project supports not only viewing code, but rendering files. Want to see what an mp3 sounds like without downloading it from GitHub? You got it! Want to preview a font without leaving your browser? Sure!
 
-Here's a list of file types that support live previews:
+Here's a list of all file types that support live previews:
 - Various forms of images (png, jpg, apng, svg, ico, etc...)
 - GIFs (It's pronounced GIF by the way)
-- Video (mp4 and webm)
+- Video (mp4 / webm)
 - Audio (mp3, wav, ogg, and aac)
 - Fonts (only ttf, otf, woff, and woff2)
-- CSV (as well as TSV)
+- Documents (doc / docx)
+- PowerPoints (ppt / pptx)
+- Spreadsheets (xls / xlsx) 
+- CSV / TSV
     - Thanks to [papaparse](https://github.com/mholt/PapaParse) 🎉
 - Markdown (as well as mdx, kinda...)
     - Thanks to [markdown-it](https://github.com/markdown-it/markdown-it) 🎉
@@ -18,6 +21,8 @@ Here's a list of file types that support live previews:
     - Thanks to [pdfjs](https://github.com/mozilla/pdf.js/) 🎉
 - AsciiDoc
     - Thanks to [Asciidoctor](https://github.com/asciidoctor/asciidoctor.js) 🎉
+- Zip
+    - Thanks to [zip.js](https://github.com/gildas-lormeau/zip.js) 🎉
 - Jupyter Notebook (Experimental)
     - Thanks to [notebookjs](https://github.com/jsvine/notebookjs) 🎉
 - GLTF/GLB Models (Experimental)
@@ -40,3 +45,20 @@ APP_ID=
 ```
 3. Install dependencies by running `yarn` in the root directory
 4. Run `yarn dev` and visit localhost:9000 in your browser
+
+## Running Tests
+Run `yarn test` or `yarn test --coverage`. If you'd like to run tests without output from the logger, add the `--silent` flag.
+
+# Live examples
+<p align="center">Wanna preview a GLB/GLTF model without downloading it? Sure! <a href="https://gitbrowser.io/google/model-viewer?branch=master&file=packages%2Fshared-assets%2Fmodels%2FAstronaut.glb">View model</a></p>
+<img width="1648" alt="Screen Shot 2021-01-26 at 12 25 12 AM" src="https://user-images.githubusercontent.com/7400747/105804293-6c6ba500-5f6d-11eb-8698-5d49f643d814.png">
+
+<p align="center">Wanna see what a font looks like without leaving your browser? Gotcha covered! <a href="https://gitbrowser.io/adobe-fonts/source-code-pro?branch=release&file=TTF%2FSourceCodePro-Medium.ttf">View font</a></p>
+<img width="1648" alt="Screen Shot 2021-01-26 at 12 33 28 AM" src="https://user-images.githubusercontent.com/7400747/105804581-26631100-5f6e-11eb-94fc-37e1fb38a958.png">
+
+<p align="center">Wanna see what a video looks like? Well you're in luck! <a href="https://gitbrowser.io/ctcuff/layout-playground?branch=develop&file=src%2Fassets%2Fvideos%2Fbeach-1920x1080.mp4">View video</a></p>
+<img width="1648" alt="Screen Shot 2021-01-26 at 12 27 31 AM" src="https://user-images.githubusercontent.com/7400747/105804867-d20c6100-5f6e-11eb-876b-0291e5979f80.png">
+
+<p align="center">Wanna see what the code for this website looks like on this website? Inception! <a href="https://gitbrowser.io/ctcuff/git-browser?branch=dev&file=src%2Fcomponents%2Frenderers%2FPDFRenderer.js
+">View code</a></p>
+<img width="1648" alt="Screen Shot 2021-01-26 at 12 45 45 AM" src="https://user-images.githubusercontent.com/7400747/105805380-de44ee00-5f6f-11eb-8b7c-5eec8e6b43ac.png">

@@ -5,6 +5,7 @@
     "size": 1028,
     "path": ".eslintrc.json",
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/6d0bfebe8714239d4393949445a3a864bfedb50b",
+    "parent": null,
     "isRoot": true
   },
   ".gitignore": {
@@ -13,6 +14,7 @@
     "size": 214,
     "path": ".gitignore",
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/a0dddc6fb8c6b3feeeffa6e29bedca338e483382",
+    "parent": null,
     "isRoot": true
   },
   ".prettierrc.json": {
@@ -21,6 +23,7 @@
     "size": 232,
     "path": ".prettierrc.json",
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/89657d724c53cb7a5e6df8e864f8882364c8a80a",
+    "parent": null,
     "isRoot": true
   },
   "README.md": {
@@ -29,6 +32,7 @@
     "size": 972,
     "path": "README.md",
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/38fccdc3924cf664eb88d1ba6c91ac6b7af46fbe",
+    "parent": null,
     "isRoot": true
   },
   "babel.config.js": {
@@ -37,6 +41,7 @@
     "size": 53,
     "path": "babel.config.js",
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/ba179669a123909a9728283fd9c004c65adb90c5",
+    "parent": null,
     "isRoot": true
   },
   "jsconfig.json": {
@@ -45,6 +50,7 @@
     "size": 184,
     "path": "jsconfig.json",
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/577535b61ee4b576c4983d1e3193e11750c1bcca",
+    "parent": null,
     "isRoot": true
   },
   "package.json": {
@@ -53,6 +59,7 @@
     "size": 1675,
     "path": "package.json",
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/b105e901098a68beaa45eae47a02a11926ac8044",
+    "parent": null,
     "isRoot": true
   },
   "public": {
@@ -64,6 +71,7 @@
       "public/index.html"
     ],
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/b0809f7dc1f3fdf7d2f84649c296f7174276ab4f",
+    "parent": null,
     "isRoot": true
   },
   "public/cameron_cuff_resume.pdf": {
@@ -71,21 +79,24 @@
     "name": "cameron_cuff_resume.pdf",
     "size": 35479,
     "path": "public/cameron_cuff_resume.pdf",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/d5b08d8c0429bf426e38cbef1bf4e4ce5f276f2f"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/d5b08d8c0429bf426e38cbef1bf4e4ce5f276f2f",
+    "parent": "public"
   },
   "public/favicon.ico": {
     "type": "file",
     "name": "favicon.ico",
     "size": 15086,
     "path": "public/favicon.ico",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/64ce757e41baef169dddba88b9a8df4ac5a87e0e"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/64ce757e41baef169dddba88b9a8df4ac5a87e0e",
+    "parent": "public"
   },
   "public/index.html": {
     "type": "file",
     "name": "index.html",
     "size": 830,
     "path": "public/index.html",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/c3c989a7ff9f34429beb5180afcf5e9c04438da0"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/c3c989a7ff9f34429beb5180afcf5e9c04438da0",
+    "parent": "public"
   },
   "src": {
     "path": "src",
@@ -101,6 +112,7 @@
       "src/util"
     ],
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/358553e5a2ee066d0bb0f52e4033456921a83c3f",
+    "parent": null,
     "isRoot": true
   },
   "src/App.vue": {
@@ -108,13 +120,15 @@
     "name": "App.vue",
     "size": 1734,
     "path": "src/App.vue",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/2e6719d25b30a897967c849672ccee435f5c6ae9"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/2e6719d25b30a897967c849672ccee435f5c6ae9",
+    "parent": "src"
   },
   "src/assets": {
     "path": "src/assets",
     "type": "folder",
     "children": ["src/assets/fonts", "src/assets/images"],
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/ad47492ec059ba4b7aa3942ea2192b5ffa46bdc3"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/ad47492ec059ba4b7aa3942ea2192b5ffa46bdc3",
+    "parent": "src"
   },
   "src/assets/fonts": {
     "path": "src/assets/fonts",
@@ -123,21 +137,24 @@
       "src/assets/fonts/AvenirNextLTPro-Bold.otf",
       "src/assets/fonts/AvenirNextLTPro-Regular.otf"
     ],
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/588ce37a296b5b5ab955799f39e766136369ddce"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/588ce37a296b5b5ab955799f39e766136369ddce",
+    "parent": "src/assets"
   },
   "src/assets/fonts/AvenirNextLTPro-Bold.otf": {
     "type": "file",
     "name": "AvenirNextLTPro-Bold.otf",
     "size": 69772,
     "path": "src/assets/fonts/AvenirNextLTPro-Bold.otf",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/9799f3012103cefa68eba1458c157a975397383d"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/9799f3012103cefa68eba1458c157a975397383d",
+    "parent": "src/assets/fonts"
   },
   "src/assets/fonts/AvenirNextLTPro-Regular.otf": {
     "type": "file",
     "name": "AvenirNextLTPro-Regular.otf",
     "size": 66800,
     "path": "src/assets/fonts/AvenirNextLTPro-Regular.otf",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/263ae4c385c7b6c95e0a97f9432dfd87a154086e"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/263ae4c385c7b6c95e0a97f9432dfd87a154086e",
+    "parent": "src/assets/fonts"
   },
   "src/assets/images": {
     "path": "src/assets/images",
@@ -153,70 +170,80 @@
       "src/assets/images/ucf-parking-fullscreen.png",
       "src/assets/images/ucf-parking.png"
     ],
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/a1803fada114460f20c2a4a24b6c055be1fc6c66"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/a1803fada114460f20c2a4a24b6c055be1fc6c66",
+    "parent": "src/assets"
   },
   "src/assets/images/dependency-visualizer-fullscreen.png": {
     "type": "file",
     "name": "dependency-visualizer-fullscreen.png",
     "size": 566195,
     "path": "src/assets/images/dependency-visualizer-fullscreen.png",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/ac6ef49bfcf109a7a0daeb6d2e0af02e7eef16f6"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/ac6ef49bfcf109a7a0daeb6d2e0af02e7eef16f6",
+    "parent": "src/assets/images"
   },
   "src/assets/images/dependency-visualizer.png": {
     "type": "file",
     "name": "dependency-visualizer.png",
     "size": 590795,
     "path": "src/assets/images/dependency-visualizer.png",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/e18aadc5db64debdb54a60d7361b1fee2e7c4ee6"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/e18aadc5db64debdb54a60d7361b1fee2e7c4ee6",
+    "parent": "src/assets/images"
   },
   "src/assets/images/livecode-fullscreen.png": {
     "type": "file",
     "name": "livecode-fullscreen.png",
     "size": 272437,
     "path": "src/assets/images/livecode-fullscreen.png",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/a951a065d9a9b7990215f3c89a7f035b9fef06d9"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/a951a065d9a9b7990215f3c89a7f035b9fef06d9",
+    "parent": "src/assets/images"
   },
   "src/assets/images/livecode.png": {
     "type": "file",
     "name": "livecode.png",
     "size": 317253,
     "path": "src/assets/images/livecode.png",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/913ae40f2d87d9e9e9ed1ee401fd1040d2f40316"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/913ae40f2d87d9e9e9ed1ee401fd1040d2f40316",
+    "parent": "src/assets/images"
   },
   "src/assets/images/portfolio-fullscreen.png": {
     "type": "file",
     "name": "portfolio-fullscreen.png",
     "size": 54265,
     "path": "src/assets/images/portfolio-fullscreen.png",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/270c70a4c6915e8baf5046e7592174f1d8392101"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/270c70a4c6915e8baf5046e7592174f1d8392101",
+    "parent": "src/assets/images"
   },
   "src/assets/images/portfolio.png": {
     "type": "file",
     "name": "portfolio.png",
     "size": 104735,
     "path": "src/assets/images/portfolio.png",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/32b23fd62471f0e3bc5a0663b71c6dc0fedfe68f"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/32b23fd62471f0e3bc5a0663b71c6dc0fedfe68f",
+    "parent": "src/assets/images"
   },
   "src/assets/images/profile.svg": {
     "type": "file",
     "name": "profile.svg",
     "size": 2834,
     "path": "src/assets/images/profile.svg",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/757da51b7e9499830f620f64a00652affa4344dc"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/757da51b7e9499830f620f64a00652affa4344dc",
+    "parent": "src/assets/images"
   },
   "src/assets/images/ucf-parking-fullscreen.png": {
     "type": "file",
     "name": "ucf-parking-fullscreen.png",
     "size": 453878,
     "path": "src/assets/images/ucf-parking-fullscreen.png",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/f3c6db5c6c5dc4258bd4f5f4428410c03cc15970"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/f3c6db5c6c5dc4258bd4f5f4428410c03cc15970",
+    "parent": "src/assets/images"
   },
   "src/assets/images/ucf-parking.png": {
     "type": "file",
     "name": "ucf-parking.png",
     "size": 477933,
     "path": "src/assets/images/ucf-parking.png",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/29e323c1ea14a1704d0ef4b1946a99aa866a4069"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/29e323c1ea14a1704d0ef4b1946a99aa866a4069",
+    "parent": "src/assets/images"
   },
   "src/components": {
     "path": "src/components",
@@ -229,70 +256,80 @@
       "src/components/ProjectInfo.vue",
       "src/components/Projects.vue"
     ],
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/255d318b3d7b18c098872826204d2526a32077b2"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/255d318b3d7b18c098872826204d2526a32077b2",
+    "parent": "src"
   },
   "src/components/About.vue": {
     "type": "file",
     "name": "About.vue",
     "size": 2487,
     "path": "src/components/About.vue",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/9830200d453d5412b1892cdede3c322de2faffaa"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/9830200d453d5412b1892cdede3c322de2faffaa",
+    "parent": "src/components"
   },
   "src/components/Contact.vue": {
     "type": "file",
     "name": "Contact.vue",
     "size": 1851,
     "path": "src/components/Contact.vue",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/ad2d550aeaadc318b0d17fc0aafb0095da185176"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/ad2d550aeaadc318b0d17fc0aafb0095da185176",
+    "parent": "src/components"
   },
   "src/components/Home.vue": {
     "type": "file",
     "name": "Home.vue",
     "size": 2535,
     "path": "src/components/Home.vue",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/b1481e5d7722b0b64478fc3c5398636e42f4b8bd"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/b1481e5d7722b0b64478fc3c5398636e42f4b8bd",
+    "parent": "src/components"
   },
   "src/components/Navbar.vue": {
     "type": "file",
     "name": "Navbar.vue",
     "size": 706,
     "path": "src/components/Navbar.vue",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/9d9826e5bd720e58409d47448b9aaf928e09df4d"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/9d9826e5bd720e58409d47448b9aaf928e09df4d",
+    "parent": "src/components"
   },
   "src/components/ProjectInfo.vue": {
     "type": "file",
     "name": "ProjectInfo.vue",
     "size": 3982,
     "path": "src/components/ProjectInfo.vue",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/6c30693d25c6619163f07c4a4cc72ed5f4ead9d6"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/6c30693d25c6619163f07c4a4cc72ed5f4ead9d6",
+    "parent": "src/components"
   },
   "src/components/Projects.vue": {
     "type": "file",
     "name": "Projects.vue",
     "size": 10212,
     "path": "src/components/Projects.vue",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/492893b8f1808ab8b77858063e85657dea3b3233"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/492893b8f1808ab8b77858063e85657dea3b3233",
+    "parent": "src/components"
   },
   "src/main.js": {
     "type": "file",
     "name": "main.js",
     "size": 520,
     "path": "src/main.js",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/c6eb9846f99f2763cb67f674d2eed46f7c5756f1"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/c6eb9846f99f2763cb67f674d2eed46f7c5756f1",
+    "parent": "src"
   },
   "src/project-info.js": {
     "type": "file",
     "name": "project-info.js",
     "size": 14542,
     "path": "src/project-info.js",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/91ae6f135e58cd3a56db3e48d6c25acbf1bb0ed9"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/91ae6f135e58cd3a56db3e48d6c25acbf1bb0ed9",
+    "parent": "src"
   },
   "src/router.js": {
     "type": "file",
     "name": "router.js",
     "size": 958,
     "path": "src/router.js",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/2e419394301fbc885eac61d334644d81035f0171"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/2e419394301fbc885eac61d334644d81035f0171",
+    "parent": "src"
   },
   "src/scss": {
     "path": "src/scss",
@@ -302,7 +339,8 @@
       "src/scss/global.scss",
       "src/scss/mixins"
     ],
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/606cec11c3f642f2d5a48d77df55543726cf7642"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/606cec11c3f642f2d5a48d77df55543726cf7642",
+    "parent": "src"
   },
   "src/scss/components": {
     "path": "src/scss/components",
@@ -316,63 +354,72 @@
       "src/scss/components/project-info.scss",
       "src/scss/components/projects.scss"
     ],
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/d3ca1b7335183c9bf13ee7a8b8d8ded541cee51d"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/d3ca1b7335183c9bf13ee7a8b8d8ded541cee51d",
+    "parent": "src/scss"
   },
   "src/scss/components/about.scss": {
     "type": "file",
     "name": "about.scss",
     "size": 1258,
     "path": "src/scss/components/about.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/ec61317a6560ac4ae5bf4d3c632d6faaad28e539"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/ec61317a6560ac4ae5bf4d3c632d6faaad28e539",
+    "parent": "src/scss/components"
   },
   "src/scss/components/app.scss": {
     "type": "file",
     "name": "app.scss",
     "size": 58,
     "path": "src/scss/components/app.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/37222b8e4522f0f2fe2eacfd33330ae10ca9b440"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/37222b8e4522f0f2fe2eacfd33330ae10ca9b440",
+    "parent": "src/scss/components"
   },
   "src/scss/components/contact.scss": {
     "type": "file",
     "name": "contact.scss",
     "size": 1714,
     "path": "src/scss/components/contact.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/bb61a627e63eb4ac621d2e9c89ad52cf41f0fc69"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/bb61a627e63eb4ac621d2e9c89ad52cf41f0fc69",
+    "parent": "src/scss/components"
   },
   "src/scss/components/home.scss": {
     "type": "file",
     "name": "home.scss",
     "size": 584,
     "path": "src/scss/components/home.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/ec8b32a1d9235cc55cc15f20ac3eacba7a416761"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/ec8b32a1d9235cc55cc15f20ac3eacba7a416761",
+    "parent": "src/scss/components"
   },
   "src/scss/components/navbar.scss": {
     "type": "file",
     "name": "navbar.scss",
     "size": 410,
     "path": "src/scss/components/navbar.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/c2afd79ef9bfed7398915935fa1d14d5d06f0b04"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/c2afd79ef9bfed7398915935fa1d14d5d06f0b04",
+    "parent": "src/scss/components"
   },
   "src/scss/components/project-info.scss": {
     "type": "file",
     "name": "project-info.scss",
     "size": 3087,
     "path": "src/scss/components/project-info.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/585884bc20e3cc8362297300e86e86940dc3f435"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/585884bc20e3cc8362297300e86e86940dc3f435",
+    "parent": "src/scss/components"
   },
   "src/scss/components/projects.scss": {
     "type": "file",
     "name": "projects.scss",
     "size": 5081,
     "path": "src/scss/components/projects.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/b6e1be3d1076039b10c91d25f4edac2531053f75"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/b6e1be3d1076039b10c91d25f4edac2531053f75",
+    "parent": "src/scss/components"
   },
   "src/scss/global.scss": {
     "type": "file",
     "name": "global.scss",
     "size": 505,
     "path": "src/scss/global.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/a6498ad4a87efad660711610aefc044244bd5bc1"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/a6498ad4a87efad660711610aefc044244bd5bc1",
+    "parent": "src/scss"
   },
   "src/scss/mixins": {
     "path": "src/scss/mixins",
@@ -383,48 +430,55 @@
       "src/scss/mixins/_fonts.scss",
       "src/scss/mixins/_height.scss"
     ],
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/6f0f437ac5d74f2d6a351b95d592e415141563c9"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/6f0f437ac5d74f2d6a351b95d592e415141563c9",
+    "parent": "src/scss"
   },
   "src/scss/mixins/_breakpoints.scss": {
     "type": "file",
     "name": "_breakpoints.scss",
     "size": 549,
     "path": "src/scss/mixins/_breakpoints.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/68b1978f71be677d0441156b586ec9c8cf32462a"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/68b1978f71be677d0441156b586ec9c8cf32462a",
+    "parent": "src/scss/mixins"
   },
   "src/scss/mixins/_debug.scss": {
     "type": "file",
     "name": "_debug.scss",
     "size": 1734,
     "path": "src/scss/mixins/_debug.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/0ccb0304ba6362f283af8055590cb582bee9fe4c"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/0ccb0304ba6362f283af8055590cb582bee9fe4c",
+    "parent": "src/scss/mixins"
   },
   "src/scss/mixins/_fonts.scss": {
     "type": "file",
     "name": "_fonts.scss",
     "size": 448,
     "path": "src/scss/mixins/_fonts.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/a5c9eae5def9d49eaa6cf3ccec25a242f58edb8f"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/a5c9eae5def9d49eaa6cf3ccec25a242f58edb8f",
+    "parent": "src/scss/mixins"
   },
   "src/scss/mixins/_height.scss": {
     "type": "file",
     "name": "_height.scss",
     "size": 204,
     "path": "src/scss/mixins/_height.scss",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/e2ea4c4448e750b1340e60280ad6472d22c48c24"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/e2ea4c4448e750b1340e60280ad6472d22c48c24",
+    "parent": "src/scss/mixins"
   },
   "src/util": {
     "path": "src/util",
     "type": "folder",
     "children": ["src/util/debounce.js"],
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/f6a37c4e1d9a1b0d1d4577e9584c891c55544930"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/f6a37c4e1d9a1b0d1d4577e9584c891c55544930",
+    "parent": "src"
   },
   "src/util/debounce.js": {
     "type": "file",
     "name": "debounce.js",
     "size": 488,
     "path": "src/util/debounce.js",
-    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/49b3e8c106ed3421151440964abcfd921dd33c96"
+    "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/49b3e8c106ed3421151440964abcfd921dd33c96",
+    "parent": "src/util"
   },
   "vue.config.js": {
     "type": "file",
@@ -432,6 +486,7 @@
     "size": 298,
     "path": "vue.config.js",
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/d70173af90bf972cccab0d8bc9125d9ec7473d2b",
+    "parent": null,
     "isRoot": true
   },
   "yarn.lock": {
@@ -440,6 +495,7 @@
     "size": 390989,
     "path": "yarn.lock",
     "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/cd0e99d014ba22327483ad5d23b4b46311499e5c",
+    "parent": null,
     "isRoot": true
   }
 }

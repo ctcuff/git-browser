@@ -16,17 +16,39 @@ class FileExplorer extends React.PureComponent {
 
     this.getRootNodes = this.getRootNodes.bind(this)
     this.getChildren = this.getChildren.bind(this)
-    this.onToggle = this.onToggle.bind(this)
+    this.toggleNode = this.toggleNode.bind(this)
     this.onSelectFile = this.onSelectFile.bind(this)
     this.closeAllFolders = this.closeAllFolders.bind(this)
+    this.openUpToRoot = this.openUpToRoot.bind(this)
   }
 
   componentDidMount() {
     const key = URLUtil.getSearchParam('file')
     const node = this.state.nodes[key]
+    const activeFilePath = this.props.activeFilePath
 
     if (node) {
       this.props.onSelectFile(node)
+    }
+
+    if (activeFilePath) {
+      this.openUpToRoot(activeFilePath)
+    }
+  }
+
+  openUpToRoot(path) {
+    const nodes = this.state.nodes
+
+    if (!nodes[path]) {
+      return
+    }
+
+    if (nodes[path].type === 'folder' && !nodes[path].isOpen) {
+      this.toggleNode(nodes[path])
+    }
+
+    if (nodes[path].parent) {
+      this.openUpToRoot(nodes[path].parent)
     }
   }
 
@@ -59,7 +81,7 @@ class FileExplorer extends React.PureComponent {
     return [...left, ...right]
   }
 
-  onToggle(node) {
+  toggleNode(node) {
     const nodes = this.state.nodes
 
     nodes[node.path].isOpen = !node.isOpen
@@ -117,8 +139,9 @@ class FileExplorer extends React.PureComponent {
               node={node}
               key={node.path}
               getChildren={this.getChildren}
-              onToggle={this.onToggle}
+              onToggle={this.toggleNode}
               onSelectNode={this.onSelectFile}
+              activeFilePath={this.props.activeFilePath}
             />
           ))}
         </React.Fragment>
@@ -128,7 +151,7 @@ class FileExplorer extends React.PureComponent {
 }
 
 FileExplorer.propTypes = {
-  onSelectFile: PropTypes.func.isRequired,
+  onSelectFile: PropTypes.func,
   nodes: PropTypes.objectOf(
     PropTypes.shape({
       type: PropTypes.oneOf(['file', 'folder']),
@@ -138,12 +161,15 @@ FileExplorer.propTypes = {
       isRoot: PropTypes.bool
     })
   ),
-  repoName: PropTypes.string
+  repoName: PropTypes.string,
+  activeFilePath: PropTypes.string
 }
 
 FileExplorer.defaultProps = {
   nodes: {},
-  repoName: ''
+  repoName: '',
+  activeFilePath: '',
+  onSelectFile: () => {}
 }
 
 export default FileExplorer

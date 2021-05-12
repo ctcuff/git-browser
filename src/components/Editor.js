@@ -22,7 +22,6 @@ class Editor extends React.Component {
     '.svg',
     '.tsv'
   ])
-
   /**
    * Files that don't have to be decoded when sent to the FileRenderer
    * since they already display as text when the Editor is rendered.
@@ -45,6 +44,8 @@ class Editor extends React.Component {
     '.apng',
     '.avif',
     '.bmp',
+    '.doc',
+    '.docx',
     '.gif',
     '.glb',
     '.ico',
@@ -59,12 +60,15 @@ class Editor extends React.Component {
     '.pjp',
     '.pjpeg',
     '.png',
+    '.ppt',
+    '.pptx',
     '.ttf',
     '.wav',
     '.webm',
     '.webp',
     '.woff',
-    '.woff2'
+    '.woff2',
+    '.zip'
   ])
 
   constructor(props) {
@@ -93,7 +97,9 @@ class Editor extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const colorScheme = this.props.theme
+    const { theme } = this.props
+    const colorScheme =
+      theme.userTheme === 'theme-auto' ? theme.preferredTheme : theme.userTheme
 
     if (prevProps.theme !== colorScheme && this.monaco) {
       this.monaco.setTheme(this.getTheme(colorScheme))
@@ -132,6 +138,8 @@ class Editor extends React.Component {
     })
 
     const model = monaco.createModel(content, language)
+    const editorTheme =
+      theme.userTheme === 'theme-auto' ? theme.preferredTheme : theme.userTheme
 
     this.editor = monaco.create(this.editorRef.current, {
       model,
@@ -142,7 +150,7 @@ class Editor extends React.Component {
       },
       automaticLayout: true,
       fontSize: 14,
-      theme: this.getTheme(theme),
+      theme: this.getTheme(editorTheme),
       renderIndentGuides: false
     })
 
@@ -245,12 +253,15 @@ Editor.propTypes = {
   language: PropTypes.string.isRequired,
   fileName: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
-  theme: PropTypes.oneOf(['theme-light', 'theme-dark']).isRequired,
+  theme: PropTypes.shape({
+    userTheme: PropTypes.oneOf(['theme-light', 'theme-dark', 'theme-auto']),
+    preferredTheme: PropTypes.oneOf(['theme-light', 'theme-dark'])
+  }),
   onForceRender: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
-  theme: state.settings.theme
+  theme: state.settings
 })
 
 export default connect(mapStateToProps)(Editor)
