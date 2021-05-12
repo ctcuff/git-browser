@@ -4,15 +4,16 @@ Git Browser is a different way of viewing GitHub repositories in your browser. H
 # Features
 Similar to GitHub, this project supports not only viewing code, but rendering files. Want to see what an mp3 sounds like without downloading it from GitHub? You got it! Want to preview a font without leaving your browser? Sure!
 
-Here's a list of file types that support live previews:
+Here's a list of all file types that support live previews:
 - Various forms of images (png, jpg, apng, svg, ico, etc...)
 - GIFs (It's pronounced GIF by the way)
-- Video (mp4 and webm)
+- Video (mp4 / webm)
 - Audio (mp3, wav, ogg, and aac)
 - Fonts (only ttf, otf, woff, and woff2)
-- doc/docx (Experimental)
-- ppt/pptx (Experimental)
-- CSV (as well as TSV)
+- Documents (doc / docx)
+- PowerPoints (ppt / pptx)
+- Spreadsheets (xls / xlsx) 
+- CSV / TSV
     - Thanks to [papaparse](https://github.com/mholt/PapaParse) 🎉
 - Markdown (as well as mdx, kinda...)
     - Thanks to [markdown-it](https://github.com/markdown-it/markdown-it) 🎉
