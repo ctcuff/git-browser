@@ -1,79 +1,59 @@
 import '../../style/renderers/glb-renderer.scss'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import Logger from '../../scripts/logger'
 
-class GLBRenderer extends React.Component {
-  constructor(props) {
-    super(props)
+const GLBRenderer = ({ content, extension }) => {
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasError, setHasError] = useState(false)
 
-    this.state = {
-      isLoading: true,
-      hasError: false
-    }
-
-    this.init = this.init.bind(this)
-    this.showError = this.showError.bind(this)
-  }
-
-  componentDidMount() {
-    this.init()
-  }
-
-  async init() {
-    this.setState({
-      isLoading: true,
-      hasError: false
-    })
+  const init = async () => {
+    setIsLoading(true)
+    setHasError(false)
 
     try {
       import('@google/model-viewer')
       // Used to get rid of the outline that appears when dragging the model
       import('../../lib/focus-visible')
-      this.setState({ isLoading: false })
+      setIsLoading(false)
     } catch (err) {
       Logger.error(err)
-      this.setState({
-        isLoading: false,
-        hasError: true
-      })
+      setIsLoading(false)
+      setHasError(true)
     }
   }
 
-  showError() {
-    this.setState({ error: true })
+  const mimeType =
+    extension === '.glb' ? 'model/gltf-binary' : 'model/gltf+json'
+
+  useEffect(() => {
+    init()
+  }, [])
+
+  if (isLoading) {
+    return <LoadingOverlay text="Loading libraries..." />
   }
 
-  render() {
-    const { extension, content } = this.props
-    const mimeType =
-      extension === '.glb' ? 'model/gltf-binary' : 'model/gltf+json'
-
-    if (this.state.isLoading) {
-      return <LoadingOverlay text="Loading libraries..." />
-    }
-
-    if (this.state.hasError) {
-      return (
-        <ErrorOverlay
-          message="An error occurred while loading the model."
-          retryMessage="Retry"
-          onRetryClick={this.init}
-        />
-      )
-    }
-
+  if (hasError) {
     return (
-      <model-viewer
-        src={`data:${mimeType};base64,${content}`}
-        error={this.showError}
-        auto-rotate
-        camera-controls
+      <ErrorOverlay
+        message="An error occurred while loading the model."
+        retryMessage="Retry"
+        onRetryClick={this.init}
       />
     )
   }
+
+  return (
+    <model-viewer
+      src={`data:${mimeType};base64,${content}`}
+      error={() => setHasError(true)}
+      auto-rotate
+      camera-controls
+    />
+  )
 }
 
 GLBRenderer.propTypes = {
