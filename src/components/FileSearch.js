@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import SearchInput from './SearchInput'
 import TreeNode from './TreeNode'
 
+// The maximum number of files that a search
+// result will display
 const MAX_FILTER_RESULT = 50
 
 const FileSearch = props => {

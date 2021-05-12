@@ -132,7 +132,7 @@ ImageRenderer.propTypes = {
   theme: PropTypes.shape({
     userTheme: PropTypes.oneOf[('theme-dark', 'theme-light', 'theme-auto')],
     preferredTheme: PropTypes.oneOf[('theme-dark', 'theme-light')]
-  })
+  }).isRequired
 }
 
 const mapStateToProps = state => ({

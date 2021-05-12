@@ -6,8 +6,22 @@ import gitBrowserIconLight from '../assets/img/git-browser-icon-light.svg'
 import { connect } from 'react-redux'
 
 const LandingScreen = ({ theme }) => {
-  const iconSrc =
-    theme === 'theme-light' ? gitBrowserIconLight : gitBrowserIconDark
+  let iconSrc = gitBrowserIconDark
+
+  switch (theme.userTheme) {
+    case 'theme-light':
+      iconSrc = gitBrowserIconLight
+      break
+    case 'theme-dark':
+      iconSrc = gitBrowserIconDark
+      break
+    case 'theme-auto':
+      iconSrc =
+        theme.preferredTheme === 'theme-light'
+          ? gitBrowserIconLight
+          : gitBrowserIconDark
+      break
+  }
 
   return (
     <div className="landing-screen">
@@ -33,11 +47,14 @@ const LandingScreen = ({ theme }) => {
 }
 
 LandingScreen.propTypes = {
-  theme: PropTypes.oneOf(['theme-dark', 'theme-light', 'theme-auto'])
+  theme: PropTypes.shape({
+    userTheme: PropTypes.oneOf[('theme-dark', 'theme-light', 'theme-auto')],
+    preferredTheme: PropTypes.oneOf[('theme-dark', 'theme-light')]
+  }).isRequired
 }
 
 const mapStateToProps = state => ({
-  theme: state.settings.theme
+  theme: state.settings
 })
 
 export default connect(mapStateToProps)(LandingScreen)

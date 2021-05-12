@@ -11,7 +11,7 @@ yzžĂÂÊÔƠƯăâêôơư1234567890‘?’“!”(%)[#]{@}/&\\<-+÷×=>®©$�
   .replace(/[\r\n]/g, '')
   .split('')
 
-const renderExtendedPreview = () => (
+const extendedPreview = (
   <div className="preview-container">
     <h2 className="font-default">Glyphs</h2>
     <div className="font-renderer-glyphs">
@@ -119,9 +119,7 @@ const FontRenderer = props => {
   const [isPreviewShowing, setShowPreview] = useState(false)
   const [preview, setPreview] = useState(null)
 
-  const togglePreview = () => {
-    setShowPreview(!isPreviewShowing)
-  }
+  const togglePreview = () => setShowPreview(!isPreviewShowing)
 
   useEffect(() => {
     const style = document.createElement('style')
@@ -136,7 +134,7 @@ const FontRenderer = props => {
 
     // Render the glyphs once here so we don't have to keep
     // rendering them when the toggle button is clicked
-    setPreview(renderExtendedPreview())
+    setPreview(extendedPreview)
 
     // Remove this style when the component is unmounted
     return () => {
