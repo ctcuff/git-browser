@@ -50,8 +50,8 @@ APP_ID=
 Run `yarn test` or `yarn test --coverage`. If you'd like to run tests without output from the logger, add the `--silent` flag.
 
 # Live examples
-<p align="center">Wanna preview a GLB/GLTF model without downloading it? Sure! <a href="https://gitbrowser.io/google/model-viewer?branch=master&file=packages%2Fshared-assets%2Fmodels%2FAstronaut.glb">View model</a></p>
-<img width="1648" alt="Screen Shot 2021-01-26 at 12 25 12 AM" src="https://user-images.githubusercontent.com/7400747/105804293-6c6ba500-5f6d-11eb-8698-5d49f643d814.png">
+<p align="center">Wanna preview an <b>animated</b> GLTF model without downloading it? Sure! <a href="https://gitbrowser.io/mrdoob/three.js?branch=dev&file=examples%2Fmodels%2Fgltf%2FSoldier.glb">View model</a></p>
+<img width="1648" alt="Screen Shot 2021-01-26 at 12 25 12 AM" src="https://user-images.githubusercontent.com/7400747/118326420-f6b32700-b4d2-11eb-8c13-09a27c19f176.png">
 
 <p align="center">Wanna see what a font looks like without leaving your browser? Gotcha covered! <a href="https://gitbrowser.io/adobe-fonts/source-code-pro?branch=release&file=TTF%2FSourceCodePro-Medium.ttf">View font</a></p>
 <img width="1648" alt="Screen Shot 2021-01-26 at 12 33 28 AM" src="https://user-images.githubusercontent.com/7400747/105804581-26631100-5f6e-11eb-94fc-37e1fb38a958.png">
