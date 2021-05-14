@@ -101,8 +101,8 @@ class Editor extends React.Component {
     const colorScheme =
       theme.userTheme === 'theme-auto' ? theme.preferredTheme : theme.userTheme
 
-    if (prevProps.theme !== colorScheme && this.monaco) {
-      this.monaco.setTheme(this.getEditorTheme(colorScheme))
+    if (prevProps.theme !== colorScheme) {
+      this.monaco?.setTheme(this.getEditorTheme(colorScheme))
     }
   }
 

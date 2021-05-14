@@ -48,9 +48,7 @@ const login = (su = false) => {
       const accessToken = res.credential.accessToken
       const payload = { accessToken }
 
-      if (res.additionalUserInfo) {
-        payload.username = res.additionalUserInfo.username
-      }
+      payload.username = res.additionalUserInfo?.username ?? ''
 
       localStorage.setItem('profile', JSON.stringify({ ...payload }))
 

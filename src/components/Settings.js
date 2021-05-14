@@ -38,7 +38,7 @@ const Settings = props => {
 
   useEffect(() => {
     const profile = JSON.parse(localStorage.getItem('profile'))
-    setCurrentTheme(localStorage.getItem('userTheme') || currentTheme)
+    setCurrentTheme(localStorage.getItem('userTheme') ?? currentTheme)
 
     if (profile) {
       props.loadProfileFromStorage({

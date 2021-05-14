@@ -40,7 +40,7 @@ class GitHubAPI {
       })
       .then(res => {
         const { default_branch, message } = res
-        if (message && message.toLowerCase() === 'not found') {
+        if (message?.toLowerCase() === 'not found') {
           return Promise.reject(ERROR_REPO_NOT_FOUND)
         }
         return default_branch

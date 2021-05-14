@@ -119,7 +119,7 @@ class FileExplorer extends React.PureComponent {
   render() {
     const rootNodes = this.getRootNodes()
 
-    if (!rootNodes || rootNodes.length === 0) {
+    if (rootNodes?.length === 0) {
       return null
     }
 

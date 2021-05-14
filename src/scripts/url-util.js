@@ -31,7 +31,9 @@ class URLUtil {
     return new Promise((resolve, reject) => {
       fetch(url, config)
         .then(res => {
-          if (res.headers.get('x-ratelimit-remaining') === '0') {
+          const rateLimitRemaining = res.headers.get('x-ratelimit-remaining')
+
+          if (parseInt(rateLimitRemaining, 10) === 0) {
             reject('rate limit exceeded')
             store.dispatch(showModal(ModalTypes.RATE_LIMIT))
           } else {
@@ -171,7 +173,7 @@ class URLUtil {
    */
   static getSearchParam(key, defaultValue = null) {
     const params = new URLSearchParams(window.location.search)
-    return params.get(key) || defaultValue
+    return params.get(key) ?? defaultValue
   }
 
   /**
