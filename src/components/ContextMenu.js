@@ -27,7 +27,7 @@ const ContextMenu = props => {
     if (isOpen) {
       let { x, y } = props.coords
 
-      if (containerRef && containerRef.current) {
+      if (containerRef?.current) {
         // If the menu is off the screen, set its position to 4px
         // away from the edge of the screen
         const menuWidth = containerRef.current.offsetWidth + 4
@@ -89,7 +89,13 @@ const ContextMenu = props => {
 }
 
 ContextMenu.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
+  /**
+   * A helper callback that makes it easier to close the
+   * menu when any of the options are clicked
+   */
+  onOptionClick: PropTypes.func,
+  onOverlayClick: PropTypes.func,
+  isOpen: PropTypes.bool,
   coords: PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired
@@ -100,17 +106,13 @@ ContextMenu.propTypes = {
       onClick: PropTypes.func.isRequired,
       disabled: PropTypes.bool
     })
-  ).isRequired,
-  onOverlayClick: PropTypes.func.isRequired,
-  /**
-   * A helper callback that makes it easier to close the
-   * menu when any of the options are clicked
-   */
-  onOptionClick: PropTypes.func
+  ).isRequired
 }
 
 ContextMenu.defaultProps = {
-  onOptionClick: () => {}
+  onOptionClick: () => {},
+  onOverlayClick: () => {},
+  isOpen: false
 }
 
 export default ContextMenu

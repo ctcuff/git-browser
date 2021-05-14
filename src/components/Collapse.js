@@ -2,7 +2,7 @@ import '../style/collapse.scss'
 import React, { useState, useRef, useEffect } from 'react'
 import { FiChevronRight } from 'react-icons/fi'
 import PropTypes from 'prop-types'
-import { noop, withClasses } from '../scripts/util'
+import { withClasses } from '../scripts/util'
 
 const Collapse = React.forwardRef((props, ref) => {
   const [isOpen, setOpen] = useState(props.open)
@@ -39,16 +39,16 @@ const Collapse = React.forwardRef((props, ref) => {
 Collapse.displayName = 'Collapse'
 
 Collapse.propTypes = {
-  title: PropTypes.string.isRequired,
   open: PropTypes.bool,
   onToggle: PropTypes.func,
   children: PropTypes.node,
-  className: PropTypes.string
+  className: PropTypes.string,
+  title: PropTypes.string.isRequired
 }
 
 Collapse.defaultProps = {
   open: false,
-  onToggle: noop,
+  onToggle: () => {},
   className: '',
   children: null
 }

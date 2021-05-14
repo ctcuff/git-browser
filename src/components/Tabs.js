@@ -188,12 +188,17 @@ const TabView = props => {
 }
 
 Tab.propTypes = {
-  title: PropTypes.string.isRequired,
+  path: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node
   ]),
-  path: PropTypes.string
+  title: PropTypes.string.isRequired
+}
+
+Tab.defaultProps = {
+  path: '',
+  children: null
 }
 
 TabView.propTypes = {
@@ -208,14 +213,20 @@ TabView.propTypes = {
       })
     )
   ]),
+  repoPath: PropTypes.string,
+  branch: PropTypes.string,
   onTabClosed: PropTypes.func.isRequired,
   activeTabIndex: PropTypes.number.isRequired,
   onSelectTab: PropTypes.func.isRequired,
   onCloseAllClick: PropTypes.func.isRequired,
-  repoPath: PropTypes.string,
-  branch: PropTypes.string,
   showModal: PropTypes.func.isRequired,
   onCloseOtherTabsClick: PropTypes.func.isRequired
+}
+
+TabView.defaultProps = {
+  children: null,
+  repoPath: '',
+  branch: ''
 }
 
 const mapStateToProps = state => ({

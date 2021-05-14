@@ -406,16 +406,16 @@ class ExplorerPanel extends React.Component {
   }
 }
 
-const mapDispatchToProps = {
-  setRepoData
-}
-
 ExplorerPanel.propTypes = {
   onSelectFile: PropTypes.func.isRequired,
   onSearchStarted: PropTypes.func.isRequired,
   onSearchFinished: PropTypes.func.isRequired,
   setRepoData: PropTypes.func.isRequired,
   activeFilePath: PropTypes.string.isRequired
+}
+
+const mapDispatchToProps = {
+  setRepoData
 }
 
 export default connect(null, mapDispatchToProps)(ExplorerPanel)

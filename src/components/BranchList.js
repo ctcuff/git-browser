@@ -30,7 +30,10 @@ const BranchList = props => {
       ))}
       {props.truncated && (
         <li className="truncated-message">
-          <small className="branch-name">
+          <small
+            className="branch-name"
+            title="The GitHub API limits the number of branches we can display."
+          >
             Only 100 branches were displayed
           </small>
         </li>
@@ -54,9 +57,16 @@ BranchList.propTypes = {
       repoUrl: PropTypes.string.isRequired
     })
   ),
-  onBranchClick: PropTypes.func.isRequired,
+  onBranchClick: PropTypes.func,
   currentBranch: PropTypes.string,
-  truncated: PropTypes.bool.isRequired
+  truncated: PropTypes.bool
+}
+
+BranchList.defaultProps = {
+  branches: [],
+  onBranchClick: () => {},
+  currentBranch: '',
+  truncated: false
 }
 
 export default BranchList

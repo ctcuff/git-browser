@@ -35,17 +35,23 @@ const ModalRoot = ({ isOpen, modalType, modalProps }) => {
   return <Modal {...modalProps} />
 }
 
-const mapStateToProps = state => ({
-  isOpen: state.modal.isOpen,
-  modalType: state.modal.modalType,
-  modalProps: state.modal.modalProps
-})
-
 ModalRoot.propTypes = {
   modalType: PropTypes.oneOf(Object.keys(ModalComponents)),
   isOpen: PropTypes.bool,
   modalProps: PropTypes.object
 }
+
+ModalRoot.defaultProps = {
+  isOpen: false,
+  modalProps: {},
+  modalType: ''
+}
+
+const mapStateToProps = state => ({
+  isOpen: state.modal.isOpen,
+  modalType: state.modal.modalType,
+  modalProps: state.modal.modalProps
+})
 
 const ConnectedModal = connect(mapStateToProps)(ModalRoot)
 

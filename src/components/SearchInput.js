@@ -1,7 +1,6 @@
 import '../style/search-input.scss'
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { noop } from '../scripts/util'
 import { AiOutlineSearch, AiOutlineLoading } from 'react-icons/ai'
 
 const rand = () => Math.floor(Math.random() * 1_000_000)
@@ -96,23 +95,22 @@ const SearchInput = props => {
 }
 
 SearchInput.propTypes = {
-  onSearch: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
   onChange: PropTypes.func,
+  hasError: PropTypes.bool,
   placeholder: PropTypes.string,
   className: PropTypes.string,
-  hasError: PropTypes.bool,
   errorMessage: PropTypes.string,
-  isLoading: PropTypes.bool
+  isLoading: PropTypes.bool,
+  onSearch: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired
 }
 
 SearchInput.defaultProps = {
-  onChange: noop,
+  onChange: () => {},
   placeholder: '',
   hasError: false,
   errorMessage: '',
   isLoading: false,
-  initialValue: '',
   className: ''
 }
 

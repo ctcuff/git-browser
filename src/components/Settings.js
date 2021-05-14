@@ -125,6 +125,22 @@ const Settings = props => {
   )
 }
 
+Settings.propTypes = {
+  username: PropTypes.string,
+  isLoggedIn: PropTypes.bool.isRequired,
+  login: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  loadProfileFromStorage: PropTypes.func.isRequired,
+  setTheme: PropTypes.func.isRequired,
+  showModal: PropTypes.func.isRequired,
+  setPreferredTheme: PropTypes.func.isRequired
+}
+
+Settings.defaultProps = {
+  username: ''
+}
+
 const mapDispatchToProps = {
   login,
   logout,
@@ -139,17 +155,5 @@ const mapStateToProps = state => ({
   username: state.user.username,
   isLoading: state.user.isLoading
 })
-
-Settings.propTypes = {
-  isLoggedIn: PropTypes.bool.isRequired,
-  username: PropTypes.string,
-  login: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  loadProfileFromStorage: PropTypes.func.isRequired,
-  setTheme: PropTypes.func.isRequired,
-  showModal: PropTypes.func.isRequired,
-  setPreferredTheme: PropTypes.func.isRequired
-}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings)

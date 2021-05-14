@@ -11,8 +11,8 @@ const LoadingOverlay = props => (
 )
 
 LoadingOverlay.propTypes = {
-  text: PropTypes.string.isRequired,
-  className: PropTypes.string
+  className: PropTypes.string,
+  text: PropTypes.string.isRequired
 }
 
 LoadingOverlay.defaultProps = {

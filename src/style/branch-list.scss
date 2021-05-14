@@ -22,10 +22,16 @@
     }
 
     &.truncated-message {
+      padding-top: 0.8em;
+      padding-bottom: 0.8em;
+      border-top: 1px solid var(--color-border, red);
       cursor: default;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    &:last-child {
+    &:last-child:not(.truncated-message) {
       padding-bottom: 6px;
     }
 

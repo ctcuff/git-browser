@@ -100,8 +100,4 @@ FileSearch.propTypes = {
   ).isRequired
 }
 
-FileSearch.defaultProps = {
-  treeData: {}
-}
-
 export default FileSearch

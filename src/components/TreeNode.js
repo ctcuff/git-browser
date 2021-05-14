@@ -3,7 +3,7 @@ import React from 'react'
 import { FaRegFile, FaFolder, FaFolderOpen } from 'react-icons/fa'
 import { FiChevronRight, FiChevronDown } from 'react-icons/fi'
 import PropTypes from 'prop-types'
-import { noop, withClasses } from '../scripts/util'
+import { withClasses } from '../scripts/util'
 
 const getPaddingLeft = (level, type) => {
   const defaultPadding = 20
@@ -98,6 +98,11 @@ const TreeNode = props => {
 }
 
 TreeNode.propTypes = {
+  onToggle: PropTypes.func,
+  showPath: PropTypes.bool,
+  className: PropTypes.string,
+  activeFilePath: PropTypes.string,
+  level: PropTypes.number,
   node: PropTypes.shape({
     type: PropTypes.oneOf(['file', 'folder']),
     name: PropTypes.string,
@@ -107,20 +112,16 @@ TreeNode.propTypes = {
     isOpen: PropTypes.bool
   }).isRequired,
   getChildren: PropTypes.func.isRequired,
-  level: PropTypes.number.isRequired,
-  onToggle: PropTypes.func,
-  onSelectNode: PropTypes.func.isRequired,
-  showPath: PropTypes.bool,
-  className: PropTypes.string,
-  activeFilePath: PropTypes.string
+  onSelectNode: PropTypes.func.isRequired
 }
 
 TreeNode.defaultProps = {
   level: 0,
-  onToggle: noop,
-  getChildren: noop,
+  onToggle: () => {},
+  getChildren: () => {},
   className: '',
-  activeFilePath: ''
+  activeFilePath: '',
+  showPath: false
 }
 
 export default TreeNode

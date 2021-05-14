@@ -286,18 +286,15 @@ class FileRenderer extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  repoPath: state.search.repoPath,
-  branch: state.search.branch
-})
-
 FileRenderer.propTypes = {
-  // "content" will be a base64 encoded string
+  wasForceRendered: PropTypes.bool,
+  /**
+   * A base64 encoded string
+   */
   content: PropTypes.string.isRequired,
   fileName: PropTypes.string.isRequired,
   extension: PropTypes.string.isRequired,
   onForceRender: PropTypes.func.isRequired,
-  wasForceRendered: PropTypes.bool,
   repoPath: PropTypes.string.isRequired,
   filePath: PropTypes.string.isRequired,
   branch: PropTypes.string.isRequired
@@ -306,5 +303,10 @@ FileRenderer.propTypes = {
 FileRenderer.defaultProps = {
   wasForceRendered: false
 }
+
+const mapStateToProps = state => ({
+  repoPath: state.search.repoPath,
+  branch: state.search.branch
+})
 
 export default connect(mapStateToProps)(FileRenderer)

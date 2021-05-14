@@ -16,16 +16,18 @@ const ErrorOverlay = props => (
 )
 
 ErrorOverlay.propTypes = {
-  message: PropTypes.string.isRequired,
   onRetryClick: PropTypes.func,
   retryMessage: PropTypes.string,
   showIcon: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
+  message: PropTypes.string.isRequired
 }
 
 ErrorOverlay.defaultProps = {
   showIcon: true,
-  className: ''
+  className: '',
+  onRetryClick: () => {},
+  retryMessage: ''
 }
 
 export default ErrorOverlay

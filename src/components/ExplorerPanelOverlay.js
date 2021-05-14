@@ -21,11 +21,7 @@ ExplorerPanelOverlay.propTypes = {
       onClick: PropTypes.func.isRequired,
       title: PropTypes.string.isRequired
     }).isRequired
-  )
-}
-
-ExplorerPanelOverlay.defaultProps = {
-  panelActions: []
+  ).isRequired
 }
 
 export default ExplorerPanelOverlay
