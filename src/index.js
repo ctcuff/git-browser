@@ -11,39 +11,36 @@ if (module.hot) {
   module.hot.accept()
 }
 
-const theme = localStorage.getItem('theme')
+const savedTheme = localStorage.getItem('userTheme')
 const query = window.matchMedia('(prefers-color-scheme: dark)')
 
-const updateFavicon = isDark => {
-  const link = isDark ? '/favicon-light.ico' : '/favicon-dark.ico'
+const updateFavicon = query => {
+  const link = query.matches ? '/favicon-light.ico' : '/favicon-dark.ico'
   document.querySelector('link[rel="icon"]').setAttribute('href', link)
 }
 
 const updatePreferredTheme = query => {
-  if (query.matches) {
-    store.dispatch(setPreferredTheme('theme-dark'))
-  } else {
-    store.dispatch(setPreferredTheme('theme-light'))
-  }
+  const theme = query.matches ? 'theme-dark' : 'theme-light'
+  store.dispatch(setPreferredTheme(theme))
 }
-
-updatePreferredTheme(query)
 
 query.addEventListener('change', event => {
-  updateFavicon(event.matches)
+  const storedTheme = localStorage.getItem('userTheme')
+  updateFavicon(event)
 
-  if (localStorage.getItem('theme') !== 'theme-auto') {
-    return
+  if (storedTheme === 'theme-auto') {
+    updatePreferredTheme(event)
   }
-
-  updatePreferredTheme(event)
 })
 
-if (theme) {
-  store.dispatch(setTheme(theme))
-}
+updatePreferredTheme(query)
+updateFavicon(query)
 
-updateFavicon(query.matches)
+if (savedTheme) {
+  store.dispatch(setTheme(savedTheme))
+} else {
+  localStorage.setItem('userTheme', 'theme-auto')
+}
 
 ReactDOM.render(
   <React.StrictMode>

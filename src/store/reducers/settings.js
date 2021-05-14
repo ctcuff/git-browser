@@ -1,8 +1,8 @@
 const initialState = {
   theme: {
     // The theme the user has currently selected
-    userTheme: 'theme-light',
-    // The theme of their system
+    userTheme: 'theme-auto',
+    // The theme of the user's system
     preferredTheme: 'theme-light'
   }
 }

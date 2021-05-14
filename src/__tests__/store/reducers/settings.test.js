@@ -4,7 +4,7 @@ describe('settings reducer', () => {
   test('returns initial state', () => {
     expect(settingsReducer(undefined, {})).toEqual({
       theme: {
-        userTheme: 'theme-light',
+        userTheme: 'theme-auto',
         preferredTheme: 'theme-light'
       }
     })

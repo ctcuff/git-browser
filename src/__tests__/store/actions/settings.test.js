@@ -43,21 +43,21 @@ describe('settings actions', () => {
     expect(lightStyle.getAttribute('disabled')).toEqual('disabled')
     expect(darkStyle.getAttribute('disabled')).toEqual(null)
     expect(body.className).toEqual('theme-dark')
-    expect(localStorage.getItem('theme')).toEqual('theme-dark')
+    expect(localStorage.getItem('userTheme')).toEqual('theme-dark')
 
     actions.setTheme('theme-light')
 
     expect(lightStyle.getAttribute('disabled')).toEqual(null)
     expect(darkStyle.getAttribute('disabled')).toEqual('disabled')
     expect(body.className).toEqual('theme-light')
-    expect(localStorage.getItem('theme')).toEqual('theme-light')
+    expect(localStorage.getItem('userTheme')).toEqual('theme-light')
 
     actions.setTheme('theme-auto')
 
     expect(lightStyle.getAttribute('disabled')).toEqual(null)
     expect(darkStyle.getAttribute('disabled')).toEqual('disabled')
     expect(body.className).toEqual('theme-light')
-    expect(localStorage.getItem('theme')).toEqual('theme-auto')
+    expect(localStorage.getItem('userTheme')).toEqual('theme-auto')
 
     actions.setTheme('invalid-theme')
 

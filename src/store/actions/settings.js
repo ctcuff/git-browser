@@ -25,7 +25,7 @@ const applyTheme = theme => {
 }
 
 const setTheme = theme => {
-  localStorage.setItem('theme', theme)
+  localStorage.setItem('userTheme', theme)
 
   if (theme !== 'theme-auto') {
     applyTheme(theme)

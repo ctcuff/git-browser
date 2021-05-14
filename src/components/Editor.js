@@ -85,14 +85,14 @@ class Editor extends React.Component {
     })
 
     this.editorRef = React.createRef()
-    this.getTheme = this.getTheme.bind(this)
+    this.getEditorTheme = this.getEditorTheme.bind(this)
     this.initEditor = this.initEditor.bind(this)
     this.renderPreviewButton = this.renderPreviewButton.bind(this)
     this.viewZoneCallback = this.viewZoneCallback.bind(this)
     this.forceRenderPreview = this.forceRenderPreview.bind(this)
   }
 
-  getTheme(colorScheme) {
+  getEditorTheme(colorScheme) {
     return colorScheme === 'theme-dark' ? 'vs-dark' : 'vs-light'
   }
 
@@ -102,7 +102,7 @@ class Editor extends React.Component {
       theme.userTheme === 'theme-auto' ? theme.preferredTheme : theme.userTheme
 
     if (prevProps.theme !== colorScheme && this.monaco) {
-      this.monaco.setTheme(this.getTheme(colorScheme))
+      this.monaco.setTheme(this.getEditorTheme(colorScheme))
     }
   }
 
@@ -150,7 +150,7 @@ class Editor extends React.Component {
       },
       automaticLayout: true,
       fontSize: 14,
-      theme: this.getTheme(editorTheme),
+      theme: this.getEditorTheme(editorTheme),
       renderIndentGuides: false
     })
 
@@ -171,9 +171,7 @@ class Editor extends React.Component {
   }
 
   componentWillUnmount() {
-    if (this.editor) {
-      this.editor.dispose()
-    }
+    this.editor?.dispose()
     this.encodeWorker.terminate()
   }
 

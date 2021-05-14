@@ -26,12 +26,9 @@ const Settings = props => {
 
     if (theme === 'theme-auto') {
       const query = window.matchMedia('(prefers-color-scheme: dark)')
+      const preferredTheme = query.matches ? 'theme-dark' : 'theme-light'
 
-      if (query.matches) {
-        props.setPreferredTheme('theme-dark')
-      } else {
-        props.setPreferredTheme('theme-light')
-      }
+      props.setPreferredTheme(preferredTheme)
     }
   }
 
@@ -41,7 +38,7 @@ const Settings = props => {
 
   useEffect(() => {
     const profile = JSON.parse(localStorage.getItem('profile'))
-    setCurrentTheme(localStorage.getItem('theme'))
+    setCurrentTheme(localStorage.getItem('userTheme') || currentTheme)
 
     if (profile) {
       props.loadProfileFromStorage({
@@ -82,7 +79,7 @@ const Settings = props => {
       </div>
       <button
         className={`login-btn ${isLoading ? 'is-loading' : ''}`}
-        onClick={onAuthClick.bind(this, false)}
+        onClick={() => onAuthClick(false)}
         disabled={isLoading}
       >
         {isLoading ? (
@@ -97,7 +94,7 @@ const Settings = props => {
       {isLoggedIn || isLoading ? null : (
         <button
           className={`login-btn ${isLoading ? 'is-loading' : ''}`}
-          onClick={onAuthClick.bind(this, true)}
+          onClick={() => onAuthClick(true)}
           disabled={isLoading}
         >
           {isLoading ? (
@@ -111,7 +108,7 @@ const Settings = props => {
         </button>
       )}
       {isLoggedIn || isLoading ? null : (
-        <p className="source-link" onClick={openAccessModal.bind(this)}>
+        <p className="source-link" onClick={openAccessModal}>
           What is this?
         </p>
       )}
