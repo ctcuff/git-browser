@@ -22,10 +22,12 @@ const Collapse = React.forwardRef((props, ref) => {
   }, [props.open])
 
   return (
-    <div className={`collapse ${openClass}`} ref={ref}>
-      <button className="header" onClick={toggle}>
+    <div className={`collapse ${openClass} ${props.className}`} ref={ref}>
+      <button className="header" onClick={toggle} title={props.title}>
         <FiChevronRight className="toggle-icon" />
-        <span>{props.title}</span>
+        <span className="collapse-title" title={props.title}>
+          {props.title}
+        </span>
       </button>
       <div className="content" ref={contentRef}>
         {props.children}
@@ -40,12 +42,15 @@ Collapse.propTypes = {
   title: PropTypes.string.isRequired,
   open: PropTypes.bool,
   onToggle: PropTypes.func,
-  children: PropTypes.node
+  children: PropTypes.node,
+  className: PropTypes.string
 }
 
 Collapse.defaultProps = {
   open: false,
-  onToggle: noop
+  onToggle: noop,
+  className: '',
+  children: null
 }
 
 export default Collapse

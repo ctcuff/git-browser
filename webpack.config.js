@@ -73,6 +73,8 @@ module.exports = env => {
       open: false,
       clientLogLevel: 'silent',
       port: 9000,
+      host: '0.0.0.0',
+      useLocalIp: true,
       hot: true,
       // Allows any url to be visited without throwing a 404 in dev mode
       historyApiFallback: {

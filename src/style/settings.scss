@@ -46,13 +46,17 @@
   }
 
   .segmented-btn {
-    border: 1px solid var(--color-border);
+    border: none;
+    box-shadow: 0 0 0 1px var(--color-border);
     display: flex;
     border-radius: 3px;
     overflow: hidden;
     margin-bottom: 0.8em;
 
     & > button {
+      border: none;
+      box-shadow: 0 0 0 1px var(--color-border);
+      margin-top: 0;
       margin-bottom: 0;
       border-radius: 0 !important;
     }

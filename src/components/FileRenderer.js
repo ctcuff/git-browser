@@ -9,7 +9,7 @@ import MarkdownRenderer from './renderers/MarkdownRenderer'
 import CSVRenderer from './renderers/CSVRenderer'
 import JupyterRenderer from './renderers/JupyterRenderer'
 import AsciiDocRenderer from './renderers/AsciiDocRenderer'
-import GLBRenderer from './renderers/GLBRenderer'
+import ModelRenderer from './renderers/ModelRenderer'
 import FontRenderer from './renderers/FontRenderer'
 import EmbeddedDocRenderer from './renderers/EmbeddedDocRenderer'
 import ZipRenderer from './renderers/ZipRenderer'
@@ -171,7 +171,7 @@ class FileRenderer extends React.Component {
         return <AudioRenderer content={content} extension={extension} />
       case '.glb':
       case '.gltf':
-        return <GLBRenderer content={content} extension={extension} />
+        return <ModelRenderer content={content} extension={extension} />
       case '.eot':
       case '.otf':
       case '.ttf':

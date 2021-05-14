@@ -1,3 +1,5 @@
+@import './mixins/media.scss';
+
 .error-overlay {
   -webkit-font-smoothing: antialiased;
   display: flex;
@@ -21,6 +23,15 @@
 
   .error-message {
     text-align: center;
+    line-height: 1.7;
+
+    @include desktop() {
+      max-width: 50%;
+    }
+
+    @include mobile() {
+      max-width: 80%;
+    }
   }
 
   .error-icon {
