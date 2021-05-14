@@ -53,8 +53,10 @@ BaseModal.propTypes = {
 }
 
 BaseModal.defaultProps = {
+  title: '',
   actions: [],
-  className: ''
+  className: '',
+  children: null
 }
 
 export default connect(null, mapDispatchToProps)(BaseModal)

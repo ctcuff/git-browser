@@ -40,6 +40,10 @@ AuthErrorModal.propTypes = {
   hideModal: PropTypes.func.isRequired
 }
 
+AuthErrorModal.defaultProps = {
+  code: ''
+}
+
 const mapDispatchToProps = {
   hideModal
 }
