@@ -131,7 +131,7 @@ class FileRenderer extends React.Component {
     }
 
     // Occurs if an empty string was passed to this component
-    if (content?.trim() || !decodedContent?.trim()) {
+    if (!content?.trim() && !decodedContent?.trim()) {
       return <ErrorOverlay message="No content to preview." showIcon={false} />
     }
 
