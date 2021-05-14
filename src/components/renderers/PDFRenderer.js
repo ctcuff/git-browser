@@ -176,12 +176,11 @@ class PDFRenderer extends React.Component {
 }
 
 PDFPage.propTypes = {
-  page: PropTypes.object
+  page: PropTypes.object.isRequired
 }
 
 PDFRenderer.propTypes = {
-  content: PropTypes.string.isRequired,
-  onLoadFinished: PropTypes.func
+  content: PropTypes.string.isRequired
 }
 
 export default PDFRenderer

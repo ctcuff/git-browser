@@ -198,8 +198,9 @@ class MarkdownRenderer extends React.Component {
 MarkdownRenderer.propTypes = {
   content: PropTypes.string.isRequired,
   theme: PropTypes.shape({
-    userTheme: PropTypes.oneOf(['theme-light', 'theme-dark', 'theme-auto']),
-    preferredTheme: PropTypes.oneOf(['theme-light', 'theme-dark'])
+    userTheme: PropTypes.oneOf(['theme-light', 'theme-dark', 'theme-auto'])
+      .isRequired,
+    preferredTheme: PropTypes.oneOf(['theme-light', 'theme-dark']).isRequired
   }).isRequired
 }
 

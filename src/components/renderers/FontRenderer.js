@@ -165,6 +165,7 @@ const FontRenderer = props => {
 FontRenderer.propTypes = {
   content: PropTypes.string.isRequired,
   extension: PropTypes.oneOf(['.eot', '.otf', '.ttf', '.woff', '.woff2'])
+    .isRequired
 }
 
 export default FontRenderer

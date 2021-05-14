@@ -49,9 +49,8 @@ const ImageRenderer = props => {
   const [gridClass, setGridClass] = useState('')
   const mimeType = getMimeType(extension)
 
-  const onImageLoaded = () => {
-    setLoading(false)
-  }
+  const onImageLoaded = () => setLoading(false)
+  const toggleBackgroundClass = () => toggleGrid(!hasGrid)
 
   const onLoadError = () => {
     setLoading(false)
@@ -61,10 +60,6 @@ const ImageRenderer = props => {
   const retry = () => {
     setLoading(true)
     setError(false)
-  }
-
-  const toggleBackgroundClass = () => {
-    toggleGrid(!hasGrid)
   }
 
   useEffect(() => {
@@ -130,8 +125,9 @@ ImageRenderer.propTypes = {
     '.ico'
   ]).isRequired,
   theme: PropTypes.shape({
-    userTheme: PropTypes.oneOf(['theme-dark', 'theme-light', 'theme-auto']),
-    preferredTheme: PropTypes.oneOf(['theme-dark', 'theme-light'])
+    userTheme: PropTypes.oneOf(['theme-dark', 'theme-light', 'theme-auto'])
+      .isRequired,
+    preferredTheme: PropTypes.oneOf(['theme-dark', 'theme-light']).isRequired
   }).isRequired
 }
 
