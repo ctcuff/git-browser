@@ -18,14 +18,14 @@ class GitHubAPI {
    */
   static getDefaultBranch(repoUrl) {
     if (!URLUtil.isGithubUrl(repoUrl)) {
-      return Promise.reject(ERROR_INVALID_GITHUB_URL)
+      return Promise.reject(new Error(ERROR_INVALID_GITHUB_URL))
     }
 
     const repoPath = URLUtil.extractRepoPath(repoUrl)
     const apiUrl = `${BASE_REPO_URL}/${repoPath}`
 
     if (!repoPath) {
-      return Promise.reject(ERROR_REPO_NOT_FOUND)
+      return Promise.reject(new Error(ERROR_REPO_NOT_FOUND))
     }
 
     return URLUtil.request(apiUrl)
@@ -36,9 +36,9 @@ class GitHubAPI {
 
         switch (res.status) {
           case 404:
-            return Promise.reject(ERROR_REPO_NOT_FOUND)
+            return Promise.reject(new Error(ERROR_REPO_NOT_FOUND))
           default:
-            return Promise.reject(UNKNOWN_ERROR)
+            return Promise.reject(new Error(UNKNOWN_ERROR))
         }
       })
       .then(res => {
@@ -46,7 +46,7 @@ class GitHubAPI {
         const { default_branch, message } = res
 
         if (message?.toLowerCase() === 'not found') {
-          return Promise.reject(ERROR_REPO_NOT_FOUND)
+          return Promise.reject(new Error(UNKNOWN_ERROR))
         }
 
         // eslint-disable-next-line camelcase
@@ -92,7 +92,7 @@ class GitHubAPI {
     const branchUrl = URLUtil.buildBranchUrl(repoPath, branch)
 
     if (!repoPath) {
-      return Promise.reject(ERROR_REPO_NOT_FOUND)
+      return Promise.reject(new Error(UNKNOWN_ERROR))
     }
 
     return URLUtil.request(branchUrl)
@@ -103,9 +103,9 @@ class GitHubAPI {
 
         switch (res.status) {
           case 404:
-            return Promise.reject(ERROR_BRANCH_NOT_FOUND)
+            return Promise.reject(new Error(ERROR_BRANCH_NOT_FOUND))
           default:
-            return Promise.reject(UNKNOWN_ERROR)
+            return Promise.reject(new Error(UNKNOWN_ERROR))
         }
       })
       .then(res => {
@@ -135,9 +135,9 @@ class GitHubAPI {
 
         switch (res.status) {
           case 404:
-            return Promise.reject(ERROR_FILE_NOT_FOUND)
+            return Promise.reject(new Error(ERROR_FILE_NOT_FOUND))
           default:
-            return Promise.reject(UNKNOWN_ERROR)
+            return Promise.reject(new Error(UNKNOWN_ERROR))
         }
       })
       .then(res => res.content)
@@ -157,7 +157,7 @@ class GitHubAPI {
    */
   static getBranches(repoUrl) {
     if (!URLUtil.isGithubUrl(repoUrl)) {
-      return Promise.reject(ERROR_INVALID_GITHUB_URL)
+      return Promise.reject(new Error(ERROR_INVALID_GITHUB_URL))
     }
 
     const repoPath = URLUtil.extractRepoPath(repoUrl)
@@ -165,7 +165,7 @@ class GitHubAPI {
     let truncated = false
 
     if (!repoPath) {
-      return Promise.reject(ERROR_REPO_NOT_FOUND)
+      return Promise.reject(new Error(UNKNOWN_ERROR))
     }
 
     return URLUtil.request(`${branchesUrl}?per_page=100`)
@@ -177,9 +177,9 @@ class GitHubAPI {
 
         switch (res.status) {
           case 404:
-            return Promise.reject(ERROR_REPO_NOT_FOUND)
+            return Promise.reject(new Error(UNKNOWN_ERROR))
           default:
-            return Promise.reject(UNKNOWN_ERROR)
+            return Promise.reject(new Error(UNKNOWN_ERROR))
         }
       })
       .then(res => {

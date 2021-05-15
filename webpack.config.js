@@ -96,20 +96,7 @@ module.exports = env => {
         },
         {
           test: /\.(css|scss)$/,
-          use: [
-            {
-              loader: 'style-loader'
-            },
-            {
-              loader: 'css-loader'
-            },
-            {
-              loader: 'postcss-loader'
-            },
-            {
-              loader: 'sass-loader'
-            }
-          ]
+          use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
         }
       ]
     },

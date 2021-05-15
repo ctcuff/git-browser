@@ -10,8 +10,8 @@
     "build": "webpack --config webpack.config.js --mode='production' --env.debug='false'",
     "build:analyze": "yarn build --env.analyze",
     "dev": "webpack-dev-server --env.debug='true'",
-    "test": "jest --env=./test-env.js",
-    "test:ci": "yarn test --bail --passWithNoTests --coverage",
+    "test": "jest --env=./test-env.js --silent",
+    "test:ci": "yarn test --bail --passWithNoTests --coverage --silent",
     "lint": "eslint './src/**/*{.js,.jsx}'",
     "format": "yarn format:js && yarn format:scss",
     "format:js": "prettier --write './src/**/*{.js,.jsx}'",
@@ -92,11 +92,12 @@
     }
   },
   "lint-staged": {
-    "./src/**/*{.js,.jsx}": [
-      "yarn lint"
-    ],
     "./src/**/*{.scss,.js,.jsx}": [
       "prettier --write"
+    ],
+    "./src/**/*{.js,.jsx}": [
+      "yarn lint",
+      "yarn test"
     ]
   },
   "postcss": {

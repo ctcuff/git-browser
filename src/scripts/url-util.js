@@ -69,7 +69,7 @@ class URLUtil {
 
     const uri = new URI(this.addScheme(url))
 
-    return uri.hostname().toLowerCase() === 'github.com'
+    return uri.hostname().toLowerCase().trim() === 'github.com'
   }
 
   /**

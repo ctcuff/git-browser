@@ -74,7 +74,9 @@ describe('URLUtil', () => {
     mockResp.headers.set('x-ratelimit-remaining', '0')
     global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
 
-    expect(URLUtil.request('test')).rejects.toEqual('rate limit exceeded')
+    expect(URLUtil.request('test')).rejects.toEqual(
+      new Error('rate limit exceeded')
+    )
 
     global.fetch = jest.fn().mockReturnValue(Promise.reject('mockError'))
 
@@ -213,7 +215,7 @@ describe('URLUtil', () => {
         branch: 'main',
         filePath: 'src/test.js'
       })
-    }).rejects.toEqual('Error downloading file')
+    }).rejects.toEqual(new Error('Error downloading file'))
 
     global.fetch = jest.fn().mockReturnValue(Promise.reject())
 
@@ -223,7 +225,7 @@ describe('URLUtil', () => {
         branch: 'main',
         filePath: 'src/test.js'
       })
-    }).rejects.toEqual('Error downloading file')
+    }).rejects.toEqual(new Error('Error downloading file'))
 
     expect(urlSpy).not.toHaveBeenCalled()
   })
