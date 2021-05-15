@@ -30,8 +30,8 @@ jobs:
       - name: Build with Node.js ${{ matrix.node-version }}
         run: yarn build
 
-      - uses: netlify/actions/cli@master 
       - name: Deploy to Netlify
+        uses: netlify/actions/cli@master 
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
