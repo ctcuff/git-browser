@@ -5,7 +5,7 @@ import { ModalTypes } from '../components/ModalRoot'
 import Logger from './logger'
 
 const BASE_API_URL = 'https://api.github.com'
-const BASE_REPO_URL = BASE_API_URL + '/repos'
+const BASE_REPO_URL = `${BASE_API_URL}/repos`
 
 class URLUtil {
   /**
@@ -34,7 +34,7 @@ class URLUtil {
           const rateLimitRemaining = res.headers.get('x-ratelimit-remaining')
 
           if (parseInt(rateLimitRemaining, 10) === 0) {
-            reject('rate limit exceeded')
+            reject(new Error('rate limit exceeded'))
             store.dispatch(showModal(ModalTypes.RATE_LIMIT))
           } else {
             resolve(res)
@@ -50,6 +50,7 @@ class URLUtil {
    */
   static isUrlValid(url) {
     try {
+      // eslint-disable-next-line no-new
       new URL(this.addScheme(url))
       return true
     } catch (e) {
@@ -78,7 +79,7 @@ class URLUtil {
    */
   static addScheme(url) {
     if (!url.startsWith('http') || !url.startsWith('https')) {
-      return 'https://' + url
+      return `https://${url}`
     }
     return url
   }
@@ -204,13 +205,15 @@ class URLUtil {
    * @param {string} path
    */
   static updateURLPath(path) {
+    let normalizedPath = path
+
     // Adding a leading / to the path replaces the entire URL
     // pathname with `path`
     if (!path.startsWith('/')) {
-      path = '/' + path
+      normalizedPath = `/${path}`
     }
 
-    window.history.replaceState({}, '', path)
+    window.history.replaceState({}, '', normalizedPath)
   }
 
   /**
@@ -255,8 +258,8 @@ class URLUtil {
       fetch(githubURL)
         .then(res => {
           if (!res.ok) {
-            reject('Error downloading file')
-            return
+            reject(new Error('Error downloading file'))
+            return null
           }
 
           return res.blob()
@@ -278,7 +281,7 @@ class URLUtil {
         })
         .catch(err => {
           Logger.error(err)
-          reject('Error downloading file')
+          reject(new Error('Error downloading file'))
         })
     })
   }

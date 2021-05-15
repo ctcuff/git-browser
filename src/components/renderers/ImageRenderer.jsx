@@ -1,11 +1,11 @@
 import '../../style/renderers/image-renderer.scss'
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import { GrGrid } from 'react-icons/gr'
+import { connect } from 'react-redux'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import Logger from '../../scripts/logger'
-import { GrGrid } from 'react-icons/gr'
-import { connect } from 'react-redux'
 
 const getMimeType = extension => {
   let type = ''
@@ -38,7 +38,7 @@ const getMimeType = extension => {
       Logger.warn('Invalid extension', extension)
   }
 
-  return 'image/' + type
+  return `image/${type}`
 }
 
 const ImageRenderer = props => {
@@ -91,7 +91,11 @@ const ImageRenderer = props => {
         onLoad={onImageLoaded}
         onError={onLoadError}
       />
-      <button className="grid-toggle" onClick={toggleBackgroundClass}>
+      <button
+        className="grid-toggle"
+        onClick={toggleBackgroundClass}
+        type="button"
+      >
         <GrGrid title="Toggle background" />
       </button>
     </div>

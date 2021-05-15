@@ -110,7 +110,8 @@ class ZipRenderer extends React.Component {
 
     return new Promise((resolve, reject) => {
       this.rawDecodeWorker.onmessage = event => resolve(event.data)
-      this.rawDecodeWorker.onerror = () => reject('Error decoding content')
+      this.rawDecodeWorker.onerror = () =>
+        reject(new Error('Error decoding content'))
     })
   }
 

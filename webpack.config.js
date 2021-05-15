@@ -60,9 +60,9 @@ module.exports = env => {
   }
 
   return {
-    plugins: plugins,
+    plugins,
     mode: 'development',
-    entry: path.resolve(__dirname, 'src', 'index.js'),
+    entry: path.resolve(__dirname, 'src', 'index.jsx'),
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: 'bundle.js',
@@ -85,26 +85,10 @@ module.exports = env => {
     module: {
       rules: [
         {
-          test: /\.js$/,
+          test: /\.(js|jsx?)$/,
           include: path.resolve(__dirname, 'src'),
           exclude: /node_modules/,
-          use: [
-            {
-              loader: 'babel-loader',
-              options: {
-                presets: [
-                  [
-                    '@babel/preset-env',
-                    {
-                      targets: 'defaults'
-                    }
-                  ],
-                  '@babel/preset-react'
-                ]
-              }
-            },
-            'eslint-loader'
-          ]
+          use: ['babel-loader', 'eslint-loader']
         },
         {
           test: /\.(ttf|png|jpg|svg|ico)$/,
@@ -128,6 +112,9 @@ module.exports = env => {
           ]
         }
       ]
+    },
+    resolve: {
+      extensions: ['.js', '.jsx']
     }
   }
 }

@@ -1,7 +1,6 @@
 import '../../style/renderers/markdown-renderer.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { noop } from '../../scripts/util'
 import { connect } from 'react-redux'
 import LoadingOverlay from '../LoadingOverlay'
 import Logger from '../../scripts/logger'
@@ -145,7 +144,7 @@ class MarkdownRenderer extends React.Component {
       }
     })
 
-    md.use(mdPluginFrontMatter, noop)
+    md.use(mdPluginFrontMatter, () => {})
     md.use(mdPluginCheckbox, {
       divWrap: true,
       divClass: 'markdown-checkbox'
@@ -155,7 +154,7 @@ class MarkdownRenderer extends React.Component {
   }
 
   sanitizeMarkdown(markdown) {
-    const DOMPurify = this.DOMPurify
+    const { DOMPurify } = this
 
     DOMPurify.addHook('afterSanitizeElements', this.afterSanitizeElements)
     DOMPurify.addHook('afterSanitizeAttributes', this.afterSanitizeAttributes)
@@ -188,6 +187,7 @@ class MarkdownRenderer extends React.Component {
       <div className="markdown-renderer">
         <div
           className="markdown-content"
+          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: markdownContent }}
         />
       </div>

@@ -1,11 +1,11 @@
 import '../style/app.scss'
 import React from 'react'
+import debounce from 'lodash/debounce'
 import Editor from './Editor'
 import { setCSSVar, getLanguageFromFileName } from '../scripts/util'
 import ExplorerPanel from './ExplorerPanel'
 import GitHubAPI from '../scripts/github-api'
 import { Tab, TabView } from './Tabs'
-import debounce from 'lodash/debounce'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import FileRenderer from './FileRenderer'
@@ -55,13 +55,9 @@ class App extends React.Component {
     window.addEventListener('resize', this.updateViewport)
 
     // Lazy load monaco so the Editor component can render quicker
-    import('monaco-editor/esm/vs/editor/editor.api.js').catch(err => {
+    import('monaco-editor/esm/vs/editor/editor.api').catch(err => {
       Logger.error(err)
     })
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateViewport)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -77,12 +73,12 @@ class App extends React.Component {
     const activeFilePath =
       openedTabs.length > 0 ? openedTabs[activeTabIndex].path : ''
 
+    // eslint-disable-next-line react/no-did-update-set-state
     this.setState({ activeFilePath })
   }
 
-  updateViewport() {
-    // Updates the --vh variable used in the height mixin
-    setCSSVar('--vh', window.innerHeight * 0.01 + 'px')
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateViewport)
   }
 
   onSelectFile(node) {
@@ -121,9 +117,143 @@ class App extends React.Component {
     )
   }
 
+  onToggleRenderable(content, canEditorRender) {
+    // Marks a tab as either renderable by the file preview
+    // component, or by the Editor component
+    const { activeTabIndex, openedTabs } = this.state
+
+    openedTabs[activeTabIndex].canEditorRender = canEditorRender
+    openedTabs[activeTabIndex].content = content
+    openedTabs[activeTabIndex].wasForceRendered = true
+
+    this.setState({ openedTabs })
+  }
+
+  onTabClosed(tabIndex) {
+    let { activeTabIndex } = this.state
+
+    // eslint-disable-next-line react/no-access-state-in-setstate
+    const openedTabs = this.state.openedTabs.filter((tab, index) => {
+      return tabIndex !== index
+    })
+
+    const openedFilePaths = new Set(openedTabs.map(node => node.path))
+
+    // If the active tab was closed but there are still tabs left,
+    // set the tab to the left of the closed tab as the active tab,
+    // but only as long as there are still tabs to the left.
+    if (tabIndex === activeTabIndex) {
+      activeTabIndex = Math.max(activeTabIndex - 1, 0)
+    }
+
+    // Make sure the currently active tab doesn't change when tabs
+    // to the left of it are closed
+    if (tabIndex < activeTabIndex) {
+      activeTabIndex -= 1
+    }
+
+    const filePath =
+      openedTabs.length === 0 ? null : openedTabs[activeTabIndex].path
+
+    URLUtil.updateURLSearchParams({ file: filePath })
+
+    this.setState({
+      openedFilePaths,
+      openedTabs,
+      activeTabIndex
+    })
+  }
+
+  onCloseOtherTabsClick(index) {
+    const { openedTabs } = this.state
+
+    if (openedTabs.length <= 1) {
+      return
+    }
+
+    const tab = openedTabs[index]
+
+    this.setState({
+      openedTabs: [tab],
+      activeTabIndex: 0,
+      openedFilePaths: new Set([tab.path])
+    })
+  }
+
+  onSearchFinished(hasError) {
+    this.setState({ isLoading: false })
+
+    // Small hack to make sure the App doesn't immediately close
+    // the tab that may have been loaded on mount
+    if (!hasError && !this.mountedWithFile) {
+      this.closeAllTabs()
+    }
+
+    this.mountedWithFile = false
+  }
+
+  setActiveTabIndex(activeTabIndex) {
+    const tab = this.state.openedTabs[activeTabIndex]
+
+    if (this.state.activeTabIndex === activeTabIndex) {
+      return
+    }
+
+    if (tab) {
+      URLUtil.updateURLSearchParams({ file: tab.path })
+    }
+
+    this.setState({ activeTabIndex })
+  }
+
+  toggleLoadingOverlay() {
+    this.setState(prevState => ({ isLoading: !prevState.isLoading }))
+  }
+
+  findTabIndex(path) {
+    return this.state.openedTabs.findIndex(tab => tab.path === path)
+  }
+
+  closeAllTabs() {
+    URLUtil.updateURLSearchParams({ file: null })
+    this.setState({
+      openedFilePaths: new Set(),
+      openedTabs: []
+    })
+  }
+
+  decodeTabContent(content, tabIndex) {
+    const { openedTabs } = this.state
+    // Use a worker to avoid UI freezes
+    const decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
+      type: 'module'
+    })
+
+    decodeWorker.postMessage({
+      message: content,
+      type: 'decode'
+    })
+
+    decodeWorker.onerror = event => {
+      openedTabs[tabIndex].hasError = true
+      openedTabs[tabIndex].isLoading = false
+      Logger.error('Error decoding tab content', event)
+      decodeWorker.terminate()
+      this.setState(prevState => ({ openedTabs: prevState.openedTabs }))
+    }
+
+    decodeWorker.onmessage = event => {
+      openedTabs[tabIndex].content = event.data || content
+      openedTabs[tabIndex].canEditorRender = event.data !== null
+      openedTabs[tabIndex].isLoading = false
+      decodeWorker.terminate()
+      this.setState(prevState => ({ openedTabs: prevState.openedTabs }))
+    }
+  }
+
   loadFile(file) {
     const { extension } = getLanguageFromFileName(file.name)
-    const openedTabs = this.state.openedTabs
+    const { openedTabs } = this.state
     let tabIndex = this.findTabIndex(file.path)
 
     if (file.size >= MAX_FILE_SIZE) {
@@ -154,7 +284,7 @@ class App extends React.Component {
           openedTabs[tabIndex].canEditorRender = false
           openedTabs[tabIndex].isLoading = false
 
-          this.setState({ openedTabs: this.state.openedTabs })
+          this.setState(prevState => ({ openedTabs: prevState.openedTabs }))
           return
         }
 
@@ -172,43 +302,15 @@ class App extends React.Component {
         openedTabs[tabIndex].hasError = true
         openedTabs[tabIndex].isLoading = false
 
-        this.setState({ openedTabs: this.state.openedTabs })
+        this.setState(prevState => ({ openedTabs: prevState.openedTabs }))
 
         Logger.error(err)
       })
   }
 
-  decodeTabContent(content, tabIndex) {
-    const openedTabs = this.state.openedTabs
-    // Use a worker to avoid UI freezes
-    const decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
-      type: 'module'
-    })
-
-    decodeWorker.postMessage({
-      message: content,
-      type: 'decode'
-    })
-
-    decodeWorker.onerror = event => {
-      openedTabs[tabIndex].hasError = true
-      openedTabs[tabIndex].isLoading = false
-      Logger.error('Error decoding tab content', event)
-      decodeWorker.terminate()
-      this.setState({ openedTabs: this.state.openedTabs })
-    }
-
-    decodeWorker.onmessage = event => {
-      openedTabs[tabIndex].content = event.data || content
-      openedTabs[tabIndex].canEditorRender = event.data !== null
-      openedTabs[tabIndex].isLoading = false
-      decodeWorker.terminate()
-      this.setState({ openedTabs: this.state.openedTabs })
-    }
-  }
-
-  findTabIndex(path) {
-    return this.state.openedTabs.findIndex(tab => tab.path === path)
+  updateViewport() {
+    // Updates the --vh variable used in the height mixin
+    setCSSVar('--vh', `${window.innerHeight * 0.01}px`)
   }
 
   renderTabContent(tab, index) {
@@ -263,104 +365,6 @@ class App extends React.Component {
         filePath={path}
       />
     )
-  }
-
-  onToggleRenderable(content, canEditorRender) {
-    // Marks a tab as either renderable by the file preview
-    // component, or by the Editor component
-    const { activeTabIndex, openedTabs } = this.state
-
-    openedTabs[activeTabIndex].canEditorRender = canEditorRender
-    openedTabs[activeTabIndex].content = content
-    openedTabs[activeTabIndex].wasForceRendered = true
-
-    this.setState({ openedTabs })
-  }
-
-  onTabClosed(tabIndex) {
-    let activeTabIndex = this.state.activeTabIndex
-    const openedTabs = this.state.openedTabs.filter((tab, index) => {
-      return tabIndex !== index
-    })
-    const openedFilePaths = new Set(openedTabs.map(node => node.path))
-
-    // If the active tab was closed but there are still tabs left,
-    // set the tab to the left of the closed tab as the active tab,
-    // but only as long as there are still tabs to the left.
-    if (tabIndex === activeTabIndex) {
-      activeTabIndex = Math.max(activeTabIndex - 1, 0)
-    }
-
-    // Make sure the currently active tab doesn't change when tabs
-    // to the left of it are closed
-    if (tabIndex < activeTabIndex) {
-      activeTabIndex -= 1
-    }
-
-    const filePath =
-      openedTabs.length === 0 ? null : openedTabs[activeTabIndex].path
-
-    URLUtil.updateURLSearchParams({ file: filePath })
-
-    this.setState({
-      openedFilePaths,
-      openedTabs,
-      activeTabIndex
-    })
-  }
-
-  onCloseOtherTabsClick(index) {
-    const openedTabs = this.state.openedTabs
-
-    if (openedTabs.length <= 1) {
-      return
-    }
-
-    const tab = openedTabs[index]
-
-    this.setState({
-      openedTabs: [tab],
-      activeTabIndex: 0,
-      openedFilePaths: new Set([tab.path])
-    })
-  }
-
-  closeAllTabs() {
-    URLUtil.updateURLSearchParams({ file: null })
-    this.setState({
-      openedFilePaths: new Set(),
-      openedTabs: []
-    })
-  }
-
-  onSearchFinished(hasError) {
-    this.setState({ isLoading: false })
-
-    // Small hack to make sure the App doesn't immediately close
-    // the tab that may have been loaded on mount
-    if (!hasError && !this.mountedWithFile) {
-      this.closeAllTabs()
-    }
-
-    this.mountedWithFile = false
-  }
-
-  toggleLoadingOverlay() {
-    this.setState({ isLoading: !this.state.isLoading })
-  }
-
-  setActiveTabIndex(activeTabIndex) {
-    const tab = this.state.openedTabs[activeTabIndex]
-
-    if (this.state.activeTabIndex === activeTabIndex) {
-      return
-    }
-
-    if (tab) {
-      URLUtil.updateURLSearchParams({ file: tab.path })
-    }
-
-    this.setState({ activeTabIndex })
   }
 
   render() {

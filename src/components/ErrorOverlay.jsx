@@ -8,7 +8,7 @@ const ErrorOverlay = props => (
     {props.showIcon && <AiOutlineFileExcel className="error-icon" />}
     <p className="error-message">{props.message}</p>
     {props.retryMessage && (
-      <button onClick={props.onRetryClick} className="reload-btn">
+      <button onClick={props.onRetryClick} className="reload-btn" type="button">
         {props.retryMessage}
       </button>
     )}

@@ -15,8 +15,8 @@ const extendedPreview = (
   <div className="preview-container">
     <h2 className="font-default">Glyphs</h2>
     <div className="font-renderer-glyphs">
-      {glpyhs.map((glyph, index) => (
-        <div key={index} className="glyph">
+      {glpyhs.map(glyph => (
+        <div key={glyph} className="glyph">
           {glyph}
         </div>
       ))}
@@ -102,14 +102,6 @@ const getFontFormat = fontName => {
 }
 
 const FontRenderer = props => {
-  if (props.extension === '.eot') {
-    return (
-      <ErrorOverlay
-        message="This font is currently unsupported."
-        showIcon={false}
-      />
-    )
-  }
   // Need to replace new line characters to
   // get the font-family to load properly
   const content = props.content.replace(/[\r\n]/g, '')
@@ -142,6 +134,15 @@ const FontRenderer = props => {
     }
   }, [])
 
+  if (props.extension === '.eot') {
+    return (
+      <ErrorOverlay
+        message="This font is currently unsupported."
+        showIcon={false}
+      />
+    )
+  }
+
   return (
     <div className="font-renderer">
       {isPreviewShowing ? (
@@ -155,6 +156,7 @@ const FontRenderer = props => {
         className="toggle-preview-button"
         onClick={togglePreview}
         title="Toggle font extended preview"
+        type="button"
       >
         <ImFont />
       </button>

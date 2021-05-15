@@ -1,12 +1,12 @@
 import '../style/landing-screen.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import gitBrowserIconDark from '../assets/img/git-browser-icon-dark.svg'
 import gitBrowserIconLight from '../assets/img/git-browser-icon-light.svg'
-import { connect } from 'react-redux'
 
 const LandingScreen = ({ theme }) => {
-  let iconSrc = gitBrowserIconDark
+  let iconSrc
 
   switch (theme.userTheme) {
     case 'theme-light':
@@ -21,6 +21,8 @@ const LandingScreen = ({ theme }) => {
           ? gitBrowserIconLight
           : gitBrowserIconDark
       break
+    default:
+      iconSrc = gitBrowserIconDark
   }
 
   return (

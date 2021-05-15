@@ -5,7 +5,7 @@ const initialState = {
 }
 
 const reducer = (state = initialState, action) => {
-  const payload = action.payload
+  const { payload } = action
 
   switch (action.type) {
     case 'SHOW_MODAL':

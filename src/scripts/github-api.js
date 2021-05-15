@@ -22,7 +22,7 @@ class GitHubAPI {
     }
 
     const repoPath = URLUtil.extractRepoPath(repoUrl)
-    const apiUrl = BASE_REPO_URL + '/' + repoPath
+    const apiUrl = `${BASE_REPO_URL}/${repoPath}`
 
     if (!repoPath) {
       return Promise.reject(ERROR_REPO_NOT_FOUND)
@@ -34,15 +34,22 @@ class GitHubAPI {
           return res.json()
         }
 
-        if (res.status === 404) {
-          return Promise.reject(ERROR_REPO_NOT_FOUND)
+        switch (res.status) {
+          case 404:
+            return Promise.reject(ERROR_REPO_NOT_FOUND)
+          default:
+            return Promise.reject(UNKNOWN_ERROR)
         }
       })
       .then(res => {
+        // eslint-disable-next-line camelcase
         const { default_branch, message } = res
+
         if (message?.toLowerCase() === 'not found') {
           return Promise.reject(ERROR_REPO_NOT_FOUND)
         }
+
+        // eslint-disable-next-line camelcase
         return default_branch
       })
       .catch(err => {
@@ -161,7 +168,7 @@ class GitHubAPI {
       return Promise.reject(ERROR_REPO_NOT_FOUND)
     }
 
-    return URLUtil.request(branchesUrl + '?per_page=100')
+    return URLUtil.request(`${branchesUrl}?per_page=100`)
       .then(res => {
         if (res.ok) {
           truncated = res.headers.has('link')
@@ -172,7 +179,7 @@ class GitHubAPI {
           case 404:
             return Promise.reject(ERROR_REPO_NOT_FOUND)
           default:
-            Promise.reject(UNKNOWN_ERROR)
+            return Promise.reject(UNKNOWN_ERROR)
         }
       })
       .then(res => {

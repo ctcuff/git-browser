@@ -23,7 +23,12 @@ const Collapse = React.forwardRef((props, ref) => {
 
   return (
     <div className={`collapse ${openClass} ${props.className}`} ref={ref}>
-      <button className="header" onClick={toggle} title={props.title}>
+      <button
+        className="header"
+        onClick={toggle}
+        title={props.title}
+        type="button"
+      >
         <FiChevronRight className="toggle-icon" />
         <span className="collapse-title" title={props.title}>
           {props.title}

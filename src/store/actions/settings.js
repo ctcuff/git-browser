@@ -5,10 +5,9 @@ const applyTheme = theme => {
   // stylesheets when the app theme changes
   const lightStyle = document.querySelector('link[title="theme-light"]')
   const darkStyle = document.querySelector('link[title="theme-dark"]')
-  const body = document.body
 
-  body.classList.toggle(body.className)
-  body.classList.add(theme)
+  document.body.classList.toggle(document.body.className)
+  document.body.classList.add(theme)
 
   switch (theme) {
     case 'theme-light':

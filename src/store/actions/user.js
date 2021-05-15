@@ -1,4 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import firebase from 'firebase/app'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'firebase/auth'
 import Logger from '../../scripts/logger'
 import { showModal } from './modal'
@@ -45,8 +47,7 @@ const login = (su = false) => {
 
     try {
       const res = await firebase.auth().signInWithPopup(provider)
-      const accessToken = res.credential.accessToken
-      const payload = { accessToken }
+      const payload = { accessToken: res.credential.accessToken }
 
       payload.username = res.additionalUserInfo?.username ?? ''
 

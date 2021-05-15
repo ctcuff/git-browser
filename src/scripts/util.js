@@ -15,7 +15,7 @@ const parseCSSVar = (cssVar, element = document.documentElement) => {
     return 0
   }
 
-  return parseInt(property.trim().replace('px', ''))
+  return parseInt(property.trim().replace('px', ''), 10)
 }
 
 /**
@@ -52,18 +52,18 @@ const getLanguageFromFileName = fileName => {
     return languageData[fileName]
   }
 
+  const sanitizedFileName = fileName.trim().toLowerCase()
   let extension = ''
-  fileName = fileName.trim().toLowerCase()
 
   // Read through the file name backwards to try to read
   // the extension of the file, stopping when we see a `.`
-  for (let i = fileName.length - 1; i >= 0; i--) {
-    if (fileName[i] === '.') {
+  for (let i = sanitizedFileName.length - 1; i >= 0; i--) {
+    if (sanitizedFileName[i] === '.') {
       extension += '.'
       break
     }
 
-    extension += fileName[i]
+    extension += sanitizedFileName[i]
   }
 
   extension = extension.split('').reverse().join('')
@@ -97,10 +97,9 @@ const base64DecodeUnicode = (str, raw = false) => {
 
   // https://stackoverflow.com/a/64752311/9124220
   const text = atob(str)
-  const length = text.length
-  const bytes = new Uint8Array(length)
+  const bytes = new Uint8Array(text.length)
 
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < text.length; i++) {
     bytes[i] = text.charCodeAt(i)
   }
 

@@ -1,5 +1,21 @@
-/* eslint-disable no-var, semi */
+/* eslint-disable */
 import { base64DecodeUnicode, base64EncodeUnicode } from './util'
+
+function encode(content, raw) {
+  try {
+    return base64EncodeUnicode(content, raw)
+  } catch (e) {
+    return null
+  }
+}
+
+function decode(content, raw) {
+  try {
+    return base64DecodeUnicode(content, raw)
+  } catch (e) {
+    return null
+  }
+}
 
 /**
  * Encoding/decoding a large string can take time and it blocks the main thread.
@@ -33,20 +49,4 @@ onmessage = function (event) {
   }
 
   postMessage(content)
-}
-
-function encode(content, raw) {
-  try {
-    return base64EncodeUnicode(content, raw)
-  } catch (e) {
-    return null
-  }
-}
-
-function decode(content, raw) {
-  try {
-    return base64DecodeUnicode(content, raw)
-  } catch (e) {
-    return null
-  }
 }

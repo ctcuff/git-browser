@@ -20,7 +20,7 @@ const SearchInput = props => {
   }
 
   const onChange = event => {
-    const value = event.currentTarget.value
+    const { value } = event.currentTarget
     setInputValue(value)
     props.onChange(value)
   }
@@ -77,6 +77,7 @@ const SearchInput = props => {
           className="search-button"
           disabled={isLoading}
           onClick={onSearch}
+          type="button"
         >
           {props.isLoading ? (
             <AiOutlineLoading className="loading-icon" />

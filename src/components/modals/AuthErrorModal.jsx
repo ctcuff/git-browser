@@ -1,7 +1,7 @@
 import React from 'react'
-import BaseModal from './BaseModal'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import BaseModal from './BaseModal'
 import { hideModal } from '../../store/actions/modal'
 
 const AuthErrorModal = props => {

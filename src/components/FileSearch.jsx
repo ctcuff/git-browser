@@ -70,7 +70,7 @@ const FileSearch = props => {
         hasError={hasError}
         errorMessage="No files found"
       />
-      <React.Fragment>
+      <>
         {Object.keys(filteredTreeData).map((key, index) => (
           <TreeNode
             showPath
@@ -81,7 +81,7 @@ const FileSearch = props => {
             activeFilePath={props.activeFilePath}
           />
         ))}
-      </React.Fragment>
+      </>
     </div>
   )
 }

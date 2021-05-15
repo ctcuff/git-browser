@@ -38,6 +38,7 @@ const ModalRoot = ({ isOpen, modalType, modalProps }) => {
 ModalRoot.propTypes = {
   modalType: PropTypes.oneOf(Object.keys(ModalComponents)),
   isOpen: PropTypes.bool,
+  // eslint-disable-next-line react/forbid-prop-types
   modalProps: PropTypes.object
 }
 

@@ -28,6 +28,10 @@ class JupyterRenderer extends React.Component {
     this.init()
   }
 
+  setCurrentStep(currentStep) {
+    this.setState({ currentStep })
+  }
+
   async init() {
     this.setState({
       isLoading: true,
@@ -52,10 +56,6 @@ class JupyterRenderer extends React.Component {
         hasError: true
       })
     }
-  }
-
-  setCurrentStep(currentStep) {
-    this.setState({ currentStep })
   }
 
   async loadLibraries() {
@@ -87,9 +87,11 @@ class JupyterRenderer extends React.Component {
     const { nb, Anser, MarkdownIt } = this
 
     nb.ansi = text => Anser.ansiToText(text)
+
     nb.highlighter = (text, pre, code, lang) => {
       return this.highlighter(text, lang || 'python')
     }
+
     nb.markdown = str => {
       const md = new MarkdownIt({
         html: true,
@@ -115,7 +117,7 @@ class JupyterRenderer extends React.Component {
   }
 
   sanitizeNotebook(content) {
-    const DOMPurify = this.DOMPurify
+    const { DOMPurify } = this
 
     DOMPurify.addHook('afterSanitizeAttributes', node => {
       // Opens all links in a new tab when clicked
@@ -129,7 +131,7 @@ class JupyterRenderer extends React.Component {
   }
 
   highlighter(str, lang) {
-    const hljs = this.hljs
+    const { hljs } = this
 
     if (lang && hljs.getLanguage(lang)) {
       try {
@@ -160,7 +162,11 @@ class JupyterRenderer extends React.Component {
 
     return (
       <div className="jupyter-renderer">
-        <div className="content" dangerouslySetInnerHTML={{ __html: HTML }} />
+        <div
+          className="content"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: HTML }}
+        />
       </div>
     )
   }

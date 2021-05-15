@@ -6,4 +6,5 @@ const setRepoData = payload => ({
   }
 })
 
+// eslint-disable-next-line import/prefer-default-export
 export { setRepoData }

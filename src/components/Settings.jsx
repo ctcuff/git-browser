@@ -56,6 +56,7 @@ const Settings = props => {
             currentTheme === 'theme-dark' ? 'selected' : ''
           }`}
           onClick={() => toggleTheme('theme-dark')}
+          type="button"
         >
           Dark
         </button>
@@ -64,6 +65,7 @@ const Settings = props => {
             currentTheme === 'theme-light' ? 'selected' : ''
           }`}
           onClick={() => toggleTheme('theme-light')}
+          type="button"
         >
           Light
         </button>
@@ -73,6 +75,7 @@ const Settings = props => {
             currentTheme === 'theme-auto' ? 'selected' : ''
           }`}
           onClick={() => toggleTheme('theme-auto')}
+          type="button"
         >
           Auto
         </button>
@@ -81,14 +84,15 @@ const Settings = props => {
         className={`login-btn ${isLoading ? 'is-loading' : ''}`}
         onClick={() => onAuthClick(false)}
         disabled={isLoading}
+        type="button"
       >
         {isLoading ? (
           <span>Loading...</span>
         ) : (
-          <React.Fragment>
+          <>
             {!isLoggedIn && <VscGithub className="github-icon" />}
             {isLoggedIn ? 'Logout' : 'Sign in with GitHub'}
-          </React.Fragment>
+          </>
         )}
       </button>
       {isLoggedIn || isLoading ? null : (
@@ -96,14 +100,15 @@ const Settings = props => {
           className={`login-btn ${isLoading ? 'is-loading' : ''}`}
           onClick={() => onAuthClick(true)}
           disabled={isLoading}
+          type="button"
         >
           {isLoading ? (
             <span>Loading...</span>
           ) : (
-            <React.Fragment>
+            <>
               {!isLoggedIn && <VscGithub className="github-icon" />}
               {isLoggedIn ? 'Logout' : 'Sign in with full access'}
-            </React.Fragment>
+            </>
           )}
         </button>
       )}

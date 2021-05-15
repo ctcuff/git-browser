@@ -1,19 +1,21 @@
+// TODO: Look at this
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'simplebar/dist/simplebar.css'
 import '../style/tabs.scss'
 import React, { useEffect, useState } from 'react'
 import { Tabs, TabList, TabPanel, Tab as ReactTab } from 'react-tabs'
 import PropTypes from 'prop-types'
 import SimpleBar from 'simplebar-react'
+import { connect } from 'react-redux'
 import { VscCloseAll } from 'react-icons/vsc'
 import { AiOutlineMenu } from 'react-icons/ai'
 import ContextMenu from './ContextMenu'
-import { connect } from 'react-redux'
 import URLUtil from '../scripts/url-util'
 import { copyToClipboard } from '../scripts/util'
 import { showModal } from '../store/actions/modal'
 import { ModalTypes } from './ModalRoot'
 
-const Tab = props => <React.Fragment>{props.children}</React.Fragment>
+const Tab = ({ children }) => <>{children}</>
 
 const TabView = props => {
   const { onTabClosed, onSelectTab, activeTabIndex, repoPath, branch } = props
@@ -79,7 +81,7 @@ const TabView = props => {
     },
     {
       title: 'Copy file path',
-      onClick: () => copyToClipboard('/' + tabs[menuTabIndex].props.path)
+      onClick: () => copyToClipboard(`/${tabs[menuTabIndex].props.path}`)
     },
     {
       title: 'Download file',
@@ -123,8 +125,8 @@ const TabView = props => {
         isOpen={isContextMenuOpen}
         coords={contextMenuCoords}
         options={menuOptions}
-        onOverlayClick={toggleContextMenu.bind(this, false)}
-        onOptionClick={toggleContextMenu.bind(this, false)}
+        onOverlayClick={() => toggleContextMenu(false)}
+        onOptionClick={() => toggleContextMenu(false)}
       />
       <div
         className={`tab-file-download-alert ${
@@ -132,12 +134,12 @@ const TabView = props => {
         }`}
       >
         {tabs[menuTabIndex] && (
-          <React.Fragment>
-            <button onClick={setShowDownloadAlert.bind(this, false)}>
+          <>
+            <button onClick={() => setShowDownloadAlert(false)} type="button">
               &times;
             </button>
             <p>Downloading {tabs[menuTabIndex].props.title}...</p>
-          </React.Fragment>
+          </>
         )}
       </div>
       <SimpleBar className="tab-simplebar">
@@ -147,6 +149,7 @@ const TabView = props => {
               className="close-all-button"
               title="Close all tabs"
               onClick={props.onCloseAllClick}
+              type="button"
             >
               <VscCloseAll />
             </button>
@@ -155,12 +158,14 @@ const TabView = props => {
                 className="tab"
                 selectedClassName="tab--selected"
                 key={index}
-                onContextMenu={onContextMenu.bind(this, index)}
+                onContextMenu={event => onContextMenu(index, event)}
               >
                 <span className="tab-title" title={tab.props.path}>
                   {tab.props.title}
                 </span>{' '}
-                <button className="tab-close-button">&times;</button>
+                <button className="tab-close-button" type="button">
+                  &times;
+                </button>
               </ReactTab>
             ))}
           </TabList>
@@ -174,7 +179,8 @@ const TabView = props => {
         >
           <button
             className="tab-context-menu-toggle"
-            onClick={onContextMenu.bind(this, index)}
+            onClick={event => onContextMenu(index, event)}
+            type="button"
           >
             <AiOutlineMenu />
           </button>
@@ -186,16 +192,13 @@ const TabView = props => {
 }
 
 Tab.propTypes = {
-  path: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node
-  ]),
-  title: PropTypes.string.isRequired
+  ])
 }
 
 Tab.defaultProps = {
-  path: '',
   children: null
 }
 

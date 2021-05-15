@@ -12,9 +12,9 @@
     "dev": "webpack-dev-server --env.debug='true'",
     "test": "jest --env=./test-env.js",
     "test:ci": "yarn test --bail --passWithNoTests --coverage",
-    "lint": "eslint './src/**/*.js'",
+    "lint": "eslint './src/**/*{.js,.jsx}'",
     "format": "yarn format:js && yarn format:scss",
-    "format:js": "prettier --write './src/**/*.js'",
+    "format:js": "prettier --write './src/**/*{.js,.jsx}'",
     "format:scss": "prettier --write './src/**/*.scss'"
   },
   "dependencies": {
@@ -31,7 +31,7 @@
     "markdown-it-front-matter": "^0.2.3",
     "monaco-editor": "^0.21.2",
     "papaparse": "^5.3.0",
-    "pdfjs-dist": "^2.5.207",
+    "pdfjs-dist": "2.6.347",
     "prop-types": "^15.7.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",
@@ -61,9 +61,13 @@
     "dotenv-webpack": "^6.0.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.5",
-    "eslint": "^7.16.0",
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb": "18.2.1",
     "eslint-loader": "^4.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^1.7.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",
     "husky": "^4.3.6",
@@ -88,10 +92,10 @@
     }
   },
   "lint-staged": {
-    "./src/**/*.js": [
+    "./src/**/*{.js,.jsx}": [
       "yarn lint"
     ],
-    "./src/**/*{.scss,.js}": [
+    "./src/**/*{.scss,.js,.jsx}": [
       "prettier --write"
     ]
   },

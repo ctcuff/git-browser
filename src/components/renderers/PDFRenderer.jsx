@@ -5,9 +5,8 @@ import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import Logger from '../../scripts/logger'
 
-const PDFPage = props => {
+const PDFPage = ({ page }) => {
   const canvasRef = useRef(null)
-  const page = props.page
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -58,18 +57,11 @@ class PDFRenderer extends React.Component {
     this.rawDecodeWorker.terminate()
   }
 
-  init() {
-    // Dynamic import to reduce bundle size
-    import('pdfjs-dist')
-      .then(pdfjs => {
-        this.pdfjs = pdfjs
-        this.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
-        this.decodeContent()
-      })
-      .catch(err => {
-        Logger.error(err)
-        this.setErrorState()
-      })
+  setErrorState() {
+    this.setState({
+      isLoading: false,
+      hasError: true
+    })
   }
 
   decodeContent() {
@@ -103,11 +95,39 @@ class PDFRenderer extends React.Component {
     )
   }
 
+  init() {
+    // Dynamic import to reduce bundle size
+    import('pdfjs-dist')
+      .then(pdfjs => {
+        this.pdfjs = pdfjs
+        this.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
+        this.decodeContent()
+      })
+      .catch(err => {
+        Logger.error(err)
+        this.setErrorState()
+      })
+  }
+
+  reload() {
+    this.setState(
+      {
+        isLoading: true,
+        hasError: false,
+        pages: [],
+        currentStep: 'Loading PDF...'
+      },
+      () => this.init()
+    )
+  }
+
   async renderPages(pdfDocument) {
     const pages = []
-    const numPages = pdfDocument.numPages
+    const { numPages } = pdfDocument
 
     for (let i = 0; i < numPages; i++) {
+      // TODO: Look at this
+      // eslint-disable-next-line no-await-in-loop
       await pdfDocument.getPage(i + 1).then(
         page => {
           pages.push(<PDFPage page={page} key={i} />)
@@ -126,25 +146,6 @@ class PDFRenderer extends React.Component {
       isLoading: false,
       pages
     })
-  }
-
-  setErrorState() {
-    this.setState({
-      isLoading: false,
-      hasError: true
-    })
-  }
-
-  reload() {
-    this.setState(
-      {
-        isLoading: true,
-        hasError: false,
-        pages: [],
-        currentStep: 'Loading PDF...'
-      },
-      () => this.init()
-    )
   }
 
   render() {
@@ -176,6 +177,10 @@ class PDFRenderer extends React.Component {
 }
 
 PDFPage.propTypes = {
+  // Disabled since pdf.js is loaded asynchronously so
+  // we won't be able to validate this prop until the component
+  // is rendered
+  // eslint-disable-next-line react/forbid-prop-types
   page: PropTypes.object.isRequired
 }
 

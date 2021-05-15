@@ -1,17 +1,16 @@
 {
-  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "extends": ["plugin:react/recommended", "airbnb", "airbnb/hooks"],
   "env": {
     "browser": true,
-    "es6": true,
     "node": true,
-    "jest": true
+    "jest": true,
+    "es2021": true
   },
   "parser": "babel-eslint",
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": 2018,
     "sourceType": "module"
   },
   "settings": {
@@ -19,16 +18,34 @@
       "version": "detect"
     }
   },
+  "ignorePatterns": [
+    "dist/**/*",
+    "src/lib/**/*",
+    "src/__tests__/**/*",
+    "src/__mocks__/**/*"
+  ],
   "rules": {
-    "semi": ["warn", "never"],
-    "no-console": "warn",
-    "no-unused-vars": ["warn", { "args": "after-used" }],
-    "no-mixed-spaces-and-tabs": "error",
-    "no-trailing-spaces": "error",
-    "no-var": "error",
-    "object-curly-spacing": ["error", "always"],
+    "arrow-parens": ["error", "as-needed"],
+    "arrow-body-style": "off",
+    "semi": ["error", "never"],
+    "semi-style": "off",
+    "no-unused-vars": ["error", { "args": "after-used" }],
     "no-alert": "error",
-    "comma-dangle": "warn",
+    "comma-dangle": ["error", "never"],
+    "operator-linebreak": "off",
+    "class-methods-use-this": "off",
+    "implicit-arrow-linebreak": "off",
+    "object-curly-newline": "off",
+    "no-plusplus": "off",
+    "func-names": "off",
+    "no-param-reassign": ["error", { "props": false }],
+    "react-hooks/exhaustive-deps": "off",
+    "react/no-array-index-key": "off",
+    "react/prop-types": 2,
+    "react/jsx-props-no-spreading": "off",
+    "react/destructuring-assignment": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "react/jsx-curly-newline": "off",
     "react/jsx-curly-spacing": [
       "error",
       {
@@ -38,6 +55,12 @@
         }
       }
     ],
-    "react/prop-types": 2
+    // Media will only every be included through the GitHub API so
+    // it's not possible to provide a <track> element to media tags
+    "jsx-a11y/media-has-caption": "off",
+    // TODO: Possibly enable these for accessability?
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-noninteractive-element-interactions": "off",
+    "jsx-a11y/no-static-element-interactions": "off"
   }
 }

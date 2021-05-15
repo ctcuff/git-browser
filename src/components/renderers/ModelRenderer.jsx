@@ -14,20 +14,11 @@ const ModelRenderer = ({ content, extension }) => {
   const [modelViewer, setModelViewer] = useState(null)
   const [isModelVisible, setIsModelVisible] = useState(false)
 
-  const modelViewerRef = useCallback(modelViewerNode => {
-    setModelViewer(modelViewerNode)
-
-    if (modelViewerNode) {
-      checkIfModelLoaded(modelViewerNode)
-    }
-  }, [])
-
   let animationCheckInterval
 
   // Attaching events to the custom element won't actually fire
   // those events. We need to poll the element to make sure the
   // model was loaded successfully
-
   const checkIfModelLoaded = modelViewerNode => {
     let timer = 0
     const timeout = 5 * 1000
@@ -57,6 +48,14 @@ const ModelRenderer = ({ content, extension }) => {
       }
     }, intervalTime)
   }
+
+  const modelViewerRef = useCallback(modelViewerNode => {
+    setModelViewer(modelViewerNode)
+
+    if (modelViewerNode) {
+      checkIfModelLoaded(modelViewerNode)
+    }
+  }, [])
 
   const playAnimation = animationName => {
     if (!modelViewer) {
@@ -132,6 +131,7 @@ const ModelRenderer = ({ content, extension }) => {
               className={`animation-btn ${
                 selectedAnimation === animationName ? 'active' : ''
               }`}
+              type="button"
               key={animationName}
               title={animationName}
               onClick={() => playAnimation(animationName)}

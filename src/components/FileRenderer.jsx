@@ -1,6 +1,8 @@
 import '../style/file-renderer.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
+import { VscCode } from 'react-icons/vsc'
+import { connect } from 'react-redux'
 import PDFRenderer from './renderers/PDFRenderer'
 import ImageRenderer from './renderers/ImageRenderer'
 import VideoRenderer from './renderers/VideoRenderer'
@@ -13,13 +15,11 @@ import ModelRenderer from './renderers/ModelRenderer'
 import FontRenderer from './renderers/FontRenderer'
 import EmbeddedDocRenderer from './renderers/EmbeddedDocRenderer'
 import ZipRenderer from './renderers/ZipRenderer'
-import { VscCode } from 'react-icons/vsc'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import Logger from '../scripts/logger'
-import Editor from '../components/Editor'
+import Editor from './Editor'
 import URLUtil from '../scripts/url-util'
-import { connect } from 'react-redux'
 
 class FileRenderer extends React.Component {
   constructor(props) {
@@ -74,40 +74,12 @@ class FileRenderer extends React.Component {
     this.decodeContent()
   }
 
-  decodeContent() {
-    this.setState({
-      isLoading: true,
-      hasError: false
-    })
-
-    this.decodeWorker.postMessage({
-      message: this.props.content,
-      type: 'decode'
-    })
-
-    this.decodeWorker.onmessage = event => {
-      // decodedContent will be null if the content couldn't
-      // be properly decoded for some reason
-      this.setState({
-        isLoading: false,
-        decodedContent: event.data
-      })
-    }
-
-    this.decodeWorker.onerror = event => {
-      this.setState({
-        isLoading: false,
-        hasError: true
-      })
-      Logger.error('Error decoding file', event)
-    }
-  }
-
   componentWillUnmount() {
     this.decodeWorker.terminate()
   }
 
   getComponent() {
+    // prettier-ignore
     const {
       content,
       fileName,
@@ -116,7 +88,7 @@ class FileRenderer extends React.Component {
       branch,
       filePath
     } = this.props
-    const decodedContent = this.state.decodedContent
+    const { decodedContent } = this.state
     const fileURL = URLUtil.buildGithubFileURL({
       repoPath,
       branch,
@@ -199,35 +171,33 @@ class FileRenderer extends React.Component {
     }
   }
 
-  renderUnsupported() {
-    const message = `
-      This file wasn't displayed because it's either binary
-      or uses an unknown text encoding.
-    `
-    return (
-      <ErrorOverlay
-        className="file-renderer-unsupported"
-        message={message}
-        retryMessage="Do you want to load it anyway?"
-        onRetryClick={this.forceRenderEditor}
-      />
-    )
-  }
+  decodeContent() {
+    this.setState({
+      isLoading: true,
+      hasError: false
+    })
 
-  renderPreviewButton() {
-    if (!Editor.previewExtensions.has(this.props.extension)) {
-      return null
+    this.decodeWorker.postMessage({
+      message: this.props.content,
+      type: 'decode'
+    })
+
+    this.decodeWorker.onmessage = event => {
+      // decodedContent will be null if the content couldn't
+      // be properly decoded for some reason
+      this.setState({
+        isLoading: false,
+        decodedContent: event.data
+      })
     }
 
-    return (
-      <button
-        className="editor-preview-btn"
-        title="View as code"
-        onClick={this.forceRenderEditor}
-      >
-        <VscCode />
-      </button>
-    )
+    this.decodeWorker.onerror = event => {
+      this.setState({
+        isLoading: false,
+        hasError: true
+      })
+      Logger.error('Error decoding file', event)
+    }
   }
 
   // Let the App component know that this file should
@@ -261,6 +231,38 @@ class FileRenderer extends React.Component {
       this.setState({ isLoading: false })
       Logger.error(error)
     }
+  }
+
+  renderPreviewButton() {
+    if (!Editor.previewExtensions.has(this.props.extension)) {
+      return null
+    }
+
+    return (
+      <button
+        className="editor-preview-btn"
+        title="View as code"
+        onClick={this.forceRenderEditor}
+        type="button"
+      >
+        <VscCode />
+      </button>
+    )
+  }
+
+  renderUnsupported() {
+    const message = `
+      This file wasn't displayed because it's either binary
+      or uses an unknown text encoding.
+    `
+    return (
+      <ErrorOverlay
+        className="file-renderer-unsupported"
+        message={message}
+        retryMessage="Do you want to load it anyway?"
+        onRetryClick={this.forceRenderEditor}
+      />
+    )
   }
 
   render() {

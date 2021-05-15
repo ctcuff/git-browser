@@ -2,16 +2,15 @@ import '../style/file-explorer.scss'
 import React from 'react'
 import partition from 'lodash/partition'
 import PropTypes from 'prop-types'
-import TreeNode from './TreeNode'
 import { VscCollapseAll } from 'react-icons/vsc'
+import TreeNode from './TreeNode'
 import URLUtil from '../scripts/url-util'
 
 class FileExplorer extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      nodes: this.props.nodes,
-      repoName: this.props.repoName
+      nodes: this.props.nodes
     }
 
     this.getRootNodes = this.getRootNodes.bind(this)
@@ -25,7 +24,7 @@ class FileExplorer extends React.PureComponent {
   componentDidMount() {
     const key = URLUtil.getSearchParam('file')
     const node = this.state.nodes[key]
-    const activeFilePath = this.props.activeFilePath
+    const { activeFilePath } = this.props
 
     if (node) {
       this.props.onSelectFile(node)
@@ -36,8 +35,48 @@ class FileExplorer extends React.PureComponent {
     }
   }
 
+  onSelectFile(node) {
+    if (node.type === 'file') {
+      this.props.onSelectFile(node)
+    }
+  }
+
+  getRootNodes() {
+    const nodes = {}
+
+    // Partition the nodes into folders and files so that
+    // folders appear before files
+    const [left, right] = partition(
+      this.state.nodes,
+      node => node.type === 'folder'
+    )
+
+    left.forEach(node => {
+      nodes[node.path] = node
+    })
+
+    right.forEach(node => {
+      nodes[node.path] = node
+    })
+
+    return Object.values(nodes).filter(node => node.isRoot)
+  }
+
+  getChildren(node) {
+    const { nodes } = this.state
+
+    if (!node.children) {
+      return []
+    }
+
+    const children = node.children.map(path => nodes[path])
+    const [left, right] = partition(children, n => n.type === 'folder')
+
+    return [...left, ...right]
+  }
+
   openUpToRoot(path) {
-    const nodes = this.state.nodes
+    const { nodes } = this.state
 
     if (!nodes[path]) {
       return
@@ -52,37 +91,8 @@ class FileExplorer extends React.PureComponent {
     }
   }
 
-  getRootNodes() {
-    const nodes = {}
-
-    // Partition the nodes into folders and files so that
-    // folders appear before files
-    const [left, right] = partition(
-      this.state.nodes,
-      node => node.type === 'folder'
-    )
-
-    left.forEach(node => (nodes[node.path] = node))
-    right.forEach(node => (nodes[node.path] = node))
-
-    return Object.values(nodes).filter(node => node.isRoot)
-  }
-
-  getChildren(node) {
-    const nodes = this.state.nodes
-
-    if (!node.children) {
-      return []
-    }
-
-    const children = node.children.map(path => nodes[path])
-    const [left, right] = partition(children, n => n.type === 'folder')
-
-    return [...left, ...right]
-  }
-
   toggleNode(node) {
-    const nodes = this.state.nodes
+    const { nodes } = this.state
 
     nodes[node.path].isOpen = !node.isOpen
 
@@ -93,14 +103,8 @@ class FileExplorer extends React.PureComponent {
     })
   }
 
-  onSelectFile(node) {
-    if (node.type === 'file') {
-      this.props.onSelectFile(node)
-    }
-  }
-
   closeAllFolders() {
-    const nodes = this.state.nodes
+    const { nodes } = this.state
 
     Object.keys(nodes).forEach(key => {
       const node = nodes[key]
@@ -129,11 +133,12 @@ class FileExplorer extends React.PureComponent {
           className="collapse-btn"
           onClick={this.closeAllFolders}
           title="Collapse folders in explorer"
+          type="button"
         >
           <VscCollapseAll />
           <span>Collapse folders</span>
         </button>
-        <React.Fragment>
+        <>
           {rootNodes.map(node => (
             <TreeNode
               node={node}
@@ -144,7 +149,7 @@ class FileExplorer extends React.PureComponent {
               activeFilePath={this.props.activeFilePath}
             />
           ))}
-        </React.Fragment>
+        </>
       </div>
     )
   }
@@ -161,13 +166,11 @@ FileExplorer.propTypes = {
       isRoot: PropTypes.bool
     })
   ),
-  repoName: PropTypes.string,
   activeFilePath: PropTypes.string
 }
 
 FileExplorer.defaultProps = {
   nodes: {},
-  repoName: '',
   activeFilePath: '',
   onSelectFile: () => {}
 }

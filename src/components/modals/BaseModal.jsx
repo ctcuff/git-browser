@@ -2,8 +2,8 @@ import '../../style/base-modal.scss'
 import React from 'react'
 import ReactModal from 'react-modal'
 import { connect } from 'react-redux'
-import { hideModal } from '../../store/actions/modal'
 import PropTypes from 'prop-types'
+import { hideModal } from '../../store/actions/modal'
 
 const BaseModal = props => (
   <ReactModal
@@ -17,14 +17,19 @@ const BaseModal = props => (
       {props.title && <h2 className="modal-title">{props.title}</h2>}
       <div className="modal-body">{props.children}</div>
       <div className="modal-actions">
-        <React.Fragment>
-          {props.actions.map((action, index) => (
-            <button className="action-btn" onClick={action.onClick} key={index}>
+        <>
+          {props.actions.map(action => (
+            <button
+              className="action-btn"
+              onClick={action.onClick}
+              key={action.text}
+              type="button"
+            >
               {action.text}
             </button>
           ))}
-        </React.Fragment>
-        <button className="action-btn" onClick={props.hideModal}>
+        </>
+        <button className="action-btn" onClick={props.hideModal} type="button">
           Close
         </button>
       </div>

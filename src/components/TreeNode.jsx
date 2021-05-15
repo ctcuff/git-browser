@@ -67,7 +67,7 @@ const TreeNode = props => {
   })
 
   return (
-    <React.Fragment>
+    <>
       <div
         className={`tree-node ${classes}`}
         title={node.path}
@@ -93,7 +93,7 @@ const TreeNode = props => {
             key={childNode.path}
           />
         ))}
-    </React.Fragment>
+    </>
   )
 }
 
@@ -106,12 +106,12 @@ TreeNode.propTypes = {
   node: PropTypes.shape({
     type: PropTypes.oneOf(['file', 'folder']),
     name: PropTypes.string,
-    path: PropTypes.path,
+    path: PropTypes.string,
     url: PropTypes.string,
     isRoot: PropTypes.bool,
     isOpen: PropTypes.bool
   }).isRequired,
-  getChildren: PropTypes.func.isRequired,
+  getChildren: PropTypes.func,
   onSelectNode: PropTypes.func.isRequired
 }
 

@@ -78,7 +78,7 @@ class AsciiDocRenderer extends React.Component {
   }
 
   sanitizeAsciiDoc(content) {
-    const DOMPurify = this.DOMPurify
+    const { DOMPurify } = this.DOMPurify
 
     DOMPurify.addHook('afterSanitizeAttributes', this.afterSanitizeAttributes)
     DOMPurify.addHook('afterSanitizeElements', this.afterSanitizeElements)
@@ -134,6 +134,7 @@ class AsciiDocRenderer extends React.Component {
     return (
       <div className="ascii-doc-renderer">
         <div
+          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: content }}
           className="ascii-doc-content"
         />

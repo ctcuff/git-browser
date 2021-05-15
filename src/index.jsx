@@ -1,8 +1,8 @@
 import './style/index.scss'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './components/App'
 import { Provider } from 'react-redux'
+import App from './components/App'
 import store from './store'
 import ModalRoot from './components/ModalRoot'
 import { setPreferredTheme, setTheme } from './store/actions/settings'
@@ -14,13 +14,13 @@ if (module.hot) {
 const savedTheme = localStorage.getItem('userTheme')
 const query = window.matchMedia('(prefers-color-scheme: dark)')
 
-const updateFavicon = query => {
-  const link = query.matches ? '/favicon-light.ico' : '/favicon-dark.ico'
+const updateFavicon = ({ matches }) => {
+  const link = matches ? '/favicon-light.ico' : '/favicon-dark.ico'
   document.querySelector('link[rel="icon"]').setAttribute('href', link)
 }
 
-const updatePreferredTheme = query => {
-  const theme = query.matches ? 'theme-dark' : 'theme-light'
+const updatePreferredTheme = ({ matches }) => {
+  const theme = matches ? 'theme-dark' : 'theme-light'
   store.dispatch(setPreferredTheme(theme))
 }
 

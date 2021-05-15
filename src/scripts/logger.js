@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+// eslint-disable-next-line prefer-destructuring
 const DEBUG = process.env.DEBUG
 
 const Logger = {

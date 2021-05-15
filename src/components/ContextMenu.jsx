@@ -56,7 +56,7 @@ const ContextMenu = props => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <div
         className="context-menu-overlay"
         onMouseDown={props.onOverlayClick}
@@ -73,9 +73,9 @@ const ContextMenu = props => {
         }}
       >
         <ul className="menu">
-          {options.map((option, index) => (
+          {options.map(option => (
             <li
-              key={index}
+              key={option.title}
               onClick={onOptionClick.bind(this, option)}
               className={`menu-option ${option.disabled ? 'disabled' : ''}`}
             >
@@ -84,7 +84,7 @@ const ContextMenu = props => {
           ))}
         </ul>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

@@ -1,10 +1,11 @@
 import '../style/editor.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { parseCSSVar } from '../scripts/util'
-import LoadingOverlay from './LoadingOverlay'
 import { AiOutlineEye } from 'react-icons/ai'
 import { connect } from 'react-redux'
+import { parseCSSVar } from '../scripts/util'
+import LoadingOverlay from './LoadingOverlay'
+
 import Logger from '../scripts/logger'
 
 class Editor extends React.Component {
@@ -22,6 +23,7 @@ class Editor extends React.Component {
     '.svg',
     '.tsv'
   ])
+
   /**
    * Files that don't have to be decoded when sent to the FileRenderer
    * since they already display as text when the Editor is rendered.
@@ -35,6 +37,7 @@ class Editor extends React.Component {
     '.mdx',
     '.tsv'
   ])
+
   /**
    * Files that will always be displayed by the FileRenderer component.
    * This allows us to avoid unnecessarily decoding a file.
@@ -76,8 +79,7 @@ class Editor extends React.Component {
 
     this.state = {
       isLoading: false,
-      isEncoding: false,
-      decodedContent: null
+      isEncoding: false
     }
 
     this.encodeWorker = new Worker('../scripts/encode-decode-worker.js', {
@@ -92,8 +94,8 @@ class Editor extends React.Component {
     this.forceRenderPreview = this.forceRenderPreview.bind(this)
   }
 
-  getEditorTheme(colorScheme) {
-    return colorScheme === 'theme-dark' ? 'vs-dark' : 'vs-light'
+  componentDidMount() {
+    this.initEditor()
   }
 
   componentDidUpdate(prevProps) {
@@ -106,8 +108,21 @@ class Editor extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.initEditor()
+  componentWillUnmount() {
+    this.editor?.dispose()
+    this.encodeWorker.terminate()
+  }
+
+  getEditorTheme(colorScheme) {
+    return colorScheme === 'theme-dark' ? 'vs-dark' : 'vs-light'
+  }
+
+  viewZoneCallback(changeAccessor) {
+    changeAccessor.addZone({
+      afterLineNumber: 0,
+      heightInPx: parseCSSVar('--scrollbar-height'),
+      domNode: document.createElement('div')
+    })
   }
 
   async initEditor() {
@@ -116,7 +131,7 @@ class Editor extends React.Component {
     // monaco editor is loaded asynchronously to prevent unnecessarily
     // bundling all of the editor API when the project is built.
     const { editor: monaco, languages } = await import(
-      'monaco-editor/esm/vs/editor/editor.api.js'
+      'monaco-editor/esm/vs/editor/editor.api'
     )
 
     const languageOpts = {
@@ -162,38 +177,6 @@ class Editor extends React.Component {
     this.setState({ isLoading: false })
   }
 
-  viewZoneCallback(changeAccessor) {
-    changeAccessor.addZone({
-      afterLineNumber: 0,
-      heightInPx: parseCSSVar('--scrollbar-height'),
-      domNode: document.createElement('div')
-    })
-  }
-
-  componentWillUnmount() {
-    this.editor?.dispose()
-    this.encodeWorker.terminate()
-  }
-
-  renderPreviewButton() {
-    if (
-      !Editor.previewExtensions.has(this.props.extension) ||
-      this.state.isLoading
-    ) {
-      return null
-    }
-
-    return (
-      <button
-        className="file-preview-btn"
-        title="Preview file"
-        onClick={this.forceRenderPreview}
-      >
-        <AiOutlineEye />
-      </button>
-    )
-  }
-
   // Let the App component know that ths file should not
   // be rendered by the editor
   forceRenderPreview() {
@@ -231,6 +214,26 @@ class Editor extends React.Component {
     }
   }
 
+  renderPreviewButton() {
+    if (
+      !Editor.previewExtensions.has(this.props.extension) ||
+      this.state.isLoading
+    ) {
+      return null
+    }
+
+    return (
+      <button
+        className="file-preview-btn"
+        title="Preview file"
+        onClick={this.forceRenderPreview}
+        type="button"
+      >
+        <AiOutlineEye />
+      </button>
+    )
+  }
+
   render() {
     return (
       <div className="monaco-editor-container" ref={this.editorRef}>
@@ -249,7 +252,6 @@ class Editor extends React.Component {
 Editor.propTypes = {
   extension: PropTypes.string.isRequired,
   language: PropTypes.string.isRequired,
-  fileName: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   theme: PropTypes.shape({
     userTheme: PropTypes.oneOf(['theme-light', 'theme-dark', 'theme-auto'])

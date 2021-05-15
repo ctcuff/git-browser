@@ -1,10 +1,10 @@
 import '../../style/renderers/csv-renderer.scss'
 import React from 'react'
 import PropTypes from 'prop-types'
-import LoadingOverlay from '../LoadingOverlay'
-import ErrorOverlay from '../ErrorOverlay'
 import { AiOutlineSearch } from 'react-icons/ai'
 import debounce from 'lodash/debounce'
+import LoadingOverlay from '../LoadingOverlay'
+import ErrorOverlay from '../ErrorOverlay'
 import Logger from '../../scripts/logger'
 
 // The max number of rows that can be displayed before truncation
@@ -53,55 +53,8 @@ class CSVRenderer extends React.Component {
     }
   }
 
-  async init() {
-    this.setState({
-      isLoading: true,
-      errors: new Set(),
-      currentStep: 'Loading libraries...'
-    })
-
-    try {
-      this.Parser = (await import('papaparse')).default
-
-      this.updateCurrentStep('Rendering CSV...')
-      this.parseCSV(this.props.content)
-    } catch (err) {
-      Logger.error(err)
-
-      this.setState({
-        isLoading: false,
-        errors: new Set([...this.state.errors, LIBRARY_IMPORT_ERROR])
-      })
-    }
-  }
-
-  updateCurrentStep(currentStep) {
-    this.setState({ currentStep })
-  }
-
-  parseCSV(content) {
-    const Parser = this.Parser
-
-    Parser.parse(content, {
-      skipEmptyLines: true,
-      worker: true,
-      comments: '#',
-      preview: MAX_ROW_COUNT + 1,
-      delimitersToGuess: [
-        ',',
-        '\t',
-        '|',
-        ';',
-        ':',
-        Parser.RECORD_SEP,
-        Parser.UNIT_SEP
-      ],
-      complete: this.onParseComplete,
-      error: this.onParseError
-    })
-  }
-
   onParseComplete(results) {
+    // eslint-disable-next-line react/no-access-state-in-setstate
     const errors = new Set([...this.state.errors])
     const tableHeaders = results.data[0]
     const tableRows = results.data.slice(1).map(row => ({
@@ -125,9 +78,9 @@ class CSVRenderer extends React.Component {
     // Just because a parsing error was generated, that doesn't
     // mean we can't still display the table
     Logger.warn(err)
-    this.setState({
-      errors: new Set([...this.state.errors, PARSE_ERROR])
-    })
+    this.setState(prevState => ({
+      errors: new Set([...prevState.errors, PARSE_ERROR])
+    }))
   }
 
   onChange(event) {
@@ -136,8 +89,56 @@ class CSVRenderer extends React.Component {
     this.filterTable(inputValue.toLowerCase())
   }
 
+  parseCSV(content) {
+    const { Parser } = this
+
+    Parser.parse(content, {
+      skipEmptyLines: true,
+      worker: true,
+      comments: '#',
+      preview: MAX_ROW_COUNT + 1,
+      delimitersToGuess: [
+        ',',
+        '\t',
+        '|',
+        ';',
+        ':',
+        Parser.RECORD_SEP,
+        Parser.UNIT_SEP
+      ],
+      complete: this.onParseComplete,
+      error: this.onParseError
+    })
+  }
+
+  updateCurrentStep(currentStep) {
+    this.setState({ currentStep })
+  }
+
+  async init() {
+    this.setState({
+      isLoading: true,
+      errors: new Set(),
+      currentStep: 'Loading libraries...'
+    })
+
+    try {
+      this.Parser = (await import('papaparse')).default
+
+      this.updateCurrentStep('Rendering CSV...')
+      this.parseCSV(this.props.content)
+    } catch (err) {
+      Logger.error(err)
+
+      this.setState(prevState => ({
+        isLoading: false,
+        errors: new Set([...prevState.errors, LIBRARY_IMPORT_ERROR])
+      }))
+    }
+  }
+
   filterTable(value) {
-    const tableRows = this.state.tableRows
+    const { tableRows } = this.state
 
     const rows = tableRows.map(data => {
       const match = data.rowArray.find(
@@ -167,9 +168,9 @@ class CSVRenderer extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {tableRows.map((data, index) => (
-            <tr key={`row-${index}`} style={{ display: data.display }}>
-              <td className="line-number" data-line-number={index + 1} />
+          {tableRows.map((data, rowIndex) => (
+            <tr key={`row-${rowIndex}`} style={{ display: data.display }}>
+              <td className="line-number" data-line-number={rowIndex + 1} />
               {data.rowArray.map((value, index) => (
                 <td key={index}>{value}</td>
               ))}

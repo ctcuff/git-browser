@@ -1,30 +1,34 @@
 import '../style/explorer-panel.scss'
+// TODO: Look at this
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'simplebar/dist/simplebar.css'
+// import 'simplebar-react/dist/simplebar.min.css'
+import SimpleBar from 'simplebar-react'
+import PropTypes from 'prop-types'
 import React from 'react'
+import {
+  AiOutlineSearch,
+  AiOutlineFileSearch,
+  AiOutlineBranches,
+  AiOutlineSetting,
+  AiOutlineLeft,
+  AiOutlineMenu
+} from 'react-icons/ai'
+import { connect } from 'react-redux'
+import { VscFiles } from 'react-icons/vsc'
 import FileExplorer from './FileExplorer'
 import Tree from '../scripts/tree'
 import Collapse from './Collapse'
-import PropTypes from 'prop-types'
 import GitHubAPI from '../scripts/github-api'
 import SearchInput from './SearchInput'
 import BranchList from './BranchList'
-import SimpleBar from 'simplebar-react'
 import URLUtil from '../scripts/url-util'
-import { AiOutlineLeft, AiOutlineMenu } from 'react-icons/ai'
 import Settings from './Settings'
 import ResizePanel from './ResizePanel'
 import Logger from '../scripts/logger'
 import FileSearch from './FileSearch'
 import ExplorerPanelOverlay from './ExplorerPanelOverlay'
-import {
-  AiOutlineSearch,
-  AiOutlineFileSearch,
-  AiOutlineBranches,
-  AiOutlineSetting
-} from 'react-icons/ai'
-import { VscFiles } from 'react-icons/vsc'
 import { setRepoData } from '../store/actions/search'
-import { connect } from 'react-redux'
 
 class ExplorerPanel extends React.Component {
   constructor(props) {
@@ -35,7 +39,6 @@ class ExplorerPanel extends React.Component {
       inputValue: '',
       currentRepoUrl: '',
       currentBranch: '',
-      currentRepoPath: '',
       searchErrorMessage: null,
       isLoading: false,
       isExplorerOpen: window.innerWidth >= 900,
@@ -83,7 +86,7 @@ class ExplorerPanel extends React.Component {
 
   componentDidMount() {
     // Get the repo and branch queries from the URL and make a search
-    const url = 'github.com' + window.location.pathname
+    const url = `github.com${window.location.pathname}`
     const repo = URLUtil.extractRepoPath(url)
     const branch = URLUtil.getSearchParam('branch', 'default')
 
@@ -105,10 +108,6 @@ class ExplorerPanel extends React.Component {
     })
   }
 
-  toggleLoading() {
-    this.setState({ isLoading: !this.state.isLoading })
-  }
-
   async getRepo(url, branch = 'default') {
     const extractedPath = URLUtil.extractRepoPath(url)
 
@@ -126,7 +125,6 @@ class ExplorerPanel extends React.Component {
       await this.getTree(url, branch)
       await this.getBranches(url)
 
-      this.setState({ currentRepoPath: url })
       this.props.onSearchFinished(false)
       this.props.setRepoData({
         repoPath: extractedPath,
@@ -142,17 +140,17 @@ class ExplorerPanel extends React.Component {
 
     return GitHubAPI.getTree(repoUrl, branch)
       .then(res => {
-        this.setState({
+        this.setState(prevState => ({
           treeData: Tree.treeify(res.tree),
           currentBranch: res.branch,
           panels: {
-            ...this.state.panels,
+            ...prevState.panels,
             code: {
-              ...this.state.panels.code,
+              ...prevState.panels.code,
               isOpen: true
             }
           }
-        })
+        }))
 
         const repoPath = URLUtil.extractRepoPath(repoUrl)
 
@@ -180,17 +178,17 @@ class ExplorerPanel extends React.Component {
 
   getBranches(repoUrl) {
     return GitHubAPI.getBranches(repoUrl).then(data => {
-      this.setState({
+      this.setState(prevState => ({
         branches: data.branches,
         isBranchListTruncated: data.truncated,
         panels: {
-          ...this.state.panels,
+          ...prevState.panels,
           branches: {
-            ...this.state.panels.branches,
+            ...prevState.panels.branches,
             isOpen: true
           }
         }
-      })
+      }))
     })
   }
 
@@ -212,8 +210,12 @@ class ExplorerPanel extends React.Component {
       })
   }
 
+  toggleLoading() {
+    this.setState(prevState => ({ isLoading: !prevState.isLoading }))
+  }
+
   toggleExplorer() {
-    this.setState({ isExplorerOpen: !this.state.isExplorerOpen })
+    this.setState(prevState => ({ isExplorerOpen: !prevState.isExplorerOpen }))
   }
 
   openExplorer() {
@@ -231,16 +233,16 @@ class ExplorerPanel extends React.Component {
     }
 
     this.setState(
-      {
+      prevState => ({
         isExplorerOpen: true,
         panels: {
-          ...this.state.panels,
+          ...prevState.panels,
           [panel]: {
-            ...this.state.panels[panel],
+            ...prevState.panels[panel],
             isOpen
           }
         }
-      },
+      }),
       () => {
         if (scrollIntoView) {
           this.scrollToPanel(panel)
@@ -305,7 +307,7 @@ class ExplorerPanel extends React.Component {
     // Pass a key to the FileExplorer component so that it knows
     // to only render when either the current repository has changed,
     // or when the current branch has changed
-    const key = currentRepoUrl + '/' + currentBranch
+    const key = `${currentRepoUrl}/${currentBranch}`
 
     return (
       <div className={`explorer-panel ${openClass}`}>
@@ -318,6 +320,7 @@ class ExplorerPanel extends React.Component {
           className="panel-toggle"
           onClick={this.toggleExplorer}
           title="Toggle Explorer"
+          type="button"
         >
           {isExplorerOpen ? (
             <AiOutlineLeft className="panel-toggle-icon" />

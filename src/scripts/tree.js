@@ -40,6 +40,7 @@ class Tree {
   static treeify(data) {
     const tree = {}
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const item of data) {
       const { path, url, type, size } = item
 
@@ -48,6 +49,7 @@ class Tree {
         // Blobs and trees are equivalent to files and folders so
         // we only care about adding those types since we
         // can't display commits (yet?).
+        // eslint-disable-next-line no-continue
         continue
       }
 
@@ -62,6 +64,7 @@ class Tree {
         url
       }
 
+      // eslint-disable-next-line default-case
       switch (type) {
         case 'blob':
           tree[path] = {

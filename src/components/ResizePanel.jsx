@@ -1,8 +1,8 @@
 import '../style/resize-panel.scss'
 import React from 'react'
-import { parseCSSVar, setCSSVar } from '../scripts/util'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import PropTypes from 'prop-types'
+import { parseCSSVar, setCSSVar } from '../scripts/util'
 
 // Used to ensure the editor panel stays within a certain size
 const clamp = (min, value, max) => Math.max(min, Math.min(value, max))
@@ -28,6 +28,18 @@ class ResizePanel extends React.Component {
     document.removeEventListener('mouseup', this.onMouseUp)
   }
 
+  onPanelMouseDown(event) {
+    this.mousePosition = event.nativeEvent.x
+
+    document.body.classList.add('is-resizing')
+    document.addEventListener('mousemove', this.resizePanel)
+  }
+
+  onMouseUp() {
+    document.body.classList.remove('is-resizing')
+    document.removeEventListener('mousemove', this.resizePanel)
+  }
+
   resize(event) {
     // The smallest the explorer is allowed to be before it snaps closed
     const absoluteMin = 150
@@ -38,7 +50,7 @@ class ResizePanel extends React.Component {
 
     // Ensures that the panel can only shrink to the size of body - absoluteMin
     // and grow only to the size of the page - absoluteMax
-    let newSize = clamp(absoluteMin, panelSize - diff, absoluteMax)
+    const newSize = clamp(absoluteMin, panelSize - diff, absoluteMax)
 
     // Setting the mouse position to the new size of the panel
     // emulates vscode's way of shrinking the file explorer. This
@@ -55,23 +67,11 @@ class ResizePanel extends React.Component {
       onBreakPointOpen()
     }
 
-    setCSSVar('--file-explorer-width', newSize + 'px')
+    setCSSVar('--file-explorer-width', `${newSize}px`)
   }
 
   resizePanel(event) {
     requestAnimationFrame(() => this.resize(event))
-  }
-
-  onPanelMouseDown(event) {
-    this.mousePosition = event.nativeEvent.x
-
-    document.body.classList.add('is-resizing')
-    document.addEventListener('mousemove', this.resizePanel)
-  }
-
-  onMouseUp() {
-    document.body.classList.remove('is-resizing')
-    document.removeEventListener('mousemove', this.resizePanel)
   }
 
   render() {
