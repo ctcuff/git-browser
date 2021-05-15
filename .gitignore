@@ -27,3 +27,6 @@ yarn-error.log*
 .idea
 /src/config.js
 .env
+
+# Local Netlify folder
+.netlify
