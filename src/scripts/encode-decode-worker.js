@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { base64DecodeUnicode, base64EncodeUnicode } from './util'
 
 function encode(content, raw) {
@@ -31,7 +30,8 @@ function decode(content, raw) {
  * }
  * ```
  */
-onmessage = function (event) {
+// eslint-disable-next-line no-restricted-globals
+self.onmessage = function (event) {
   const { message, type, raw = false } = event.data
   let content = null
 
@@ -48,5 +48,6 @@ onmessage = function (event) {
       )
   }
 
-  postMessage(content)
+  // eslint-disable-next-line no-restricted-globals
+  self.postMessage(content)
 }

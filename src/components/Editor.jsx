@@ -82,9 +82,9 @@ class Editor extends React.Component {
       isEncoding: false
     }
 
-    this.encodeWorker = new Worker('../scripts/encode-decode-worker.js', {
-      type: 'module'
-    })
+    this.encodeWorker = new Worker(
+      new URL('../scripts/encode-decode-worker.js', import.meta.url)
+    )
 
     this.editorRef = React.createRef()
     this.getEditorTheme = this.getEditorTheme.bind(this)

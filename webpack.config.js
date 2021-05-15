@@ -3,10 +3,10 @@ const { HotModuleReplacementPlugin, EnvironmentPlugin } = require('webpack')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const WorkerPlugin = require('worker-plugin')
 const Dotenv = require('dotenv-webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const CopyPlugin = require('copy-webpack-plugin')
+const ESLintPlugin = require('eslint-webpack-plugin')
 
 // Files in the `/public` directory that will be copied to `/dist during build
 const includedFiles = [
@@ -20,6 +20,9 @@ module.exports = env => {
   const plugins = [
     new Dotenv({
       systemvars: true
+    }),
+    new ESLintPlugin({
+      extensions: ['js', 'jsx']
     }),
     new HotModuleReplacementPlugin(),
     new MonacoWebpackPlugin({
@@ -46,12 +49,6 @@ module.exports = env => {
     ),
     new EnvironmentPlugin({
       DEBUG: JSON.parse(env.debug)
-    }),
-    new WorkerPlugin({
-      // Use "self" as the global object when receiving hot updates
-      // during debug but disable warnings about hot module reload
-      // when building for production
-      globalObject: env.debug ? 'self' : false
     })
   ]
 
@@ -88,11 +85,11 @@ module.exports = env => {
           test: /\.(js|jsx?)$/,
           include: path.resolve(__dirname, 'src'),
           exclude: /node_modules/,
-          use: ['babel-loader', 'eslint-loader']
+          use: 'babel-loader'
         },
         {
           test: /\.(ttf|png|jpg|svg|ico)$/,
-          use: ['file-loader']
+          type: 'asset/resource'
         },
         {
           test: /\.(css|scss)$/,
