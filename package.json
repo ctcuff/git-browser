@@ -1,11 +1,9 @@
 {
   "name": "git-browser",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "A better way of viewing GitHub repositories in your browser",
+  "author": "Cameron Cuff",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "webpack --config webpack.config.js --mode='production' --env.debug='false'",
     "build:analyze": "yarn build --env.analyze",
