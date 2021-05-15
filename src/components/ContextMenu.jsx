@@ -76,7 +76,7 @@ const ContextMenu = props => {
           {options.map(option => (
             <li
               key={option.title}
-              onClick={onOptionClick.bind(this, option)}
+              onClick={() => onOptionClick(option)}
               className={`menu-option ${option.disabled ? 'disabled' : ''}`}
             >
               {option.title}

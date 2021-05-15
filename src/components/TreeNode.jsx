@@ -72,7 +72,7 @@ const TreeNode = props => {
         className={`tree-node ${classes}`}
         title={node.path}
         style={{ paddingLeft: getPaddingLeft(level, node.type) }}
-        onClick={onSelectNode.bind(this, node, props)}
+        onClick={() => onSelectNode(node, props)}
       >
         <div className="tree-node__icon toggle">
           {renderToggleIcon(node.type, node.isOpen)}
