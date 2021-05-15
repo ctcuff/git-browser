@@ -78,7 +78,7 @@ class AsciiDocRenderer extends React.Component {
   }
 
   sanitizeAsciiDoc(content) {
-    const { DOMPurify } = this.DOMPurify
+    const { DOMPurify } = this
 
     DOMPurify.addHook('afterSanitizeAttributes', this.afterSanitizeAttributes)
     DOMPurify.addHook('afterSanitizeElements', this.afterSanitizeElements)

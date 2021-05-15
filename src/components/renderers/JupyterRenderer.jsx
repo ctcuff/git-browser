@@ -130,12 +130,12 @@ class JupyterRenderer extends React.Component {
     return DOMPurify.sanitize(content)
   }
 
-  highlighter(str, lang) {
+  highlighter(code, language) {
     const { hljs } = this
 
-    if (lang && hljs.getLanguage(lang)) {
+    if (language && hljs.getLanguage(language)) {
       try {
-        return hljs.highlight(lang, str).value
+        return hljs.highlight(code, { language }).value
       } catch (e) {
         Logger.warn(e)
       }

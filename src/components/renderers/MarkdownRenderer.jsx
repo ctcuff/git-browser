@@ -132,10 +132,10 @@ class MarkdownRenderer extends React.Component {
       typographer: true,
       linkify: true,
       breaks: false,
-      highlight: (str, lang) => {
-        if (lang && hljs.getLanguage(lang)) {
+      highlight: (code, language) => {
+        if (language && hljs.getLanguage(language)) {
           try {
-            return hljs.highlight(lang, str).value
+            return hljs.highlight(code, { language }).value
           } catch (e) {
             Logger.warn(e)
           }
