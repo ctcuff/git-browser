@@ -1,4 +1,3 @@
-// TODO: Look at this
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'simplebar/dist/simplebar.css'
 import '../style/tabs.scss'

@@ -97,7 +97,7 @@
     ],
     "./src/**/*{.js,.jsx}": [
       "yarn lint",
-      "yarn test"
+      "yarn test --findRelatedTests"
     ]
   },
   "postcss": {

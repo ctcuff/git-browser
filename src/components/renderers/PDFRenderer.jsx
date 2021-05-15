@@ -123,24 +123,27 @@ class PDFRenderer extends React.Component {
 
   async renderPages(pdfDocument) {
     const pages = []
+    const promises = []
     const { numPages } = pdfDocument
 
     for (let i = 0; i < numPages; i++) {
-      // TODO: Look at this
-      // eslint-disable-next-line no-await-in-loop
-      await pdfDocument.getPage(i + 1).then(
-        page => {
-          pages.push(<PDFPage page={page} key={i} />)
-          this.setState({
-            currentStep: `Loading page ${i + 1}/${numPages}`
-          })
-        },
-        err => {
-          Logger.error(`Error loading page at index ${i}`, err)
-          this.setErrorState()
-        }
+      promises.push(
+        pdfDocument.getPage(i + 1).then(
+          page => {
+            pages.push(<PDFPage page={page} key={i} />)
+            this.setState({
+              currentStep: `Loading page ${i + 1}/${numPages}`
+            })
+          },
+          err => {
+            Logger.error(`Error loading page at index ${i}`, err)
+            this.setErrorState()
+          }
+        )
       )
     }
+
+    await Promise.all(promises)
 
     this.setState({
       isLoading: false,

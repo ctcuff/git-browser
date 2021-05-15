@@ -1,8 +1,6 @@
-import '../style/explorer-panel.scss'
-// TODO: Look at this
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'simplebar/dist/simplebar.css'
-// import 'simplebar-react/dist/simplebar.min.css'
+import '../style/explorer-panel.scss'
 import SimpleBar from 'simplebar-react'
 import PropTypes from 'prop-types'
 import React from 'react'
