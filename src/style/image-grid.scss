@@ -46,11 +46,6 @@
       width: 2em;
       height: 2em;
 
-      @include mobile() {
-        width: 1.5em;
-        height: 1.5em;
-      }
-
       path {
         stroke: var(--color-text-primary);
       }
