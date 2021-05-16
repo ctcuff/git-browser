@@ -65,6 +65,7 @@ class Editor extends React.Component {
     '.png',
     '.ppt',
     '.pptx',
+    '.psd',
     '.ttf',
     '.wav',
     '.webm',

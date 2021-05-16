@@ -1,20 +1,9 @@
-@import '../mixins/media';
-
 .image-renderer {
   width: 90%;
   height: 90%;
-  background-repeat: repeat;
   display: flex;
   justify-self: center;
   align-items: center;
-
-  &.has-grid.theme-light {
-    background-image: url('../../assets/img/checker-theme-light.svg');
-  }
-
-  &.has-grid.theme-dark {
-    background-image: url('../../assets/img/checker-theme-dark.svg');
-  }
 
   img {
     max-width: 100%;
@@ -26,43 +15,5 @@
   .img--loading {
     border: none;
     display: none;
-  }
-
-  .grid-toggle {
-    position: absolute;
-    right: 1.5em;
-    top: 1em;
-    background-color: transparent;
-    z-index: 1;
-    border: none;
-    cursor: pointer;
-    color: var(--color-text-primary);
-
-    @include desktop() {
-      opacity: 0.5;
-      transition: opacity 0.3s ease-in;
-
-      &:hover {
-        opacity: 1;
-      }
-    }
-
-    &:focus {
-      outline: none;
-    }
-
-    svg {
-      width: 2em;
-      height: 2em;
-
-      @include mobile() {
-        width: 1.5em;
-        height: 1.5em;
-      }
-
-      path {
-        stroke: var(--color-text-primary);
-      }
-    }
   }
 }

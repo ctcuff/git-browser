@@ -15,6 +15,7 @@ import ModelRenderer from './renderers/ModelRenderer'
 import FontRenderer from './renderers/FontRenderer'
 import EmbeddedDocRenderer from './renderers/EmbeddedDocRenderer'
 import ZipRenderer from './renderers/ZipRenderer'
+import PSDRenderer from './renderers/PSDRenderer'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import Logger from '../scripts/logger'
@@ -166,6 +167,8 @@ class FileRenderer extends React.Component {
       case '.xls':
       case '.xlsx':
         return <EmbeddedDocRenderer fileURL={fileURL} />
+      case '.psd':
+        return <PSDRenderer content={content} fileName={fileName} />
       default:
         return this.renderUnsupported()
     }

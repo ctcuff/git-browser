@@ -1,10 +1,9 @@
 import '../../style/renderers/image-renderer.scss'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { GrGrid } from 'react-icons/gr'
-import { connect } from 'react-redux'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
+import ImageGrid from '../ImageGrid'
 import Logger from '../../scripts/logger'
 
 const getMimeType = extension => {
@@ -41,48 +40,26 @@ const getMimeType = extension => {
   return `image/${type}`
 }
 
-const ImageRenderer = props => {
-  const { extension, alt, content, theme } = props
+const ImageRenderer = ({ extension, alt, content }) => {
   const [isLoading, setLoading] = useState(true)
   const [hasError, setError] = useState(false)
-  const [hasGrid, toggleGrid] = useState(false)
-  const [gridClass, setGridClass] = useState('')
   const mimeType = getMimeType(extension)
 
   const onImageLoaded = () => setLoading(false)
-  const toggleBackgroundClass = () => toggleGrid(!hasGrid)
 
   const onLoadError = () => {
     setLoading(false)
     setError(true)
   }
 
-  const retry = () => {
-    setLoading(true)
-    setError(false)
-  }
-
-  useEffect(() => {
-    const { userTheme, preferredTheme } = theme
-
-    // Need to set the theme of the background grid when the theme changes.
-    // If the theme is auto, we'll use the user's preferred theme based on
-    // their system settings.
-    setGridClass(userTheme === 'theme-auto' ? preferredTheme : userTheme)
-  }, [theme])
-
   if (hasError) {
     return (
-      <ErrorOverlay
-        message="Error loading image."
-        retryMessage="Retry"
-        onRetryClick={retry}
-      />
+      <ErrorOverlay message="An error occurred while loading this image." />
     )
   }
 
   return (
-    <div className={`image-renderer ${hasGrid ? 'has-grid' : ''} ${gridClass}`}>
+    <div className="image-renderer">
       {isLoading && <LoadingOverlay text="Rendering image..." />}
       <img
         src={`data:${mimeType};base64,${content}`}
@@ -91,13 +68,7 @@ const ImageRenderer = props => {
         onLoad={onImageLoaded}
         onError={onLoadError}
       />
-      <button
-        className="grid-toggle"
-        onClick={toggleBackgroundClass}
-        type="button"
-      >
-        <GrGrid title="Toggle background" />
-      </button>
+      <ImageGrid />
     </div>
   )
 }
@@ -127,16 +98,7 @@ ImageRenderer.propTypes = {
     '.webp',
     // MIME Type: image/x-icon
     '.ico'
-  ]).isRequired,
-  theme: PropTypes.shape({
-    userTheme: PropTypes.oneOf(['theme-dark', 'theme-light', 'theme-auto'])
-      .isRequired,
-    preferredTheme: PropTypes.oneOf(['theme-dark', 'theme-light']).isRequired
-  }).isRequired
+  ]).isRequired
 }
 
-const mapStateToProps = state => ({
-  theme: state.settings.theme
-})
-
-export default connect(mapStateToProps)(ImageRenderer)
+export default ImageRenderer
