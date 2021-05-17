@@ -1,29 +1,10 @@
 import '../../style/renderers/pdf-renderer.scss'
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
+import PDFPage from '../PDFPage'
 import Logger from '../../scripts/logger'
-
-const PDFPage = ({ page }) => {
-  const canvasRef = useRef(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const viewport = page.getViewport({ scale: 3 })
-    const context = canvas.getContext('2d')
-
-    canvas.width = viewport.width
-    canvas.height = viewport.height
-
-    page.render({
-      canvasContext: context,
-      viewport
-    })
-  }, [])
-
-  return <canvas ref={canvasRef} />
-}
 
 class PDFRenderer extends React.Component {
   constructor(props) {
@@ -32,7 +13,6 @@ class PDFRenderer extends React.Component {
     this.state = {
       isLoading: true,
       hasError: false,
-      decodedContent: null,
       currentStep: 'Loading PDF...',
       pages: []
     }
@@ -65,26 +45,25 @@ class PDFRenderer extends React.Component {
   }
 
   decodeContent() {
-    this.rawDecodeWorker.postMessage({
-      message: this.props.content,
-      type: 'decode',
-      raw: true
+    return new Promise((resolve, reject) => {
+      this.rawDecodeWorker.postMessage({
+        message: this.props.content,
+        type: 'decode',
+        raw: true
+      })
+
+      this.rawDecodeWorker.onmessage = event => {
+        resolve(event.data)
+      }
+
+      this.rawDecodeWorker.onerror = event => {
+        reject(new Error(event.message))
+      }
     })
-
-    this.rawDecodeWorker.onmessage = event => {
-      this.setState({ decodedContent: event.data }, () => this.loadPDF())
-    }
-
-    this.rawDecodeWorker.onerror = event => {
-      Logger.error('Error decoding PDF content', event.message)
-      this.setErrorState()
-    }
   }
 
-  loadPDF() {
-    const data = this.state.decodedContent
-
-    this.pdfjs.getDocument({ data }).promise.then(
+  loadPDF(decodedPdfData) {
+    this.pdfjs.getDocument({ data: decodedPdfData }).promise.then(
       pdfDocument => {
         this.renderPages(pdfDocument)
       },
@@ -95,18 +74,18 @@ class PDFRenderer extends React.Component {
     )
   }
 
-  init() {
-    // Dynamic import to reduce bundle size
-    import('pdfjs-dist')
-      .then(pdfjs => {
-        this.pdfjs = pdfjs
-        this.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
-        this.decodeContent()
-      })
-      .catch(err => {
-        Logger.error(err)
-        this.setErrorState()
-      })
+  async init() {
+    try {
+      this.pdfjs = await import('pdfjs-dist')
+      this.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${this.pdfjs.version}/pdf.worker.js`
+
+      const decodedData = await this.decodeContent()
+
+      this.loadPDF(decodedData)
+    } catch (err) {
+      Logger.error(err)
+      this.setErrorState()
+    }
   }
 
   reload() {
@@ -117,7 +96,7 @@ class PDFRenderer extends React.Component {
         pages: [],
         currentStep: 'Loading PDF...'
       },
-      () => this.init()
+      this.init
     )
   }
 
@@ -127,20 +106,20 @@ class PDFRenderer extends React.Component {
     const { numPages } = pdfDocument
 
     for (let i = 0; i < numPages; i++) {
-      promises.push(
-        pdfDocument.getPage(i + 1).then(
-          page => {
-            pages.push(<PDFPage page={page} key={i} />)
-            this.setState({
-              currentStep: `Loading page ${i + 1}/${numPages}`
-            })
-          },
-          err => {
-            Logger.error(`Error loading page at index ${i}`, err)
-            this.setErrorState()
-          }
-        )
+      const promise = pdfDocument.getPage(i + 1).then(
+        page => {
+          pages.push(<PDFPage page={page} key={i} />)
+          this.setState({
+            currentStep: `Loading page ${i + 1}/${numPages}`
+          })
+        },
+        err => {
+          Logger.error(`Error loading page at index ${i}`, err)
+          this.setErrorState()
+        }
       )
+
+      promises.push(promise)
     }
 
     await Promise.all(promises)
@@ -177,14 +156,6 @@ class PDFRenderer extends React.Component {
       </div>
     )
   }
-}
-
-PDFPage.propTypes = {
-  // Disabled since pdf.js is loaded asynchronously so
-  // we won't be able to validate this prop until the component
-  // is rendered
-  // eslint-disable-next-line react/forbid-prop-types
-  page: PropTypes.object.isRequired
 }
 
 PDFRenderer.propTypes = {

@@ -70,18 +70,16 @@ const FileSearch = props => {
         hasError={hasError}
         errorMessage="No files found"
       />
-      <>
-        {Object.keys(filteredTreeData).map((key, index) => (
-          <TreeNode
-            showPath
-            className="file-search-node"
-            key={index}
-            node={filteredTreeData[key]}
-            onSelectNode={props.onSelectFile}
-            activeFilePath={props.activeFilePath}
-          />
-        ))}
-      </>
+      {Object.keys(filteredTreeData).map((key, index) => (
+        <TreeNode
+          showPath
+          className="file-search-node"
+          key={index}
+          node={filteredTreeData[key]}
+          onSelectNode={props.onSelectFile}
+          activeFilePath={props.activeFilePath}
+        />
+      ))}
     </div>
   )
 }

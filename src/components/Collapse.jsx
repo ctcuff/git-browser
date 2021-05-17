@@ -1,12 +1,11 @@
 import '../style/collapse.scss'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FiChevronRight } from 'react-icons/fi'
 import PropTypes from 'prop-types'
 import { withClasses } from '../scripts/util'
 
 const Collapse = React.forwardRef((props, ref) => {
   const [isOpen, setOpen] = useState(props.open)
-  const contentRef = useRef(null)
   const openClass = withClasses({
     'is-open': isOpen,
     'is-closed': !isOpen
@@ -34,9 +33,7 @@ const Collapse = React.forwardRef((props, ref) => {
           {props.title}
         </span>
       </button>
-      <div className="content" ref={contentRef}>
-        {props.children}
-      </div>
+      <div className="content">{props.children}</div>
     </div>
   )
 })

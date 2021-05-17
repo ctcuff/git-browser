@@ -98,7 +98,10 @@ const TabView = props => {
   ]
 
   useEffect(() => {
-    const callback = toggleContextMenu.bind(this, false)
+    // Close the context menu when any key is pressed or when the
+    // document looses focus
+    const callback = () => toggleContextMenu(false)
+
     document.addEventListener('keypress', callback)
     document.addEventListener('blur', callback)
     return () => {
