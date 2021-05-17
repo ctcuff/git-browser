@@ -178,7 +178,7 @@ class Editor extends React.Component {
     this.setState({ isLoading: false })
   }
 
-  // Let the App component know that ths file should not
+  // Let the App component know that this file should not
   // be rendered by the editor
   forceRenderPreview() {
     if (this.state.isEncoding) {

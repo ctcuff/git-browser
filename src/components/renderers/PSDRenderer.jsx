@@ -14,7 +14,8 @@ class PSDRenderer extends React.Component {
     this.state = {
       isLoading: false,
       hasError: false,
-      base64ImageString: ''
+      base64ImageString: '',
+      pngObjectUrl: ''
     }
 
     this.init = this.init.bind(this)
@@ -32,6 +33,9 @@ class PSDRenderer extends React.Component {
   }
 
   componentWillUnmount() {
+    // Let the browser know that it no longer
+    // needs to keep a reference to this file
+    URL.revokeObjectURL(this.state.pngObjectUrl)
     this.rawDecodeWorker.terminate()
   }
 
@@ -63,10 +67,10 @@ class PSDRenderer extends React.Component {
 
   async convertPSD() {
     const blob = await this.base64ToBlob()
-    const objectUrl = URL.createObjectURL(blob)
-    const psd = await this.PSD.fromURL(objectUrl)
+    const pngObjectUrl = URL.createObjectURL(blob)
+    const psd = await this.PSD.fromURL(pngObjectUrl)
 
-    URL.revokeObjectURL(objectUrl)
+    this.setState({ pngObjectUrl })
 
     return psd.image.toBase64()
   }
@@ -104,7 +108,7 @@ class PSDRenderer extends React.Component {
   }
 
   render() {
-    const { isLoading, hasError, base64ImageString } = this.state
+    const { isLoading, hasError, base64ImageString, pngObjectUrl } = this.state
     const fileName = this.props.fileName.replace('.psd', '')
 
     if (isLoading) {
@@ -125,9 +129,11 @@ class PSDRenderer extends React.Component {
       <div className="psd-renderer">
         <ImageGrid />
         <a
-          href={base64ImageString}
+          // This tag has the object URL as the href because the base 64 image
+          // string can get large enough to freeze the browser when it's clicked
+          href={pngObjectUrl}
           className="file-download-link"
-          title="Download as a PNG"
+          title="Download this file as a PNG"
           download={`${fileName}.png`}
         >
           <AiOutlineSave />
