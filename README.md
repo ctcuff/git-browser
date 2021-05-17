@@ -23,8 +23,10 @@ Here's a list of all file types that support live previews:
     - Thanks to [Asciidoctor](https://github.com/asciidoctor/asciidoctor.js) 🎉
 - Zip
     - Thanks to [zip.js](https://github.com/gildas-lormeau/zip.js) 🎉
-- Jupyter Notebook (Experimental)
+- Jupyter Notebook
     - Thanks to [notebookjs](https://github.com/jsvine/notebookjs) 🎉
+- PSD (Photoshop)
+    - Thanks to [psd.js](https://github.com/meltingice/psd.js) 🎉
 - GLTF/GLB Models (Experimental)
     - Thanks to [model-viewer](https://github.com/google/model-viewer) 🎉
 
@@ -59,6 +61,6 @@ Run `yarn test` or `yarn test --coverage`. If you'd like to run tests without ou
 <p align="center">Wanna see what a video looks like? Well you're in luck! <a href="https://gitbrowser.io/ctcuff/layout-playground?branch=develop&file=src%2Fassets%2Fvideos%2Fbeach-1920x1080.mp4">View video</a></p>
 <img width="1648" alt="Screen Shot 2021-01-26 at 12 27 31 AM" src="https://user-images.githubusercontent.com/7400747/105804867-d20c6100-5f6e-11eb-876b-0291e5979f80.png">
 
-<p align="center">Wanna see what the code for this website looks like on this website? Inception! <a href="https://gitbrowser.io/ctcuff/git-browser?branch=dev&file=src%2Fcomponents%2Frenderers%2FPDFRenderer.js
+<p align="center">Wanna see what the code for this website looks like on this website? Inception! <a href="https://gitbrowser.io/ctcuff/git-browser?branch=dev&file=src%2Fcomponents%2Frenderers%2FPDFRenderer.jsx
 ">View code</a></p>
 <img width="1648" alt="Screen Shot 2021-01-26 at 12 45 45 AM" src="https://user-images.githubusercontent.com/7400747/105805380-de44ee00-5f6f-11eb-8b7c-5eec8e6b43ac.png">
