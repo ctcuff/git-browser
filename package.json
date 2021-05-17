@@ -8,6 +8,7 @@
     "build": "webpack --config webpack.config.js --mode='production' --env.debug='false'",
     "build:analyze": "yarn build --env.analyze",
     "dev": "webpack-dev-server --env.debug='true'",
+    "dev:deploy": "yarn build && netlify deploy --open",
     "test": "jest --env=./test-env.js",
     "test:ci": "yarn test --bail --passWithNoTests --silent",
     "lint": "eslint './src/**/*{.js,.jsx}'",
