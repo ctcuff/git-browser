@@ -1,14 +1,4 @@
-/**
- * Represents the structure of the object returned in the tree array from GitHub
- */
-interface GithubResponseTree {
-  path: string
-  mode: string
-  type: 'blob' | 'tree' | 'commit'
-  sha: 'string'
-  size: number
-  url: string
-}
+import { GitHubTreeItem } from './types/github-api'
 
 type TreeObject = {
   [key: string]: {
@@ -61,7 +51,7 @@ class Tree {
    *
    * @see https://docs.github.com/en/free-pro-team@latest/rest/reference/git#trees
    */
-  public static treeify(data: GithubResponseTree[]): TreeObject {
+  public static treeify(data: GitHubTreeItem[]): TreeObject {
     const tree: TreeObject = {}
 
     for (let i = 0; i < data.length; i++) {

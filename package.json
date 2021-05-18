@@ -98,10 +98,10 @@
     }
   },
   "lint-staged": {
-    "./src/**/*{.scss,.js,.jsx}": [
+    "./src/**/*{.scss,.js,.jsx,.ts,.tsx}": [
       "prettier --write"
     ],
-    "./src/**/*{.js,.jsx}": [
+    "./src/**/*{.js,.jsx,.ts,.tsx}": [
       "yarn lint",
       "yarn test --findRelatedTests"
     ]
