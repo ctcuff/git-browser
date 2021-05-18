@@ -85,7 +85,7 @@ class Editor extends React.Component {
       isEncoding: false
     }
 
-    this.encodeWorker = new Worker('../scripts/encode-decode.worker.js', {
+    this.encodeWorker = new Worker('../scripts/encode-decode.worker.ts', {
       type: 'module'
     })
 

@@ -16,6 +16,11 @@
   "settings": {
     "react": {
       "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"]
+      }
     }
   },
   "ignorePatterns": [
@@ -39,6 +44,7 @@
     "no-plusplus": "off",
     "func-names": "off",
     "no-param-reassign": ["error", { "props": false }],
+    "import/extensions": ["error", "never"],
     "react-hooks/exhaustive-deps": "off",
     "react/no-array-index-key": "off",
     "react/prop-types": 2,
@@ -62,5 +68,20 @@
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",
     "jsx-a11y/no-static-element-interactions": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parser": "@typescript-eslint/parser",
+      "extends": [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended"
+      ],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": "error",
+        // Temporary?
+        "@typescript-eslint/ban-ts-comment": "off"
+      }
+    }
+  ]
 }

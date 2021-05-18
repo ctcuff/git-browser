@@ -7,18 +7,28 @@ import Logger from './logger'
 const BASE_API_URL = 'https://api.github.com'
 const BASE_REPO_URL = `${BASE_API_URL}/repos`
 
+type RequestConfig = {
+  headers: {
+    Authorization?: string
+  }
+}
+
+type RepoPathParams = {
+  repoPath: string
+  branch: string
+  filePath: string
+  raw?: boolean
+}
+
 class URLUtil {
   /**
    * A wrapper around fetch that makes a request to the GitHub API.
    * This rejects if the GitHub rate limit is exceeded.
-   *
-   * @param {string} url
-   * @returns {Promise}
    */
-  static request(url) {
+  public static request(url: string): Promise<Response> {
     const oauthToken = store.getState().user.accessToken
     const debugToken = process.env.OAUTH_TOKEN
-    const config = {
+    const config: RequestConfig = {
       headers: {}
     }
 
@@ -31,7 +41,8 @@ class URLUtil {
     return new Promise((resolve, reject) => {
       fetch(url, config)
         .then(res => {
-          const rateLimitRemaining = res.headers.get('x-ratelimit-remaining')
+          const rateLimitRemaining =
+            res.headers.get('x-ratelimit-remaining') || ''
 
           if (parseInt(rateLimitRemaining, 10) === 0) {
             reject(new Error('rate limit exceeded'))
@@ -44,11 +55,7 @@ class URLUtil {
     })
   }
 
-  /**
-   * @param {string} url
-   * @returns {boolean}
-   */
-  static isUrlValid(url) {
+  public static isUrlValid(url: string): boolean {
     try {
       // eslint-disable-next-line no-new
       new URL(this.addScheme(url))
@@ -58,11 +65,7 @@ class URLUtil {
     }
   }
 
-  /**
-   * @param {string} url
-   * @returns {boolean}
-   */
-  static isGithubUrl(url) {
+  public static isGithubUrl(url: string): boolean {
     if (!this.isUrlValid(url)) {
       return false
     }
@@ -74,10 +77,8 @@ class URLUtil {
 
   /**
    * Adds `https://` to a url if that or `http://` isn't present
-   * @param {string} url
-   * @returns {string}
    */
-  static addScheme(url) {
+  public static addScheme(url: string): string {
     if (!url.startsWith('http') || !url.startsWith('https')) {
       return `https://${url}`
     }
@@ -87,11 +88,8 @@ class URLUtil {
   /**
    * Takes a github url: `https://github.com/user/repo-name`
    * and returns the string `user/repo-name`
-   *
-   * @param {string} url
-   * @returns {string}
    */
-  static extractRepoPath(url) {
+  public static extractRepoPath(url: string): string | null {
     if (!this.isUrlValid(url)) {
       throw new Error(`Invalid URL: ${url}`)
     }
@@ -106,20 +104,11 @@ class URLUtil {
     return `${segments[0]}/${segments[1]}`
   }
 
-  /**
-   * @param {string} repoPath
-   * @param {string} branchName
-   * @returns {string}
-   */
-  static buildBranchUrl(repoPath, branchName) {
+  public static buildBranchUrl(repoPath: string, branchName: string): string {
     return `${BASE_REPO_URL}/${repoPath}/git/trees/${branchName}?recursive=true`
   }
 
-  /**
-   * @param {string} repoPath
-   * @returns {string}
-   */
-  static buildBranchesUrl(repoPath) {
+  static buildBranchesUrl(repoPath: string): string {
     return `${BASE_REPO_URL}/${repoPath}/branches`
   }
 
@@ -134,19 +123,18 @@ class URLUtil {
    * })
    *
    * ```
-   * returns `?repo=user%2Fname&file=test.css`
-   *
-   * @param {Object.<string, string?>} queryObj
-   * @returns {string}
+   * appends `?repo=user%2Fname&file=test.css` to the URL
    */
-  static updateURLSearchParams(queryObj) {
+  static updateURLSearchParams(queryObj: {
+    [key: string]: string | null
+  }): void {
     const prevUrl = window.location.pathname + window.location.search
     const searchParams = new URLSearchParams(window.location.search)
     let newUrl = window.location.pathname
 
     Object.keys(queryObj).forEach(key => {
       if (queryObj[key]) {
-        searchParams.set(key, queryObj[key])
+        searchParams.set(key, queryObj[key] as string)
       } else {
         searchParams.delete(key)
       }
@@ -168,11 +156,8 @@ class URLUtil {
   /**
    * Takes a key and return the value of that search param from current URL.
    * If defaultValue is present, that's returned instead if `key` isn't found.
-   * @param {string} key
-   * @param {string} defaultValue
-   * @returns {string | any}
    */
-  static getSearchParam(key, defaultValue = null) {
+  static getSearchParam<Type>(key: string, defaultValue: Type): string | Type {
     const params = new URLSearchParams(window.location.search)
     return params.get(key) ?? defaultValue
   }
@@ -181,14 +166,8 @@ class URLUtil {
    * Takes a repo path (`user/repo-name`), branch, and file path and returns
    * a URL to view that file on GitHub. If `raw` is `true`, this will return
    * a link similar to clicking the "raw" button on github.
-   * @param {Object} params
-   * @param {string} params.repoPath
-   * @param {string} params.branch
-   * @param {string} params.filePath
-   * @param {boolean?} params.raw
-   * @returns {string}
    */
-  buildGithubFileURL(params) {
+  buildGithubFileURL(params: RepoPathParams): string {
     const { repoPath, branch, filePath, raw = false } = params
 
     let URL = `https://github.com/${repoPath}/blob/${branch}/${filePath}`
@@ -202,9 +181,8 @@ class URLUtil {
 
   /**
    * Takes a path name and replaces the current URL path name
-   * @param {string} path
    */
-  static updateURLPath(path) {
+  static updateURLPath(path: string): void {
     let normalizedPath = path
 
     // Adding a leading / to the path replaces the entire URL
@@ -220,14 +198,8 @@ class URLUtil {
    * Takes a repo path (`user/repo-name`), branch, and file path and returns
    * a URL to view that file on GitHub. If `raw` is `true`, this will return
    * a link similar to clicking the "raw" button on github.
-   * @param {Object} params
-   * @param {string} params.repoPath
-   * @param {string} params.branch
-   * @param {string} params.filePath
-   * @param {boolean?} params.raw
-   * @returns {string}
    */
-  static buildGithubFileURL(params) {
+  static buildGithubFileURL(params: RepoPathParams): string {
     const { repoPath, branch, filePath, raw = false } = params
 
     const url = raw
@@ -240,13 +212,8 @@ class URLUtil {
   /**
    * Takes a repo path (`user/repo-name`), branch, and file path and
    * downloads that file from github using the `raw.githubusercontent` URL
-   *
-   * @param {Object} params
-   * @param {string} params.repoPath
-   * @param {string} params.branch
-   * @param {string} params.filePath
    */
-  static downloadGithubFile(params) {
+  static downloadGithubFile(params: RepoPathParams): Promise<void> {
     const githubURL = URLUtil.buildGithubFileURL({
       ...params,
       raw: true

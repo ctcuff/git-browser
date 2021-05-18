@@ -1,3 +1,27 @@
+/**
+ * Represents the structure of the object returned in the tree array from GitHub
+ */
+interface GithubResponseTree {
+  path: string
+  mode: string
+  type: 'blob' | 'tree' | 'commit'
+  sha: 'string'
+  size: number
+  url: string
+}
+
+type TreeObject = {
+  [key: string]: {
+    type: 'file' | 'folder'
+    parent: string | null
+    url: string
+    size?: number
+    name?: string
+    isRoot?: boolean
+    children?: string[]
+  }
+}
+
 class Tree {
   /**
    * Takes the response from the GitHub tree API and turns it into a flat
@@ -37,12 +61,11 @@ class Tree {
    *
    * @see https://docs.github.com/en/free-pro-team@latest/rest/reference/git#trees
    */
-  static treeify(data) {
-    const tree = {}
+  public static treeify(data: GithubResponseTree[]): TreeObject {
+    const tree: TreeObject = {}
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const item of data) {
-      const { path, url, type, size } = item
+    for (let i = 0; i < data.length; i++) {
+      const { path, url, type, size } = data[i]
 
       if (type !== 'blob' && type !== 'tree') {
         // The GitHub API has 3 types: blobs, trees, and commits.
@@ -90,7 +113,7 @@ class Tree {
       // If the file/folder had a parent, make sure that file/folder
       // gets added to the parent's children
       if (parentPath && tree[parentPath]) {
-        tree[parentPath].children.push(path)
+        tree[parentPath].children?.push(path)
         tree[path].parent = parentPath
       } else {
         // This file doesn't have a parent so it must be in the root

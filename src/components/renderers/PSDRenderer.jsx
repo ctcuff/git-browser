@@ -22,7 +22,7 @@ class PSDRenderer extends React.Component {
     this.convertPSD = this.convertPSD.bind(this)
     this.convertToUint8Array = this.convertToUint8Array.bind(this)
 
-    this.rawDecodeWorker = new Worker('../../scripts/encode-decode.worker.js', {
+    this.rawDecodeWorker = new Worker('../../scripts/encode-decode.worker.ts', {
       type: 'module'
     })
   }

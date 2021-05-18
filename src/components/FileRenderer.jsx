@@ -39,7 +39,7 @@ class FileRenderer extends React.Component {
     this.renderPreviewButton = this.renderPreviewButton.bind(this)
     this.decodeContent = this.decodeContent.bind(this)
 
-    this.decodeWorker = new Worker('../scripts/encode-decode.worker.js', {
+    this.decodeWorker = new Worker('../scripts/encode-decode.worker.ts', {
       type: 'module'
     })
   }

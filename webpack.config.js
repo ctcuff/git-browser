@@ -85,7 +85,7 @@ module.exports = env => {
     module: {
       rules: [
         {
-          test: /\.(js|jsx?)$/,
+          test: /\.(ts|js)x?$/,
           include: path.resolve(__dirname, 'src'),
           exclude: /node_modules/,
           use: ['babel-loader', 'eslint-loader']
@@ -101,7 +101,7 @@ module.exports = env => {
       ]
     },
     resolve: {
-      extensions: ['.js', '.jsx']
+      extensions: ['.js', '.jsx', '.ts', '.tsx']
     },
     // HACK: wabt.js uses fs from node which isn't available in the browser
     // so it needs to be replaced with an empty object. HOWEVER: this may

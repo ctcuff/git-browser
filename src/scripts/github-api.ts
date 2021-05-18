@@ -1,5 +1,12 @@
 import URLUtil, { BASE_REPO_URL } from './url-util'
 import Logger from './logger'
+import {
+  GitHubRepo,
+  GitHubError,
+  GitHubBranchInfo,
+  GitHubBlob,
+  GitHubBranch
+} from '../types/github-api'
 
 const ERROR_INVALID_GITHUB_URL = 'Invalid GitHub URL'
 const ERROR_REPO_NOT_FOUND = "Couldn't find repository"
@@ -13,10 +20,8 @@ class GitHubAPI {
    * `user/repo-name` to make a request to `/repos/user/repo-name`
    *
    * @see https://docs.github.com/rest/reference/repos#get-a-repository
-   * @param {string} repoUrl
-   * @returns {Promise}
    */
-  static getDefaultBranch(repoUrl) {
+  public static getDefaultBranch(repoUrl: string): Promise<string> {
     if (!URLUtil.isGithubUrl(repoUrl)) {
       return Promise.reject(new Error(ERROR_INVALID_GITHUB_URL))
     }
@@ -41,7 +46,7 @@ class GitHubAPI {
             return Promise.reject(new Error(UNKNOWN_ERROR))
         }
       })
-      .then(res => {
+      .then((res: GitHubRepo & GitHubError) => {
         // eslint-disable-next-line camelcase
         const { default_branch, message } = res
 
@@ -60,40 +65,43 @@ class GitHubAPI {
 
   /**
    * Takes a github url: `https://github.com/user/repo/`,
-   * and returns the tree (all files) from the given branch.
+   * and returns the tree (all files) from the given branch. If the branch is
+   * "default", it'll return the tree for the default branch
    *
    * @see https://docs.github.com/rest/reference/git#get-a-tree
-   * @param {string} repoUrl
-   * @param {string} branch
-   * @returns {Promise}
    */
-  static getTree(repoUrl, branch = 'default') {
+  public static getTree(
+    repoUrl: string,
+    branch = 'default'
+  ): Promise<GitHubBranchInfo> {
     if (branch === 'default') {
       return GitHubAPI.getDefaultBranch(repoUrl)
-        .then(branchName => this.getBranch(repoUrl, branchName))
+        .then(branchName => GitHubAPI.getBranch(repoUrl, branchName))
         .catch(err => {
           Logger.error(err)
           return Promise.reject(err)
         })
     }
 
-    return this.getBranch(repoUrl, branch)
+    return GitHubAPI.getBranch(repoUrl, branch)
   }
 
   /**
    * Takes a github url: `https://github.com/user/repo/` and a
    * branch name and returns the tree (all files).
-   * @param {string} repoUrl
-   * @param {string} branch
-   * @returns {Promise}
    */
-  static getBranch(repoUrl, branch) {
+  public static getBranch(
+    repoUrl: string,
+    branch: string
+  ): Promise<GitHubBranchInfo & { branch: string }> {
     const repoPath = URLUtil.extractRepoPath(repoUrl)
-    const branchUrl = URLUtil.buildBranchUrl(repoPath, branch)
 
     if (!repoPath) {
+      Logger.error('Invalid repo path')
       return Promise.reject(new Error(UNKNOWN_ERROR))
     }
+
+    const branchUrl = URLUtil.buildBranchUrl(repoPath, branch)
 
     return URLUtil.request(branchUrl)
       .then(res => {
@@ -108,10 +116,10 @@ class GitHubAPI {
             return Promise.reject(new Error(UNKNOWN_ERROR))
         }
       })
-      .then(res => {
-        res.branch = branch
-        return res
-      })
+      .then((res: GitHubBranchInfo) => ({
+        ...res,
+        branch
+      }))
       .catch(err => {
         Logger.error(err)
         return Promise.reject(err)
@@ -123,10 +131,8 @@ class GitHubAPI {
    * the base64 encoded content
    *
    * @see https://docs.github.com/rest/reference/git#get-a-blob
-   * @param {string} url
-   * @returns {Promise}
    */
-  static getFile(url) {
+  public static getFile(url: string): Promise<string> {
     return URLUtil.request(url)
       .then(res => {
         if (res.ok) {
@@ -140,7 +146,7 @@ class GitHubAPI {
             return Promise.reject(new Error(UNKNOWN_ERROR))
         }
       })
-      .then(res => res.content)
+      .then((res: GitHubBlob) => res.content)
       .catch(err => {
         Logger.error(err)
         return Promise.reject(err)
@@ -152,21 +158,24 @@ class GitHubAPI {
    * and returns every branch from `/user/repo-name/branches`.
    *
    * @see https://docs.github.com/rest/reference/repos#branches
-   * @param {string} repoUrl
-   * @returns {Promise}
    */
-  static getBranches(repoUrl) {
+  public static getBranches(repoUrl: string): Promise<{
+    branches: (GitHubBranch & { repoUrl: string })[]
+    truncated: boolean
+  }> {
     if (!URLUtil.isGithubUrl(repoUrl)) {
       return Promise.reject(new Error(ERROR_INVALID_GITHUB_URL))
     }
 
     const repoPath = URLUtil.extractRepoPath(repoUrl)
-    const branchesUrl = URLUtil.buildBranchesUrl(repoPath)
-    let truncated = false
 
     if (!repoPath) {
+      Logger.error('Invalid repo path')
       return Promise.reject(new Error(UNKNOWN_ERROR))
     }
+
+    const branchesUrl = URLUtil.buildBranchesUrl(repoPath)
+    let truncated = false
 
     return URLUtil.request(`${branchesUrl}?per_page=100`)
       .then(res => {
@@ -182,11 +191,11 @@ class GitHubAPI {
             return Promise.reject(new Error(UNKNOWN_ERROR))
         }
       })
-      .then(res => {
-        const branches = res.map(branch => {
-          branch.repoUrl = repoUrl
-          return branch
-        })
+      .then((res: GitHubBranch[]) => {
+        const branches = res.map(branch => ({
+          ...branch,
+          repoUrl
+        }))
 
         return {
           branches,

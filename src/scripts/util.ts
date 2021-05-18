@@ -1,13 +1,19 @@
-import languageData from '../assets/monaco-languages-parsed.json'
+import monacoLanguages from '../assets/monaco-languages-parsed.json'
 import Logger from './logger'
+
+type FileInfo = {
+  language: string
+  displayName: string
+  extension: string
+}
 
 /**
  * Takes the name of a CSS var and returns that variable as an integer
- * @param {string} cssVar
- * @param {HTMLElement} element
- * @returns {number}
  */
-const parseCSSVar = (cssVar, element = document.documentElement) => {
+const parseCSSVar = (
+  cssVar: string,
+  element: HTMLElement = document.documentElement
+): number => {
   const property = getComputedStyle(element).getPropertyValue(cssVar)
 
   if (!property) {
@@ -18,12 +24,11 @@ const parseCSSVar = (cssVar, element = document.documentElement) => {
   return parseInt(property.trim().replace('px', ''), 10)
 }
 
-/**
- * @param {string} key
- * @param {any} value
- * @param {HTMLElement} element
- */
-const setCSSVar = (key, value, element = document.documentElement) => {
+const setCSSVar = (
+  key: string,
+  value: string,
+  element: HTMLElement = document.documentElement
+): void => {
   element.style.setProperty(key, value)
 }
 
@@ -39,15 +44,10 @@ const setCSSVar = (key, value, element = document.documentElement) => {
  *    "extension": ".js"
  * }
  * ```
- * @typedef {Object} FileInfo
- * @property {string} language
- * @property {string} displayName
- * @property {string} extension
- *
- * @param {string} fileName
- * @returns {FileInfo}
  */
-const getLanguageFromFileName = fileName => {
+const getLanguageFromFileName = (fileName: string): FileInfo => {
+  const languageData = monacoLanguages as { [key: string]: FileInfo }
+
   if (languageData[fileName]) {
     return languageData[fileName]
   }
@@ -86,11 +86,9 @@ const getLanguageFromFileName = fileName => {
  * it may be an image, PDF, or some other file type that
  * FileRenderer might be able to display
  *
- * @param {string} str
- * @param {boolean} raw If true, force decoding with atob
- * @returns {string}
+ * @param raw If true, force decoding with atob
  */
-const base64DecodeUnicode = (str, raw = false) => {
+const base64DecodeUnicode = (str: string, raw = false): string => {
   if (raw) {
     return atob(str)
   }
@@ -110,17 +108,16 @@ const base64DecodeUnicode = (str, raw = false) => {
 
 /**
  * Properly encodes a string since it may contain non UTF characters
- * @param {string} str
- * @param {boolean} raw If true, force encoding with btoa
- * @returns {string}
+ *
+ * @param raw If true, force encoding with btoa
  */
-const base64EncodeUnicode = (str, raw = false) => {
+const base64EncodeUnicode = (str: string, raw = false): string => {
   if (raw) {
     return btoa(str)
   }
 
   // https://stackoverflow.com/a/43271130/9124220
-  const binary = []
+  const binary: string[] = []
   const encoder = new TextEncoder()
   const bytes = encoder.encode(str)
 
@@ -136,19 +133,13 @@ const base64EncodeUnicode = (str, raw = false) => {
  * ```
  * withClasses({ foo: true, bar: false, baz: true }) // returns 'foo baz'
  * ```
- *
- * @param {Object.<string, boolean>} classObj
- * @returns {string}
  */
-const withClasses = classObj => {
+const withClasses = (classObj: Record<string, boolean>): string => {
   const classNames = Object.keys(classObj).filter(key => !!classObj[key])
   return classNames.join(' ')
 }
 
-/**
- * @param {string} text
- */
-const copyToClipboard = text => {
+const copyToClipboard = (text: string): void => {
   // Fallback if navigator.clipboard isn't available
   if (!navigator.clipboard) {
     const textArea = document.createElement('textarea')
@@ -170,14 +161,10 @@ const copyToClipboard = text => {
   navigator.clipboard.writeText(text).catch(err => Logger.error(err))
 }
 
-/* istanbul ignore next */
-const noop = () => {}
-
 export {
   parseCSSVar,
   setCSSVar,
   getLanguageFromFileName,
-  noop,
   base64DecodeUnicode,
   base64EncodeUnicode,
   withClasses,
