@@ -17,16 +17,19 @@ class WasmRenderer extends React.Component {
 
     this.init = this.init.bind(this)
     this.loadWasmLibrary = this.loadWasmLibrary.bind(this)
-    this.decodeContent = this.decodeContent.bind(this)
     this.convertToUint8Array = this.convertToUint8Array.bind(this)
 
-    this.rawDecodeWorker = new Worker('../../scripts/encode-decode-worker.js', {
+    this.rawDecodeWorker = new Worker('../../scripts/encode-decode.worker.js', {
       type: 'module'
     })
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.init()
+  }
+
+  componentWillUnmount() {
+    this.rawDecodeWorker.terminate()
   }
 
   async loadWasmLibrary() {
@@ -51,6 +54,7 @@ class WasmRenderer extends React.Component {
       const wasmModule = this.wabt.readWasm(buffer, {
         readDebugNames: false
       })
+
       const wast = wasmModule.toText({
         foldExprs: false,
         inlineExport: false
@@ -72,21 +76,9 @@ class WasmRenderer extends React.Component {
   }
 
   async convertToUint8Array(content) {
-    const decodedContent = await this.decodeContent(content)
-    const bytes = new Array(decodedContent.length)
-
-    for (let i = 0; i < decodedContent.length; i++) {
-      bytes[i] = decodedContent.charCodeAt(i)
-    }
-
-    return new Uint8Array(bytes)
-  }
-
-  decodeContent(content) {
     this.rawDecodeWorker.postMessage({
       message: content,
-      raw: true,
-      type: 'decode'
+      type: 'convertToArrayBuffer'
     })
 
     return new Promise((resolve, reject) => {

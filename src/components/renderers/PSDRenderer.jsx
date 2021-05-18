@@ -23,7 +23,7 @@ class PSDRenderer extends React.Component {
     this.decodeContent = this.decodeContent.bind(this)
     this.base64ToBlob = this.base64ToBlob.bind(this)
 
-    this.rawDecodeWorker = new Worker('../../scripts/encode-decode-worker.js', {
+    this.rawDecodeWorker = new Worker('../../scripts/encode-decode.worker.js', {
       type: 'module'
     })
   }

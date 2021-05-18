@@ -101,9 +101,13 @@ module.exports = env => {
       ]
     },
     resolve: {
-      extensions: ['.js', '.jsx'],
-      
+      extensions: ['.js', '.jsx']
     },
+    // HACK: wabt.js uses fs from node which isn't available in the browser
+    // so it needs to be replaced with an empty object. HOWEVER: this may
+    // mean that some functions of the library may not work properly
+    // https://v4.webpack.js.org/configuration/node/#node
+    // https://github.com/AssemblyScript/wabt.js/issues/21#issuecomment-790203740
     node: {
       fs: 'empty'
     }

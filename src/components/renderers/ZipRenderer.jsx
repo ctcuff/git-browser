@@ -22,7 +22,7 @@ class ZipRenderer extends React.Component {
     this.parseZip = this.parseZip.bind(this)
     this.decodeContent = this.decodeContent.bind(this)
 
-    this.rawDecodeWorker = new Worker('../../scripts/encode-decode-worker.js', {
+    this.rawDecodeWorker = new Worker('../../scripts/encode-decode.worker.js', {
       type: 'module'
     })
   }

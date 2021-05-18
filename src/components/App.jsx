@@ -225,7 +225,7 @@ class App extends React.Component {
   decodeTabContent(content, tabIndex) {
     const { openedTabs } = this.state
     // Use a worker to avoid UI freezes
-    const decodeWorker = new Worker('../scripts/encode-decode-worker.js', {
+    const decodeWorker = new Worker('../scripts/encode-decode.worker.js', {
       type: 'module'
     })
 
