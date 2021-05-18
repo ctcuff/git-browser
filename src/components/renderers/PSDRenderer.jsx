@@ -20,8 +20,7 @@ class PSDRenderer extends React.Component {
 
     this.init = this.init.bind(this)
     this.convertPSD = this.convertPSD.bind(this)
-    this.decodeContent = this.decodeContent.bind(this)
-    this.base64ToBlob = this.base64ToBlob.bind(this)
+    this.convertToUint8Array = this.convertToUint8Array.bind(this)
 
     this.rawDecodeWorker = new Worker('../../scripts/encode-decode.worker.js', {
       type: 'module'
@@ -66,7 +65,12 @@ class PSDRenderer extends React.Component {
   }
 
   async convertPSD() {
-    const blob = await this.base64ToBlob()
+    // Need to convert the base 64 content string into a blob so that it can
+    // be converted to a base 64 PNG string by PSD. Using fetch for the conversion
+    // results in a large network request (sometimes more than 10 MB)
+    // so we need to work with a byte array instead.
+    const buffer = await this.convertToUint8Array(this.props.content)
+    const blob = new Blob([buffer])
     const pngObjectUrl = URL.createObjectURL(blob)
     const psd = await this.PSD.fromURL(pngObjectUrl)
 
@@ -75,29 +79,10 @@ class PSDRenderer extends React.Component {
     return psd.image.toBase64()
   }
 
-  async base64ToBlob() {
-    // Need to convert the base 64 content string into a blob so that it can
-    // be converted to a base 64 PNG string by PSD. Using fetch for the conversion
-    // results in a large network request (sometimes more than 10 MB)
-    // so we need to work with a byte array instead.
-    // https://stackoverflow.com/a/16245768/9124220
-    const byteCharacters = await this.decodeContent(this.props.content)
-    const bytes = new Array(byteCharacters.length)
-
-    for (let i = 0; i < byteCharacters.length; i++) {
-      bytes[i] = byteCharacters.charCodeAt(i)
-    }
-
-    const byteArray = new Uint8Array(bytes)
-
-    return new Blob([byteArray])
-  }
-
-  decodeContent(content) {
+  convertToUint8Array(content) {
     this.rawDecodeWorker.postMessage({
       message: content,
-      raw: true,
-      type: 'decode'
+      type: 'convertToArrayBuffer'
     })
 
     return new Promise((resolve, reject) => {
@@ -112,7 +97,7 @@ class PSDRenderer extends React.Component {
     const fileName = this.props.fileName.replace('.psd', '')
 
     if (isLoading) {
-      return <LoadingOverlay text="Loading image..." />
+      return <LoadingOverlay text="Converting image to PNG..." />
     }
 
     if (hasError) {

@@ -20,7 +20,7 @@ class ZipRenderer extends React.Component {
     this.importLibrary = this.importLibrary.bind(this)
     this.init = this.init.bind(this)
     this.parseZip = this.parseZip.bind(this)
-    this.decodeContent = this.decodeContent.bind(this)
+    this.convertToUint8Array = this.convertToUint8Array.bind(this)
 
     this.rawDecodeWorker = new Worker('../../scripts/encode-decode.worker.js', {
       type: 'module'
@@ -44,8 +44,10 @@ class ZipRenderer extends React.Component {
     try {
       await this.importLibrary()
 
-      const data = await this.decodeContent(this.props.content)
-      const tree = await this.parseZip(data)
+      // We need to turn the base 64 string into a Uint8Array so
+      // that the zip can be parsed by zip.js
+      const buffer = await this.convertToUint8Array(this.props.content)
+      const tree = await this.parseZip(buffer)
 
       this.setState({
         tree,
@@ -71,18 +73,10 @@ class ZipRenderer extends React.Component {
     }
   }
 
-  async parseZip(content) {
-    // 'content' is a base64 string decoded with atob. We need to
-    // turn that into a Uint8Array so that the zip can be parsed by zip.js
+  async parseZip(buffer) {
     const { ZipReader, Uint8ArrayReader } = this.zip
-    const bytes = new Array(content.length)
 
-    for (let i = 0; i < content.length; i++) {
-      bytes[i] = content.charCodeAt(i)
-    }
-
-    const byteArray = new Uint8Array(bytes)
-    const uintReader = new Uint8ArrayReader(byteArray)
+    const uintReader = new Uint8ArrayReader(buffer)
     const reader = new ZipReader(uintReader, { useWebWorkers: true })
 
     const entries = await reader.getEntries()
@@ -101,11 +95,10 @@ class ZipRenderer extends React.Component {
     return Tree.treeify(treeData)
   }
 
-  decodeContent(content) {
+  convertToUint8Array(content) {
     this.rawDecodeWorker.postMessage({
       message: content,
-      raw: true,
-      type: 'decode'
+      type: 'convertToArrayBuffer'
     })
 
     return new Promise((resolve, reject) => {
