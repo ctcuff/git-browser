@@ -17,18 +17,16 @@ const BaseModal = props => (
       {props.title && <h2 className="modal-title">{props.title}</h2>}
       <div className="modal-body">{props.children}</div>
       <div className="modal-actions">
-        <>
-          {props.actions.map(action => (
-            <button
-              className="action-btn"
-              onClick={action.onClick}
-              key={action.text}
-              type="button"
-            >
-              {action.text}
-            </button>
-          ))}
-        </>
+        {props.actions.map(action => (
+          <button
+            className="action-btn"
+            onClick={action.onClick}
+            key={action.text}
+            type="button"
+          >
+            {action.text}
+          </button>
+        ))}
         <button className="action-btn" onClick={props.hideModal} type="button">
           Close
         </button>

@@ -138,18 +138,16 @@ class FileExplorer extends React.PureComponent {
           <VscCollapseAll />
           <span>Collapse folders</span>
         </button>
-        <>
-          {rootNodes.map(node => (
-            <TreeNode
-              node={node}
-              key={node.path}
-              getChildren={this.getChildren}
-              onToggle={this.toggleNode}
-              onSelectNode={this.onSelectFile}
-              activeFilePath={this.props.activeFilePath}
-            />
-          ))}
-        </>
+        {rootNodes.map(node => (
+          <TreeNode
+            node={node}
+            key={node.path}
+            getChildren={this.getChildren}
+            onToggle={this.toggleNode}
+            onSelectNode={this.onSelectFile}
+            activeFilePath={this.props.activeFilePath}
+          />
+        ))}
       </div>
     )
   }
