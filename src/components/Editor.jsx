@@ -5,7 +5,6 @@ import { AiOutlineEye } from 'react-icons/ai'
 import { connect } from 'react-redux'
 import { parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
-
 import Logger from '../scripts/logger'
 
 class Editor extends React.Component {
@@ -67,6 +66,9 @@ class Editor extends React.Component {
     '.pptx',
     '.psd',
     '.ttf',
+    // .wasm is an exception. This file type will be decompiled and
+    // displayed as text in an editor through the WasmRenderer component.
+    '.wasm',
     '.wav',
     '.webm',
     '.webp',

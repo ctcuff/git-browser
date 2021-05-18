@@ -16,6 +16,7 @@ import FontRenderer from './renderers/FontRenderer'
 import EmbeddedDocRenderer from './renderers/EmbeddedDocRenderer'
 import ZipRenderer from './renderers/ZipRenderer'
 import PSDRenderer from './renderers/PSDRenderer'
+import WasmRenderer from './renderers/WasmRenderer'
 import LoadingOverlay from './LoadingOverlay'
 import ErrorOverlay from './ErrorOverlay'
 import Logger from '../scripts/logger'
@@ -169,6 +170,8 @@ class FileRenderer extends React.Component {
         return <EmbeddedDocRenderer fileURL={fileURL} />
       case '.psd':
         return <PSDRenderer content={content} fileName={fileName} />
+      case '.wasm':
+        return <WasmRenderer content={content} />
       default:
         return this.renderUnsupported()
     }

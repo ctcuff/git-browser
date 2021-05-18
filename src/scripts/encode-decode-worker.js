@@ -31,7 +31,7 @@ function decode(content, raw) {
  * }
  * ```
  */
-onmessage = function (event) {
+self.onmessage = function (event) {
   const { message, type, raw = false } = event.data
   let content = null
 
@@ -48,5 +48,5 @@ onmessage = function (event) {
       )
   }
 
-  postMessage(content)
+  self.postMessage(content)
 }

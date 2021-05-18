@@ -349,7 +349,6 @@ class App extends React.Component {
 
     return canEditorRender ? (
       <Editor
-        fileName={title}
         extension={extension}
         content={content}
         language={language}

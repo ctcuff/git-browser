@@ -101,7 +101,11 @@ module.exports = env => {
       ]
     },
     resolve: {
-      extensions: ['.js', '.jsx']
+      extensions: ['.js', '.jsx'],
+      
+    },
+    node: {
+      fs: 'empty'
     }
   }
 }
