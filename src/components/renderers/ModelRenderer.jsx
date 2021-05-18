@@ -111,7 +111,7 @@ const ModelRenderer = ({ content, extension }) => {
         message={`
           An error occurred while loading this model. ${
             extension === '.gltf'
-              ? 'Some gltf, models cannot be loaded if the model requires external textures.'
+              ? 'Some gltf models cannot be loaded if the model requires external textures.'
               : ''
           }
         `}
