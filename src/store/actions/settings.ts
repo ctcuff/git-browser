@@ -1,13 +1,18 @@
 import Logger from '../../scripts/logger'
 
-const applyTheme = theme => {
+const applyTheme = (theme: Omit<Theme, 'theme-auto'>): void => {
   // Query light/dark themes for highlight.js so we can enable/disable
   // stylesheets when the app theme changes
   const lightStyle = document.querySelector('link[title="theme-light"]')
   const darkStyle = document.querySelector('link[title="theme-dark"]')
 
+  if (!lightStyle || !darkStyle) {
+    Logger.error('Invalid selector for link')
+    return
+  }
+
   document.body.classList.toggle(document.body.className)
-  document.body.classList.add(theme)
+  document.body.classList.add(theme as string)
 
   switch (theme) {
     case 'theme-light':
@@ -23,7 +28,7 @@ const applyTheme = theme => {
   }
 }
 
-const setTheme = theme => {
+const setTheme = (theme: Theme): SetThemeAction => {
   localStorage.setItem('userTheme', theme)
 
   if (theme !== 'theme-auto') {
@@ -38,7 +43,7 @@ const setTheme = theme => {
   }
 }
 
-const setPreferredTheme = theme => {
+const setPreferredTheme = (theme: Theme): SetPreferredThemeAction => {
   applyTheme(theme)
 
   return {
@@ -49,4 +54,20 @@ const setPreferredTheme = theme => {
   }
 }
 
+type SetThemeAction = {
+  type: 'SET_THEME'
+  payload: {
+    userTheme: Theme
+  }
+}
+
+type SetPreferredThemeAction = {
+  type: 'SET_PREFERRED_THEME'
+  payload: {
+    preferredTheme: Theme
+  }
+}
+
 export { setTheme, setPreferredTheme }
+export type SettingsAction = SetThemeAction | SetPreferredThemeAction
+export type Theme = 'theme-light' | 'theme-dark' | 'theme-auto'

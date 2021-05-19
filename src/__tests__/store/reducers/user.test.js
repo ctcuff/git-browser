@@ -1,8 +1,8 @@
 import userReducer from 'src/store/reducers/user'
 
 const initialState = {
-  accessToken: null,
-  username: null,
+  accessToken: '',
+  username: '',
   isLoggedIn: false,
   isLoading: false
 }

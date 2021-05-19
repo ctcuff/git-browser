@@ -2,9 +2,32 @@
 import firebase from 'firebase/app'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'firebase/auth'
+import { ActionCreator, Dispatch } from 'redux'
 import Logger from '../../scripts/logger'
 import { showModal } from './modal'
 import { ModalTypes } from '../../components/ModalRoot'
+import { State } from '..'
+
+type UserInfoPayload = {
+  accessToken: string
+  username: string
+}
+
+type ToggleLoadingAction = {
+  type: 'TOGGLE_LOADING'
+  payload: {
+    isLoading: boolean
+  }
+}
+
+type LoadProfileAction = {
+  type: 'LOGIN'
+  payload: UserInfoPayload
+}
+
+type LogoutAction = {
+  type: 'LOGOUT'
+}
 
 firebase.initializeApp({
   apiKey: process.env.API_KEY,
@@ -23,20 +46,24 @@ const enhancedProvider = new firebase.auth.GithubAuthProvider()
 // Grants access to private and public repositories.
 enhancedProvider.addScope('repo')
 
-const toggleLoading = isLoading => ({
+const toggleLoading = (isLoading: boolean): ToggleLoadingAction => ({
   type: 'TOGGLE_LOADING',
   payload: {
     isLoading
   }
 })
 
-const loadProfileFromStorage = payload => ({
+const clearUserInfo = (): LogoutAction => ({ type: 'LOGOUT' })
+
+const loadProfileFromStorage = (
+  payload: UserInfoPayload
+): LoadProfileAction => ({
   type: 'LOGIN',
   payload
 })
 
-const login = (su = false) => {
-  return async function (dispatch, getState) {
+const login = (su = false): ActionCreator<void> => {
+  return async function (dispatch: Dispatch, getState: () => State) {
     if (getState().user.isLoading) {
       return
     }
@@ -47,9 +74,14 @@ const login = (su = false) => {
 
     try {
       const res = await firebase.auth().signInWithPopup(provider)
-      const payload = { accessToken: res.credential.accessToken }
+      const credential = res.credential as firebase.auth.OAuthCredential
+      const payload: UserInfoPayload = {
+        accessToken: 's',
+        username: ''
+      }
 
-      payload.username = res.additionalUserInfo?.username ?? ''
+      payload.accessToken = credential.accessToken || ''
+      payload.username = res.additionalUserInfo?.username || ''
 
       localStorage.setItem('profile', JSON.stringify({ ...payload }))
 
@@ -68,8 +100,8 @@ const login = (su = false) => {
   }
 }
 
-const logout = () => {
-  return async function (dispatch, getState) {
+const logout = (): ActionCreator<void> => {
+  return async function (dispatch: Dispatch, getState: () => State) {
     if (getState().user.isLoading) {
       return
     }
@@ -79,7 +111,7 @@ const logout = () => {
 
     try {
       await firebase.auth().signOut()
-      dispatch({ type: 'LOGOUT' })
+      dispatch(clearUserInfo())
     } catch (err) {
       Logger.error(err)
     }
@@ -89,3 +121,4 @@ const logout = () => {
 }
 
 export { login, logout, loadProfileFromStorage, toggleLoading }
+export type UserAction = ToggleLoadingAction | LoadProfileAction | LogoutAction

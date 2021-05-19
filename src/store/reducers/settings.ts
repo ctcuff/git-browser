@@ -1,4 +1,6 @@
-const initialState = {
+import { Theme, SettingsAction } from '../actions/settings'
+
+const initialState: SettingsState = {
   theme: {
     // The theme the user has currently selected
     userTheme: 'theme-auto',
@@ -7,22 +9,23 @@ const initialState = {
   }
 }
 
-const reducer = (state = initialState, action) => {
-  const { payload } = action
-
+const reducer = (
+  state: SettingsState = initialState,
+  action: SettingsAction
+): SettingsState => {
   switch (action.type) {
     case 'SET_THEME':
       return {
         theme: {
           ...state.theme,
-          userTheme: payload.userTheme
+          userTheme: action.payload.userTheme
         }
       }
     case 'SET_PREFERRED_THEME':
       return {
         theme: {
           ...state.theme,
-          preferredTheme: payload.preferredTheme
+          preferredTheme: action.payload.preferredTheme
         }
       }
     default:
@@ -31,3 +34,9 @@ const reducer = (state = initialState, action) => {
 }
 
 export default reducer
+export type SettingsState = {
+  theme: {
+    userTheme: Theme
+    preferredTheme: Theme
+  }
+}
