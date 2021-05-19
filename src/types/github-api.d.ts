@@ -1,5 +1,7 @@
 /* eslint-disable camelcase */
 
+// Directly mapped from GitHub's API responses
+
 export type GitHubRepoOwner = {
   login: string
   id: number

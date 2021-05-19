@@ -1,22 +1,36 @@
 import '../style/context-menu.scss'
 import React, { useRef, useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
 
-const preventDefault = event => event.preventDefault()
+type ContextMenuProps = {
+  /**
+   * A helper callback that makes it easier to close the
+   * menu when any of the options are clicked
+   */
+  onOptionClick: () => void
+  onOverlayClick: () => void
+  coords: {
+    x: number
+    y: number
+  }
+  isOpen: boolean
+  options: MenuOption[]
+}
 
-const ContextMenu = props => {
+const preventDefault = (event: React.MouseEvent) => event.preventDefault()
+
+const ContextMenu = (props: ContextMenuProps): JSX.Element | null => {
   // Sometimes, repositioning the menu causes it to flicker then
   // jump to it's new position. To fix this, we need to hide the
   // menu and display it after its new position is calculated
   const [hasAdjusted, setAdjusted] = useState(false)
-  const containerRef = useRef(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [coords, setCoords] = useState({
     x: props.coords.x,
     y: props.coords.y
   })
   const { isOpen, options } = props
 
-  const onOptionClick = option => {
+  const onOptionClick = (option: MenuOption) => {
     if (!option.disabled) {
       option.onClick()
     }
@@ -88,31 +102,9 @@ const ContextMenu = props => {
   )
 }
 
-ContextMenu.propTypes = {
-  /**
-   * A helper callback that makes it easier to close the
-   * menu when any of the options are clicked
-   */
-  onOptionClick: PropTypes.func,
-  onOverlayClick: PropTypes.func,
-  isOpen: PropTypes.bool,
-  coords: PropTypes.shape({
-    x: PropTypes.number.isRequired,
-    y: PropTypes.number.isRequired
-  }).isRequired,
-  options: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      onClick: PropTypes.func.isRequired,
-      disabled: PropTypes.bool
-    })
-  ).isRequired
-}
-
-ContextMenu.defaultProps = {
-  onOptionClick: () => {},
-  onOverlayClick: () => {},
-  isOpen: false
-}
-
 export default ContextMenu
+export type MenuOption = {
+  title: string
+  onClick: () => void
+  disabled?: boolean
+}

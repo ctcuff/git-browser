@@ -6,7 +6,7 @@ import {
   GitHubBranchInfo,
   GitHubBlob,
   GitHubBranch
-} from './types/github-api'
+} from '../types/github-api'
 
 const ERROR_INVALID_GITHUB_URL = 'Invalid GitHub URL'
 const ERROR_REPO_NOT_FOUND = "Couldn't find repository"

@@ -1,14 +1,22 @@
 import React, { useCallback } from 'react'
-import PropTypes from 'prop-types'
+import { PDFPageProxy } from 'pdfjs-dist/types/display/api'
 
-const PDFPage = ({ page }) => {
-  const canvasRef = useCallback(canvasNode => {
+type PDFPageProps = {
+  page: PDFPageProxy
+}
+
+const PDFPage = ({ page }: PDFPageProps): JSX.Element => {
+  const canvasRef = useCallback((canvasNode: HTMLCanvasElement | null) => {
     if (!canvasNode) {
       return
     }
 
     const viewport = page.getViewport({ scale: 3 })
     const context = canvasNode.getContext('2d')
+
+    if (!context) {
+      return
+    }
 
     canvasNode.width = viewport.width
     canvasNode.height = viewport.height
@@ -20,14 +28,6 @@ const PDFPage = ({ page }) => {
   }, [])
 
   return <canvas ref={canvasRef} />
-}
-
-PDFPage.propTypes = {
-  // Disabled since pdf.js is loaded asynchronously so
-  // we won't be able to validate this prop until the component
-  // is rendered
-  // eslint-disable-next-line react/forbid-prop-types
-  page: PropTypes.object.isRequired
 }
 
 export default PDFPage

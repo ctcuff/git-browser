@@ -1,12 +1,28 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import Editor from '../Editor'
 import Logger from '../../scripts/logger'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
+import { WabtModule } from '../../types/wabt'
 
-class WasmRenderer extends React.Component {
-  constructor(props) {
+type WasmRendererProps = {
+  content: string
+}
+
+type WasmRendererState = {
+  webAssemblyText: string
+  hasError: boolean
+  isLoading: boolean
+}
+
+class WasmRenderer extends React.Component<
+  WasmRendererProps,
+  WasmRendererState
+> {
+  private rawDecodeWorker: Worker
+  private wabt!: WabtModule
+
+  constructor(props: WasmRendererProps) {
     super(props)
 
     this.state = {
@@ -24,15 +40,15 @@ class WasmRenderer extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.init()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this.rawDecodeWorker.terminate()
   }
 
-  async loadWasmLibrary() {
+  async loadWasmLibrary(): Promise<void> {
     try {
       const loadWabt = (await import('wabt')).default
       this.wabt = await loadWabt()
@@ -41,7 +57,7 @@ class WasmRenderer extends React.Component {
     }
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.setState({
       isLoading: true,
       hasError: false
@@ -75,7 +91,7 @@ class WasmRenderer extends React.Component {
     }
   }
 
-  async convertToUint8Array(content) {
+  async convertToUint8Array(content: string): Promise<Uint8Array> {
     this.rawDecodeWorker.postMessage({
       message: content,
       type: 'convertToArrayBuffer'
@@ -88,7 +104,7 @@ class WasmRenderer extends React.Component {
     })
   }
 
-  render() {
+  render(): JSX.Element {
     const { isLoading, hasError, webAssemblyText } = this.state
 
     if (isLoading) {
@@ -113,10 +129,6 @@ class WasmRenderer extends React.Component {
       />
     )
   }
-}
-
-WasmRenderer.propTypes = {
-  content: PropTypes.string.isRequired
 }
 
 export default WasmRenderer

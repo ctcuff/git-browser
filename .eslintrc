@@ -52,6 +52,10 @@
     "react/destructuring-assignment": "off",
     "react/jsx-one-expression-per-line": "off",
     "react/jsx-curly-newline": "off",
+    "react/jsx-filename-extension": [
+      "error",
+      { "extensions": [".jsx", ".tsx"] }
+    ],
     "react/jsx-curly-spacing": [
       "error",
       {
@@ -79,10 +83,12 @@
       ],
       "rules": {
         "no-use-before-define": "off",
+        "react/prop-types": "off",
+        "lines-between-class-members": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
         "@typescript-eslint/explicit-module-boundary-types": "error",
-        // Temporary?
-        "@typescript-eslint/ban-ts-comment": "off"
+        "@typescript-eslint/ban-ts-comment": "off", // Temporary?
+        "@typescript-eslint/no-empty-function": "off"
       }
     }
   ]

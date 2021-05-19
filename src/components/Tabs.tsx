@@ -3,32 +3,56 @@ import 'simplebar/dist/simplebar.css'
 import '../style/tabs.scss'
 import React, { useEffect, useState } from 'react'
 import { Tabs, TabList, TabPanel, Tab as ReactTab } from 'react-tabs'
-import PropTypes from 'prop-types'
 import SimpleBar from 'simplebar-react'
 import { connect } from 'react-redux'
 import { VscCloseAll } from 'react-icons/vsc'
 import { AiOutlineMenu } from 'react-icons/ai'
-import ContextMenu from './ContextMenu'
+import ContextMenu, { MenuOption } from './ContextMenu'
 import URLUtil from '../scripts/url-util'
 import { copyToClipboard } from '../scripts/util'
 import { showModal } from '../store/actions/modal'
 import { ModalTypes } from './ModalRoot'
+import { State } from '../store'
 
-const Tab = ({ children }) => <>{children}</>
+type TabProps = {
+  // These props are accessed in the TabView component
+  // eslint-disable-next-line react/no-unused-prop-types
+  title: string
+  // eslint-disable-next-line react/no-unused-prop-types
+  path: string
+  children: React.ReactNode
+}
 
-const TabView = props => {
+type TabViewProps = {
+  children: typeof Tab[] & React.ReactNode
+  repoPath: string
+  branch: string
+  onTabClosed: (tabIndex: number) => void
+  activeTabIndex: number
+  onSelectTab: (tabIndex: number) => void
+  onCloseAllClick: () => void
+  showModal: typeof showModal
+  onCloseOtherTabsClick: (menuTabIndex: number) => void
+}
+
+// Just a wrapper that makes working with tha tab view feel a little
+// cleaner. This allows the TabView to also access the props of each
+// of its tabs
+const Tab = ({ children }: TabProps): JSX.Element => <>{children}</>
+
+const TabView = (props: TabViewProps): JSX.Element | null => {
   const { onTabClosed, onSelectTab, activeTabIndex, repoPath, branch } = props
   const [isContextMenuOpen, toggleContextMenu] = useState(false)
   const [contextMenuCoords, setContextMenuCoords] = useState({ x: 0, y: 0 })
   // The index of the tab where the context menu was activated
   const [menuTabIndex, setMenuTabIndex] = useState(0)
   const [isDownloadAlertShowing, setShowDownloadAlert] = useState(false)
-  const tabs = props.children
+  const tabs = props.children as React.ReactElement<TabProps>[]
 
-  const onSelect = (index, prevIndex, event) => {
+  const onSelect = (index: number, prevIndex: number, event: Event): void => {
     // Clicking anywhere on the tab fires the tab's onSelect
     // event so we need to watch for a click on the close button
-    if (event.target.nodeName === 'BUTTON') {
+    if ((event.target as HTMLElement).nodeName === 'BUTTON') {
       onTabClosed(index)
       return
     }
@@ -36,7 +60,7 @@ const TabView = props => {
     onSelectTab(index)
   }
 
-  const onContextMenu = (index, event) => {
+  const onContextMenu = (index: number, event: React.MouseEvent) => {
     event.preventDefault()
 
     setMenuTabIndex(index)
@@ -73,7 +97,7 @@ const TabView = props => {
       })
   }
 
-  const menuOptions = [
+  const menuOptions: MenuOption[] = [
     {
       title: 'View file on GitHub',
       onClick: openFileInGitHub
@@ -104,6 +128,7 @@ const TabView = props => {
 
     document.addEventListener('keypress', callback)
     document.addEventListener('blur', callback)
+
     return () => {
       document.removeEventListener('keypress', callback)
       document.removeEventListener('blur', callback)
@@ -160,7 +185,9 @@ const TabView = props => {
                 className="tab"
                 selectedClassName="tab--selected"
                 key={index}
-                onContextMenu={event => onContextMenu(index, event)}
+                onContextMenu={(event: React.MouseEvent) =>
+                  onContextMenu(index, event)
+                }
               >
                 <span className="tab-title" title={tab.props.path}>
                   {tab.props.title}
@@ -181,7 +208,7 @@ const TabView = props => {
         >
           <button
             className="tab-context-menu-toggle"
-            onClick={event => onContextMenu(index, event)}
+            onClick={(event: React.MouseEvent) => onContextMenu(index, event)}
             type="button"
           >
             <AiOutlineMenu />
@@ -193,46 +220,7 @@ const TabView = props => {
   )
 }
 
-Tab.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node
-  ])
-}
-
-Tab.defaultProps = {
-  children: null
-}
-
-TabView.propTypes = {
-  // Makes sure the TabView only has tabs as direct children
-  children: PropTypes.oneOfType([
-    PropTypes.shape({
-      type: PropTypes.oneOf([Tab])
-    }),
-    PropTypes.arrayOf(
-      PropTypes.shape({
-        type: PropTypes.oneOf([Tab])
-      })
-    )
-  ]),
-  repoPath: PropTypes.string,
-  branch: PropTypes.string,
-  onTabClosed: PropTypes.func.isRequired,
-  activeTabIndex: PropTypes.number.isRequired,
-  onSelectTab: PropTypes.func.isRequired,
-  onCloseAllClick: PropTypes.func.isRequired,
-  showModal: PropTypes.func.isRequired,
-  onCloseOtherTabsClick: PropTypes.func.isRequired
-}
-
-TabView.defaultProps = {
-  children: null,
-  repoPath: '',
-  branch: ''
-}
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state: State) => ({
   branch: state.search.branch,
   repoPath: state.search.repoPath
 })

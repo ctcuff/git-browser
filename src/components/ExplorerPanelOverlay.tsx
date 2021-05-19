@@ -1,10 +1,15 @@
 import '../style/explorer-panel-overlay.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
+
+type ExplorerPanelOverlayProps = {
+  panelActions: PanelAction[]
+}
 
 // Covers the explorer panel when the explorer is closed
 // and adds button actions that toggle jump to each menu section
-const ExplorerPanelOverlay = ({ panelActions }) => (
+const ExplorerPanelOverlay = ({
+  panelActions
+}: ExplorerPanelOverlayProps): JSX.Element => (
   <div className="explorer-panel-overlay">
     {panelActions.map(action => (
       <button
@@ -19,14 +24,9 @@ const ExplorerPanelOverlay = ({ panelActions }) => (
   </div>
 )
 
-ExplorerPanelOverlay.propTypes = {
-  panelActions: PropTypes.arrayOf(
-    PropTypes.shape({
-      icon: PropTypes.node.isRequired,
-      onClick: PropTypes.func.isRequired,
-      title: PropTypes.string.isRequired
-    }).isRequired
-  ).isRequired
-}
-
 export default ExplorerPanelOverlay
+export type PanelAction = {
+  onClick: () => void
+  title: string
+  icon: React.ReactNode
+}
