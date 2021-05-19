@@ -1,6 +1,5 @@
 import '../style/file-renderer.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
 import { VscCode } from 'react-icons/vsc'
 import { connect } from 'react-redux'
 import PDFRenderer from './renderers/PDFRenderer'
@@ -22,9 +21,35 @@ import ErrorOverlay from './ErrorOverlay'
 import Logger from '../scripts/logger'
 import Editor from './Editor'
 import URLUtil from '../scripts/url-util'
+import { State } from '../store'
 
-class FileRenderer extends React.Component {
-  constructor(props) {
+type FileRendererProps = {
+  /**
+   * base64 encoded
+   */
+  content: string
+  wasForceRendered: boolean
+  fileName: string
+  extension: string
+  onForceRender: (content: string, canEditorRender: boolean) => void
+  repoPath: string
+  filePath: string
+  branch: string
+}
+
+type FileRendererState = {
+  isLoading: boolean
+  decodedContent: string | null
+  hasError: boolean
+}
+
+class FileRenderer extends React.Component<
+  FileRendererProps,
+  FileRendererState
+> {
+  private decodeWorker: Worker
+
+  constructor(props: FileRendererProps) {
     super(props)
 
     this.state = {
@@ -44,7 +69,7 @@ class FileRenderer extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     const { content, extension, wasForceRendered } = this.props
 
     // Skip decoding if this file if it doesn't need to be displayed as text.
@@ -76,11 +101,11 @@ class FileRenderer extends React.Component {
     this.decodeContent()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this.decodeWorker.terminate()
   }
 
-  getComponent() {
+  getComponent(): JSX.Element {
     // prettier-ignore
     const {
       content,
@@ -177,7 +202,7 @@ class FileRenderer extends React.Component {
     }
   }
 
-  decodeContent() {
+  decodeContent(): void {
     this.setState({
       isLoading: true,
       hasError: false
@@ -208,7 +233,7 @@ class FileRenderer extends React.Component {
 
   // Let the App component know that this file should
   // be rendered by the editor
-  forceRenderEditor() {
+  forceRenderEditor(): void {
     const content = this.state.decodedContent
 
     if (content) {
@@ -239,7 +264,7 @@ class FileRenderer extends React.Component {
     }
   }
 
-  renderPreviewButton() {
+  renderPreviewButton(): JSX.Element | null {
     if (!Editor.previewExtensions.has(this.props.extension)) {
       return null
     }
@@ -256,7 +281,7 @@ class FileRenderer extends React.Component {
     )
   }
 
-  renderUnsupported() {
+  renderUnsupported(): JSX.Element {
     const message = `
       This file wasn't displayed because it's either binary
       or uses an unknown text encoding.
@@ -271,7 +296,7 @@ class FileRenderer extends React.Component {
     )
   }
 
-  render() {
+  render(): JSX.Element {
     if (this.state.isLoading) {
       return <LoadingOverlay text="Loading file..." />
     }
@@ -291,25 +316,7 @@ class FileRenderer extends React.Component {
   }
 }
 
-FileRenderer.propTypes = {
-  wasForceRendered: PropTypes.bool,
-  /**
-   * A base64 encoded string
-   */
-  content: PropTypes.string.isRequired,
-  fileName: PropTypes.string.isRequired,
-  extension: PropTypes.string.isRequired,
-  onForceRender: PropTypes.func.isRequired,
-  repoPath: PropTypes.string.isRequired,
-  filePath: PropTypes.string.isRequired,
-  branch: PropTypes.string.isRequired
-}
-
-FileRenderer.defaultProps = {
-  wasForceRendered: false
-}
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state: State) => ({
   repoPath: state.search.repoPath,
   branch: state.search.branch
 })

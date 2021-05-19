@@ -2,10 +2,20 @@ import '../style/tree-node.scss'
 import React from 'react'
 import { FaRegFile, FaFolder, FaFolderOpen } from 'react-icons/fa'
 import { FiChevronRight, FiChevronDown } from 'react-icons/fi'
-import PropTypes from 'prop-types'
 import { withClasses } from '../scripts/util'
 
-const getPaddingLeft = (level, type) => {
+type TreeNodeProps = {
+  onSelectNode: (node: TreeNodeData) => void
+  node: TreeNodeData
+  onToggle?: (node: TreeNodeData) => void
+  getChildren?: (node: TreeNodeData) => TreeNodeData[]
+  showPath?: boolean
+  className?: string
+  activeFilePath?: string
+  level?: number
+}
+
+const getPaddingLeft = (level: number, type: TreeNodeData['type']): number => {
   const defaultPadding = 20
 
   if (level === 0) {
@@ -24,12 +34,19 @@ const getPaddingLeft = (level, type) => {
   return paddingLeft
 }
 
-const getNodeLabel = node => {
+/**
+ * Takes a full file path and returns only the name of the folder
+ * or file. Ex: `src/components/App.jsx => App.jsx`
+ */
+const getNodeLabel = (node: TreeNodeData): string => {
   const path = node.path.split('/').filter(str => !!str.trim())
   return path[path.length - 1]
 }
 
-const renderIcon = (type, isOpen) => {
+const renderIcon = (
+  type: TreeNodeData['type'],
+  isOpen: boolean
+): JSX.Element => {
   if (type === 'file') {
     return <FaRegFile />
   }
@@ -41,7 +58,10 @@ const renderIcon = (type, isOpen) => {
   return <FaFolder className="folder-icon" />
 }
 
-const renderToggleIcon = (type, isOpen) => {
+const renderToggleIcon = (
+  type: TreeNodeData['type'],
+  isOpen: boolean
+): JSX.Element | null => {
   if (type === 'file') {
     return null
   }
@@ -49,20 +69,30 @@ const renderToggleIcon = (type, isOpen) => {
   return type === 'folder' && isOpen ? <FiChevronDown /> : <FiChevronRight />
 }
 
-const onSelectNode = (node, props) => {
+const onSelectNode = (node: TreeNodeData, props: TreeNodeProps): void => {
   if (node.type === 'folder') {
-    props.onToggle(node)
+    if (props.onToggle) {
+      props.onToggle(node)
+    }
   } else {
     props.onSelectNode(node)
   }
 }
 
-const TreeNode = props => {
-  const { node, getChildren, level, showPath, activeFilePath } = props
+const TreeNode = (props: TreeNodeProps): JSX.Element => {
+  const {
+    node,
+    getChildren = () => [],
+    level = 0,
+    showPath = false,
+    activeFilePath = '',
+    className = ''
+  } = props
+
   const children = getChildren(node)
   const nodeLabel = getNodeLabel(node)
   const classes = withClasses({
-    [props.className]: true,
+    [className]: true,
     'is-active': node.path === activeFilePath
   })
 
@@ -97,31 +127,12 @@ const TreeNode = props => {
   )
 }
 
-TreeNode.propTypes = {
-  onToggle: PropTypes.func,
-  showPath: PropTypes.bool,
-  className: PropTypes.string,
-  activeFilePath: PropTypes.string,
-  level: PropTypes.number,
-  node: PropTypes.shape({
-    type: PropTypes.oneOf(['file', 'folder']),
-    name: PropTypes.string,
-    path: PropTypes.string,
-    url: PropTypes.string,
-    isRoot: PropTypes.bool,
-    isOpen: PropTypes.bool
-  }).isRequired,
-  getChildren: PropTypes.func,
-  onSelectNode: PropTypes.func.isRequired
-}
-
-TreeNode.defaultProps = {
-  level: 0,
-  onToggle: () => {},
-  getChildren: () => {},
-  className: '',
-  activeFilePath: '',
-  showPath: false
-}
-
 export default TreeNode
+export type TreeNodeData = {
+  type: 'file' | 'folder'
+  name: string
+  path: string
+  url: string
+  isRoot: boolean
+  isOpen: boolean
+}

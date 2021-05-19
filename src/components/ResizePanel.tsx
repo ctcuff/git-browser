@@ -1,15 +1,24 @@
 import '../style/resize-panel.scss'
 import React from 'react'
 import { BsThreeDotsVertical } from 'react-icons/bs'
-import PropTypes from 'prop-types'
 import { parseCSSVar, setCSSVar } from '../scripts/util'
 
+type ResizePanelProps = {
+  isExplorerOpen: boolean
+  onBreakPointClose: () => void
+  onBreakPointOpen: () => void
+}
+
 // Used to ensure the editor panel stays within a certain size
-const clamp = (min, value, max) => Math.max(min, Math.min(value, max))
+const clamp = (min: number, value: number, max: number) => {
+  return Math.max(min, Math.min(value, max))
+}
 
 // Controls the width of the explorer panel when dragged.
-class ResizePanel extends React.Component {
-  constructor(props) {
+class ResizePanel extends React.Component<ResizePanelProps> {
+  private mousePosition: number
+
+  constructor(props: ResizePanelProps) {
     super(props)
 
     this.mousePosition = 0
@@ -20,27 +29,27 @@ class ResizePanel extends React.Component {
     this.onPanelMouseDown = this.onPanelMouseDown.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     document.addEventListener('mouseup', this.onMouseUp)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     document.removeEventListener('mouseup', this.onMouseUp)
   }
 
-  onPanelMouseDown(event) {
+  onPanelMouseDown(event: React.MouseEvent): void {
     this.mousePosition = event.nativeEvent.x
 
     document.body.classList.add('is-resizing')
     document.addEventListener('mousemove', this.resizePanel)
   }
 
-  onMouseUp() {
+  onMouseUp(): void {
     document.body.classList.remove('is-resizing')
     document.removeEventListener('mousemove', this.resizePanel)
   }
 
-  resize(event) {
+  resize(event: MouseEvent): void {
     // The smallest the explorer is allowed to be before it snaps closed
     const absoluteMin = 150
     const absoluteMax = document.body.clientWidth - 100
@@ -70,11 +79,11 @@ class ResizePanel extends React.Component {
     setCSSVar('--file-explorer-width', `${newSize}px`)
   }
 
-  resizePanel(event) {
+  resizePanel(event: MouseEvent): void {
     requestAnimationFrame(() => this.resize(event))
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="resize-panel" onMouseDown={this.onPanelMouseDown}>
         <div className="resize-overlay" />
@@ -82,12 +91,6 @@ class ResizePanel extends React.Component {
       </div>
     )
   }
-}
-
-ResizePanel.propTypes = {
-  isExplorerOpen: PropTypes.bool.isRequired,
-  onBreakPointClose: PropTypes.func.isRequired,
-  onBreakPointOpen: PropTypes.func.isRequired
 }
 
 export default ResizePanel

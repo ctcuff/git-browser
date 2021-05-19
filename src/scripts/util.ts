@@ -134,7 +134,7 @@ const base64EncodeUnicode = (str: string, raw = false): string => {
  * withClasses({ foo: true, bar: false, baz: true }) // returns 'foo baz'
  * ```
  */
-const withClasses = (classObj: Record<string, boolean>): string => {
+const withClasses = (classObj: { [key: string]: boolean }): string => {
   const classNames = Object.keys(classObj).filter(key => !!classObj[key])
   return classNames.join(' ')
 }

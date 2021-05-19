@@ -1,17 +1,27 @@
 import '../style/search-input.scss'
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
 import { AiOutlineSearch, AiOutlineLoading } from 'react-icons/ai'
 
-const rand = () => Math.floor(Math.random() * 1_000_000)
-const randId = () => `input-${rand()}-${rand()}-${rand()}`
+type SearchInputProps = {
+  onChange: (value: string) => void
+  onSearch: (value: string) => void
+  value: string
+  hasError: boolean
+  placeholder: string
+  className: string
+  errorMessage: string
+  isLoading?: boolean
+}
 
-const SearchInput = props => {
+const rand = () => Math.floor(Math.random() * 1_000_000)
+const randomId = () => `input-${rand()}-${rand()}-${rand()}`
+
+const SearchInput = (props: SearchInputProps): JSX.Element => {
   const [inputValue, setInputValue] = useState(props.value)
   const [hasError, setHasError] = useState(props.hasError)
   const [errorMessage, setErrorMessage] = useState(props.errorMessage)
-  const [isLoading, setLoading] = useState(props.isLoading)
-  const inputId = randId()
+  const [isLoading, setLoading] = useState(props.isLoading ?? false)
+  const inputId = randomId()
 
   const onSearch = () => {
     if (!isLoading) {
@@ -19,17 +29,17 @@ const SearchInput = props => {
     }
   }
 
-  const onChange = event => {
+  const onInputValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget
     setInputValue(value)
     props.onChange(value)
   }
 
-  const onEnterPress = event => {
+  const onPressEnter = (event: KeyboardEvent) => {
     if (
       event.repeat ||
       event.key !== 'Enter' ||
-      document.activeElement.id !== inputId ||
+      document.activeElement?.id !== inputId ||
       isLoading
     ) {
       return
@@ -40,11 +50,12 @@ const SearchInput = props => {
 
   useEffect(() => {
     setInputValue(props.value)
-    document.addEventListener('keypress', onEnterPress)
+    document.addEventListener('keypress', onPressEnter)
+
     return () => {
-      document.removeEventListener('keypress', onEnterPress)
+      document.removeEventListener('keypress', onPressEnter)
     }
-  }, [onEnterPress])
+  }, [onPressEnter])
 
   useEffect(() => {
     setHasError(props.hasError)
@@ -52,7 +63,7 @@ const SearchInput = props => {
   }, [props.hasError, props.errorMessage])
 
   useEffect(() => {
-    setLoading(props.isLoading)
+    setLoading(props.isLoading ?? false)
   }, [props.isLoading])
 
   useEffect(() => {
@@ -65,7 +76,7 @@ const SearchInput = props => {
         <input
           type="text"
           id={inputId}
-          onChange={onChange}
+          onChange={onInputValueChange}
           placeholder={props.placeholder}
           value={props.value}
           autoComplete="off"
@@ -93,26 +104,6 @@ const SearchInput = props => {
       )}
     </div>
   )
-}
-
-SearchInput.propTypes = {
-  onChange: PropTypes.func,
-  hasError: PropTypes.bool,
-  placeholder: PropTypes.string,
-  className: PropTypes.string,
-  errorMessage: PropTypes.string,
-  isLoading: PropTypes.bool,
-  onSearch: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired
-}
-
-SearchInput.defaultProps = {
-  onChange: () => {},
-  placeholder: '',
-  hasError: false,
-  errorMessage: '',
-  isLoading: false,
-  className: ''
 }
 
 export default SearchInput

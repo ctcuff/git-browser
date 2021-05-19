@@ -85,6 +85,12 @@
         "no-use-before-define": "off",
         "react/prop-types": "off",
         "lines-between-class-members": "off",
+        "react/require-default-props": [
+          "error",
+          {
+            "ignoreFunctionalComponents": true
+          }
+        ],
         "@typescript-eslint/no-use-before-define": ["error"],
         "@typescript-eslint/explicit-module-boundary-types": "error",
         "@typescript-eslint/ban-ts-comment": "off", // Temporary?

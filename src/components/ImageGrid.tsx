@@ -1,10 +1,17 @@
 import '../style/image-grid.scss'
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
 import { GrGrid } from 'react-icons/gr'
 import { connect } from 'react-redux'
+import { SettingsState } from '../store/reducers/settings'
+import { State } from '../store'
 
-const ImageGrid = ({ theme }) => {
+type ImageGridProps = Pick<SettingsState, 'theme'>
+
+/**
+ * Used to display a checkered background for images. This allows
+ * the image to be seen a bit better if it contrasts with the background
+ */
+const ImageGrid = ({ theme }: ImageGridProps): JSX.Element => {
   const [gridClass, setGridClass] = useState('')
   const [showGrid, setShowGrid] = useState(false)
 
@@ -29,15 +36,7 @@ const ImageGrid = ({ theme }) => {
   )
 }
 
-ImageGrid.propTypes = {
-  theme: PropTypes.shape({
-    userTheme: PropTypes.oneOf(['theme-dark', 'theme-light', 'theme-auto'])
-      .isRequired,
-    preferredTheme: PropTypes.oneOf(['theme-dark', 'theme-light']).isRequired
-  }).isRequired
-}
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state: State) => ({
   theme: state.settings.theme
 })
 
