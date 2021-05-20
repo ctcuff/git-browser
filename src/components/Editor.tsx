@@ -1,18 +1,40 @@
 import '../style/editor.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
 import { AiOutlineEye } from 'react-icons/ai'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
 import { parseCSSVar } from '../scripts/util'
 import LoadingOverlay from './LoadingOverlay'
 import Logger from '../scripts/logger'
+import { State } from '../store'
+import { Theme } from '../store/actions/settings'
 
-class Editor extends React.Component {
+const mapStateToProps = (state: State) => ({
+  theme: state.settings.theme
+})
+
+const connector = connect(mapStateToProps)
+
+type EditorProps = ConnectedProps<typeof connector> & {
+  extension: string
+  language: string
+  /**
+   * Must be base 64 decoded in order to display correctly
+   */
+  content: string
+  onForceRender: (content: string, canEditorRender: boolean) => void
+}
+
+type EditorState = {
+  isLoading: boolean
+  isEncoding: boolean
+}
+
+class Editor extends React.Component<EditorProps, EditorState> {
   /**
    * File extensions that cause the component to
    * display the "preview file" button.
    */
-  static previewExtensions = new Set([
+  public static previewExtensions = new Set([
     '.adoc',
     '.csv',
     '.gltf',
@@ -28,7 +50,7 @@ class Editor extends React.Component {
    * since they already display as text when the Editor is rendered.
    * These files will still cause the preview button to be displayed.
    */
-  static textExtensions = new Set([
+  public static textExtensions = new Set([
     '.adoc',
     '.csv',
     '.ipynb',
@@ -41,7 +63,7 @@ class Editor extends React.Component {
    * Files that will always be displayed by the FileRenderer component.
    * This allows us to avoid unnecessarily decoding a file.
    */
-  static illegalExtensions = new Set([
+  public static illegalExtensions = new Set([
     '.aac',
     '.apng',
     '.avif',
@@ -76,8 +98,12 @@ class Editor extends React.Component {
     '.woff2',
     '.zip'
   ])
+  private encodeWorker: Worker
+  private editorRef: React.RefObject<HTMLDivElement>
+  private editor!: import('monaco-editor').editor.IStandaloneCodeEditor
+  private monaco!: typeof import('monaco-editor').editor
 
-  constructor(props) {
+  constructor(props: EditorProps) {
     super(props)
 
     this.state = {
@@ -89,7 +115,7 @@ class Editor extends React.Component {
       type: 'module'
     })
 
-    this.editorRef = React.createRef()
+    this.editorRef = React.createRef<HTMLDivElement>()
     this.getEditorTheme = this.getEditorTheme.bind(this)
     this.initEditor = this.initEditor.bind(this)
     this.renderPreviewButton = this.renderPreviewButton.bind(this)
@@ -97,30 +123,32 @@ class Editor extends React.Component {
     this.forceRenderPreview = this.forceRenderPreview.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.initEditor()
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: EditorProps): void {
     const { theme } = this.props
     const colorScheme =
       theme.userTheme === 'theme-auto' ? theme.preferredTheme : theme.userTheme
 
-    if (prevProps.theme !== colorScheme) {
+    if (prevProps.theme.userTheme !== colorScheme) {
       this.monaco?.setTheme(this.getEditorTheme(colorScheme))
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this.editor?.dispose()
     this.encodeWorker.terminate()
   }
 
-  getEditorTheme(colorScheme) {
+  getEditorTheme(colorScheme: Theme): string {
     return colorScheme === 'theme-dark' ? 'vs-dark' : 'vs-light'
   }
 
-  viewZoneCallback(changeAccessor) {
+  viewZoneCallback(
+    changeAccessor: import('monaco-editor').editor.IViewZoneChangeAccessor
+  ): void {
     changeAccessor.addZone({
       afterLineNumber: 0,
       heightInPx: parseCSSVar('--scrollbar-height'),
@@ -128,8 +156,13 @@ class Editor extends React.Component {
     })
   }
 
-  async initEditor() {
+  async initEditor(): Promise<void> {
     this.setState({ isLoading: true })
+
+    if (!this.editorRef.current) {
+      // TODO: ensure that the ref was actually set rather than just returning here
+      return
+    }
 
     // monaco editor is loaded asynchronously to prevent unnecessarily
     // bundling all of the editor API when the project is built.
@@ -182,7 +215,7 @@ class Editor extends React.Component {
 
   // Let the App component know that this file should not
   // be rendered by the editor
-  forceRenderPreview() {
+  forceRenderPreview(): void {
     if (this.state.isEncoding) {
       return
     }
@@ -252,20 +285,6 @@ class Editor extends React.Component {
   }
 }
 
-Editor.propTypes = {
-  extension: PropTypes.string.isRequired,
-  language: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
-  theme: PropTypes.shape({
-    userTheme: PropTypes.oneOf(['theme-light', 'theme-dark', 'theme-auto'])
-      .isRequired,
-    preferredTheme: PropTypes.oneOf(['theme-light', 'theme-dark']).isRequired
-  }).isRequired,
-  onForceRender: PropTypes.func.isRequired
-}
+const ConnectedEditor = connector(Editor)
 
-const mapStateToProps = state => ({
-  theme: state.settings.theme
-})
-
-export default connect(mapStateToProps)(Editor)
+export default ConnectedEditor
