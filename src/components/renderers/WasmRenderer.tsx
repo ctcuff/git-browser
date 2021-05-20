@@ -3,7 +3,7 @@ import Editor from '../Editor'
 import Logger from '../../scripts/logger'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
-import { WabtModule } from '../../types/wabt'
+import { WabtModule } from '../../@types/wabt'
 
 type WasmRendererProps = {
   content: string
@@ -119,6 +119,7 @@ class WasmRenderer extends React.Component<
         />
       )
     }
+
     return (
       <Editor
         extension="wasm"

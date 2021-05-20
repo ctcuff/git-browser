@@ -1,4 +1,4 @@
-import { GitHubTreeItem } from '../types/github-api'
+import { GitHubTreeItem } from '../@types/github-api'
 
 type TreeObject = {
   [key: string]: {

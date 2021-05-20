@@ -2,15 +2,15 @@ import '../../style/renderers/csv-renderer.scss'
 import React from 'react'
 import { AiOutlineSearch } from 'react-icons/ai'
 import debounce from 'lodash/debounce'
-import {
-  ParseError,
-  ParseResult,
-  ParseConfig,
-  GuessableDelimiters
-} from 'papaparse'
+import { ParseError, ParseResult, GuessableDelimiters } from 'papaparse'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import Logger from '../../scripts/logger'
+
+type TableRow = {
+  rowArray: string[]
+  display: string
+}
 
 type CSVRendererProps = {
   /**
@@ -25,10 +25,7 @@ type CSVRendererState = {
   currentStep: string
   inputValue: string
   tableHeaders: string[]
-  tableRows: {
-    rowArray: string[]
-    display: string
-  }[]
+  tableRows: TableRow[]
 }
 
 // The max number of rows that can be displayed before truncation
@@ -42,11 +39,7 @@ const MAX_ROW_ERROR = 'MAX_ROW_ERROR'
 const LIBRARY_IMPORT_ERROR = 'LIBRARY_IMPORT_ERROR'
 
 class CSVRenderer extends React.Component<CSVRendererProps, CSVRendererState> {
-  private Parser!: {
-    parse<T>(input: string, config?: ParseConfig<T>): ParseResult<T>
-    RECORD_SEP: GuessableDelimiters
-    UNIT_SEP: GuessableDelimiters
-  }
+  private Parser!: typeof import('papaparse')
 
   constructor(props: CSVRendererProps) {
     super(props)
@@ -151,18 +144,7 @@ class CSVRenderer extends React.Component<CSVRendererProps, CSVRendererState> {
     })
 
     try {
-      // Because of the way the types are exported for papaparse, we can't
-      // import everything and specify a type so we need to import a subset
-      // and build a Parser type object manually. This makes the library
-      // easier to work with.
-      const { parse, RECORD_SEP, UNIT_SEP } = (await import('papaparse'))
-        .default
-
-      this.Parser = {
-        parse,
-        RECORD_SEP,
-        UNIT_SEP
-      }
+      this.Parser = (await import('papaparse')).default
 
       this.updateCurrentStep('Rendering CSV...')
       this.parseCSV(this.props.content)

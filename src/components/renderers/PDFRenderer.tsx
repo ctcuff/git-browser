@@ -1,12 +1,6 @@
 import '../../style/renderers/pdf-renderer.scss'
 import React from 'react'
-import {
-  DocumentInitParameters,
-  PDFDocumentLoadingTask,
-  PDFDocumentProxy,
-  PDFPageProxy
-} from 'pdfjs-dist/types/display/api'
-import { GlobalWorkerOptionsType } from 'pdfjs-dist/types/display/worker_options'
+import { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist/types/display/api'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import PDFPage from '../PDFPage'
@@ -26,13 +20,7 @@ type PDFRendererState = {
 
 class PDFRenderer extends React.Component<PDFRendererProps, PDFRendererState> {
   private rawDecodeWorker: Worker
-  private pdfjs!: {
-    getDocument: (
-      src: string | DocumentInitParameters
-    ) => PDFDocumentLoadingTask
-    GlobalWorkerOptions: GlobalWorkerOptionsType
-    version: string
-  }
+  private pdfjs!: typeof import('pdfjs-dist')
 
   constructor(props: PDFRendererProps) {
     super(props)
@@ -103,16 +91,7 @@ class PDFRenderer extends React.Component<PDFRendererProps, PDFRendererState> {
 
   async init(): Promise<void> {
     try {
-      const { getDocument, GlobalWorkerOptions, version } = await import(
-        'pdfjs-dist'
-      )
-
-      this.pdfjs = {
-        getDocument,
-        GlobalWorkerOptions,
-        version
-      }
-
+      this.pdfjs = await import('pdfjs-dist')
       this.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${this.pdfjs.version}/pdf.worker.js`
 
       const decodedData = await this.decodeContent()

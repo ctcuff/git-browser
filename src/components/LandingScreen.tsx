@@ -1,12 +1,20 @@
 import '../style/landing-screen.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
 import gitBrowserIconDark from '../assets/img/git-browser-icon-dark.svg'
 import gitBrowserIconLight from '../assets/img/git-browser-icon-light.svg'
+import { State } from '../store'
 
-const LandingScreen = ({ theme }) => {
-  let iconSrc
+const mapStateToProps = (state: State) => ({
+  theme: state.settings.theme
+})
+
+const connector = connect(mapStateToProps)
+
+type LandingScreenProps = ConnectedProps<typeof connector>
+
+const LandingScreen = ({ theme }: LandingScreenProps): JSX.Element => {
+  let iconSrc = ''
 
   switch (theme.userTheme) {
     case 'theme-light':
@@ -48,16 +56,6 @@ const LandingScreen = ({ theme }) => {
   )
 }
 
-LandingScreen.propTypes = {
-  theme: PropTypes.shape({
-    userTheme: PropTypes.oneOf(['theme-dark', 'theme-light', 'theme-auto'])
-      .isRequired,
-    preferredTheme: PropTypes.oneOf(['theme-dark', 'theme-light']).isRequired
-  }).isRequired
-}
+const ConnectedLandingScreen = connector(LandingScreen)
 
-const mapStateToProps = state => ({
-  theme: state.settings.theme
-})
-
-export default connect(mapStateToProps)(LandingScreen)
+export default ConnectedLandingScreen
