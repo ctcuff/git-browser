@@ -1,11 +1,11 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
 import ReactModal from 'react-modal'
 import RateLimitModal from './modals/RateLimitModal'
 import AuthErrorModal from './modals/AuthErrorModal'
 import FullAccessModal from './modals/FullAccessModal'
 import FileDownloadErrorModal from './modals/FileDownloadErrorModal'
+import { State } from '../store'
 
 ReactModal.setAppElement('#app')
 
@@ -16,16 +16,32 @@ const ModalTypes = {
   FILE_DOWNLOAD_ERROR: 'FILE_DOWNLOAD_ERROR'
 }
 
-const ModalComponents = {
+const ModalComponents: { [key: string]: React.ElementType } = {
   RATE_LIMIT: RateLimitModal,
   AUTH_ERROR: AuthErrorModal,
   FULL_ACCESS: FullAccessModal,
   FILE_DOWNLOAD_ERROR: FileDownloadErrorModal
 }
 
-// Handles orchestrating what modals should be shown depending on what
-// modal type is dispatched in the modal store
-const ModalRoot = ({ isOpen, modalType, modalProps }) => {
+const mapStateToProps = (state: State) => ({
+  isOpen: state.modal.isOpen,
+  modalType: state.modal.modalType,
+  modalProps: state.modal.modalProps
+})
+
+const connector = connect(mapStateToProps)
+
+type ModalRootProps = ConnectedProps<typeof connector>
+
+/**
+ * Handles orchestrating what modals should be shown depending
+ * on what modal type is dispatched in the modal store.
+ */
+const ModalRoot = ({
+  isOpen,
+  modalType,
+  modalProps
+}: ModalRootProps): JSX.Element | null => {
   if (!isOpen || !modalType || !ModalComponents[modalType]) {
     return null
   }
@@ -35,25 +51,6 @@ const ModalRoot = ({ isOpen, modalType, modalProps }) => {
   return <Modal {...modalProps} />
 }
 
-ModalRoot.propTypes = {
-  modalType: PropTypes.oneOf(Object.keys(ModalComponents)),
-  isOpen: PropTypes.bool,
-  // eslint-disable-next-line react/forbid-prop-types
-  modalProps: PropTypes.object
-}
-
-ModalRoot.defaultProps = {
-  isOpen: false,
-  modalProps: {},
-  modalType: ''
-}
-
-const mapStateToProps = state => ({
-  isOpen: state.modal.isOpen,
-  modalType: state.modal.modalType,
-  modalProps: state.modal.modalProps
-})
-
-const ConnectedModal = connect(mapStateToProps)(ModalRoot)
+const ConnectedModal = connector(ModalRoot)
 
 export { ConnectedModal as default, ModalTypes }

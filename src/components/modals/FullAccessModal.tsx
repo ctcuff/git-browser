@@ -1,7 +1,7 @@
 import React from 'react'
-import BaseModal from './BaseModal'
+import BaseModal, { ModalAction } from './BaseModal'
 
-const modalActions = [
+const modalActions: ModalAction[] = [
   {
     text: 'Read more',
     onClick: () =>
@@ -13,7 +13,7 @@ const modalActions = [
   }
 ]
 
-const FullAccessModal = () => (
+const FullAccessModal = (): JSX.Element => (
   <BaseModal title="Full Access" actions={modalActions}>
     <p>
       {`Signing in with GitHub grants read-only access to public repositories. If

@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import App from './components/App'
 import store from './store'
 import ModalRoot from './components/ModalRoot'
-import { setPreferredTheme, setTheme } from './store/actions/settings'
+import { setPreferredTheme, setTheme, Theme } from './store/actions/settings'
 
 if (module.hot) {
   module.hot.accept()
@@ -14,12 +14,14 @@ if (module.hot) {
 const savedTheme = localStorage.getItem('userTheme')
 const query = window.matchMedia('(prefers-color-scheme: dark)')
 
-const updateFavicon = ({ matches }) => {
+const updateFavicon = ({ matches }: MediaQueryListEvent | MediaQueryList) => {
   const link = matches ? '/favicon-light.ico' : '/favicon-dark.ico'
-  document.querySelector('link[rel="icon"]').setAttribute('href', link)
+  document.querySelector('link[rel="icon"]')?.setAttribute('href', link)
 }
 
-const updatePreferredTheme = ({ matches }) => {
+const updatePreferredTheme = ({
+  matches
+}: MediaQueryListEvent | MediaQueryList) => {
   const theme = matches ? 'theme-dark' : 'theme-light'
   store.dispatch(setPreferredTheme(theme))
 }
@@ -37,7 +39,7 @@ updatePreferredTheme(query)
 updateFavicon(query)
 
 if (savedTheme) {
-  store.dispatch(setTheme(savedTheme))
+  store.dispatch(setTheme(savedTheme as Theme))
 } else {
   localStorage.setItem('userTheme', 'theme-auto')
 }

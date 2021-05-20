@@ -1,11 +1,20 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
 import BaseModal from './BaseModal'
 import { hideModal } from '../../store/actions/modal'
 
-const AuthErrorModal = props => {
-  let message
+const mapDispatchToProps = {
+  hideModal
+}
+
+const connector = connect(null, mapDispatchToProps)
+
+type AuthErrorModalProps = ConnectedProps<typeof connector> & {
+  code: string
+}
+
+const AuthErrorModal = (props: AuthErrorModalProps): JSX.Element | null => {
+  let message = ''
 
   switch (props.code) {
     // Ignore errors that aren't related to the auth process
@@ -35,17 +44,6 @@ const AuthErrorModal = props => {
   )
 }
 
-AuthErrorModal.propTypes = {
-  code: PropTypes.string,
-  hideModal: PropTypes.func.isRequired
-}
+const ConnectedAuthErrorModal = connector(AuthErrorModal)
 
-AuthErrorModal.defaultProps = {
-  code: ''
-}
-
-const mapDispatchToProps = {
-  hideModal
-}
-
-export default connect(null, mapDispatchToProps)(AuthErrorModal)
+export default ConnectedAuthErrorModal

@@ -2,7 +2,7 @@ import { ModalAction } from '../actions/modal'
 
 const initialState = {
   isOpen: false,
-  modalType: null,
+  modalType: '',
   modalProps: {}
 }
 
@@ -28,7 +28,7 @@ export default reducer
 
 export type ModalState = {
   isOpen: boolean
-  modalType: string | null
+  modalType: string
   modalProps: {
     [key: string]: unknown
   }
