@@ -1,13 +1,40 @@
 import '../../style/renderers/pdf-renderer.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
+import {
+  DocumentInitParameters,
+  PDFDocumentLoadingTask,
+  PDFDocumentProxy,
+  PDFPageProxy
+} from 'pdfjs-dist/types/display/api'
+import { GlobalWorkerOptionsType } from 'pdfjs-dist/types/display/worker_options'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import PDFPage from '../PDFPage'
 import Logger from '../../scripts/logger'
 
-class PDFRenderer extends React.Component {
-  constructor(props) {
+type PDFRendererProps = {
+  content: string
+}
+
+type PDFRendererState = {
+  isLoading: boolean
+  hasError: boolean
+  currentStep: string
+  // TODO: Check this
+  pages: React.ReactElement<typeof PDFPage>[]
+}
+
+class PDFRenderer extends React.Component<PDFRendererProps, PDFRendererState> {
+  private rawDecodeWorker: Worker
+  private pdfjs!: {
+    getDocument: (
+      src: string | DocumentInitParameters
+    ) => PDFDocumentLoadingTask
+    GlobalWorkerOptions: GlobalWorkerOptionsType
+    version: string
+  }
+
+  constructor(props: PDFRendererProps) {
     super(props)
 
     this.state = {
@@ -29,22 +56,22 @@ class PDFRenderer extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.init()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this.rawDecodeWorker.terminate()
   }
 
-  setErrorState() {
+  setErrorState(): void {
     this.setState({
       isLoading: false,
       hasError: true
     })
   }
 
-  decodeContent() {
+  decodeContent(): Promise<string> {
     return new Promise((resolve, reject) => {
       this.rawDecodeWorker.postMessage({
         message: this.props.content,
@@ -62,9 +89,9 @@ class PDFRenderer extends React.Component {
     })
   }
 
-  loadPDF(decodedPdfData) {
+  loadPDF(decodedPdfData: string): void {
     this.pdfjs.getDocument({ data: decodedPdfData }).promise.then(
-      pdfDocument => {
+      (pdfDocument: PDFDocumentProxy) => {
         this.renderPages(pdfDocument)
       },
       err => {
@@ -74,9 +101,18 @@ class PDFRenderer extends React.Component {
     )
   }
 
-  async init() {
+  async init(): Promise<void> {
     try {
-      this.pdfjs = await import('pdfjs-dist')
+      const { getDocument, GlobalWorkerOptions, version } = await import(
+        'pdfjs-dist'
+      )
+
+      this.pdfjs = {
+        getDocument,
+        GlobalWorkerOptions,
+        version
+      }
+
       this.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${this.pdfjs.version}/pdf.worker.js`
 
       const decodedData = await this.decodeContent()
@@ -88,7 +124,7 @@ class PDFRenderer extends React.Component {
     }
   }
 
-  reload() {
+  reload(): void {
     this.setState(
       {
         isLoading: true,
@@ -100,14 +136,14 @@ class PDFRenderer extends React.Component {
     )
   }
 
-  async renderPages(pdfDocument) {
-    const pages = []
-    const promises = []
+  async renderPages(pdfDocument: PDFDocumentProxy): Promise<void> {
+    const pages: React.ReactElement<typeof PDFPage>[] = []
+    const promises: Promise<void>[] = []
     const { numPages } = pdfDocument
 
     for (let i = 0; i < numPages; i++) {
       const promise = pdfDocument.getPage(i + 1).then(
-        page => {
+        (page: PDFPageProxy) => {
           pages.push(<PDFPage page={page} key={i} />)
           this.setState({
             currentStep: `Loading page ${i + 1}/${numPages}`
@@ -130,7 +166,7 @@ class PDFRenderer extends React.Component {
     })
   }
 
-  render() {
+  render(): JSX.Element {
     const { currentStep, isLoading, hasError, pages } = this.state
 
     if (isLoading) {
@@ -156,10 +192,6 @@ class PDFRenderer extends React.Component {
       </div>
     )
   }
-}
-
-PDFRenderer.propTypes = {
-  content: PropTypes.string.isRequired
 }
 
 export default PDFRenderer

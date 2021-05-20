@@ -1,11 +1,35 @@
 import '../../style/renderers/csv-renderer.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
 import { AiOutlineSearch } from 'react-icons/ai'
 import debounce from 'lodash/debounce'
+import {
+  ParseError,
+  ParseResult,
+  ParseConfig,
+  GuessableDelimiters
+} from 'papaparse'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import Logger from '../../scripts/logger'
+
+type CSVRendererProps = {
+  /**
+   * Not base64 encoded
+   */
+  content: string
+}
+
+type CSVRendererState = {
+  isLoading: boolean
+  errors: Set<string>
+  currentStep: string
+  inputValue: string
+  tableHeaders: string[]
+  tableRows: {
+    rowArray: string[]
+    display: string
+  }[]
+}
 
 // The max number of rows that can be displayed before truncation
 const MAX_ROW_COUNT = 500
@@ -17,8 +41,14 @@ const MAX_ROW_ERROR = 'MAX_ROW_ERROR'
 // Occurs if there was an error importing papaparse library
 const LIBRARY_IMPORT_ERROR = 'LIBRARY_IMPORT_ERROR'
 
-class CSVRenderer extends React.Component {
-  constructor(props) {
+class CSVRenderer extends React.Component<CSVRendererProps, CSVRendererState> {
+  private Parser!: {
+    parse<T>(input: string, config?: ParseConfig<T>): ParseResult<T>
+    RECORD_SEP: GuessableDelimiters
+    UNIT_SEP: GuessableDelimiters
+  }
+
+  constructor(props: CSVRendererProps) {
     super(props)
 
     this.state = {
@@ -27,11 +57,6 @@ class CSVRenderer extends React.Component {
       currentStep: 'Loading...',
       inputValue: '',
       tableHeaders: [],
-      // Contains an array of objects that look like:
-      //  {
-      //    rowArray: [],
-      //    display: ''
-      //  }
       tableRows: []
     }
 
@@ -45,7 +70,7 @@ class CSVRenderer extends React.Component {
     this.filterTable = debounce(this.filterTable.bind(this), 100)
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     try {
       this.init()
     } catch (err) {
@@ -53,9 +78,9 @@ class CSVRenderer extends React.Component {
     }
   }
 
-  onParseComplete(results) {
+  onParseComplete(results: ParseResult<string[]>): void {
     // eslint-disable-next-line react/no-access-state-in-setstate
-    const errors = new Set([...this.state.errors])
+    const errors = new Set(Array.from(this.state.errors))
     const tableHeaders = results.data[0]
     const tableRows = results.data.slice(1).map(row => ({
       rowArray: row,
@@ -74,22 +99,25 @@ class CSVRenderer extends React.Component {
     })
   }
 
-  onParseError(err) {
+  onParseError(err: ParseError): void {
     // Just because a parsing error was generated, that doesn't
     // mean we can't still display the table
     Logger.warn(err)
-    this.setState(prevState => ({
-      errors: new Set([...prevState.errors, PARSE_ERROR])
-    }))
+    this.setState(prevState => {
+      const errors = new Set(Array.from(prevState.errors))
+      errors.add(PARSE_ERROR)
+
+      return { errors }
+    })
   }
 
-  onChange(event) {
+  onChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const inputValue = event.currentTarget.value
     this.setState({ inputValue })
     this.filterTable(inputValue.toLowerCase())
   }
 
-  parseCSV(content) {
+  parseCSV(content: string): void {
     const { Parser } = this
 
     Parser.parse(content, {
@@ -102,7 +130,7 @@ class CSVRenderer extends React.Component {
         '\t',
         '|',
         ';',
-        ':',
+        ':' as GuessableDelimiters,
         Parser.RECORD_SEP,
         Parser.UNIT_SEP
       ],
@@ -111,11 +139,11 @@ class CSVRenderer extends React.Component {
     })
   }
 
-  updateCurrentStep(currentStep) {
+  updateCurrentStep(currentStep: string): void {
     this.setState({ currentStep })
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.setState({
       isLoading: true,
       errors: new Set(),
@@ -123,21 +151,37 @@ class CSVRenderer extends React.Component {
     })
 
     try {
-      this.Parser = (await import('papaparse')).default
+      // Because of the way the types are exported for papaparse, we can't
+      // import everything and specify a type so we need to import a subset
+      // and build a Parser type object manually. This makes the library
+      // easier to work with.
+      const { parse, RECORD_SEP, UNIT_SEP } = (await import('papaparse'))
+        .default
+
+      this.Parser = {
+        parse,
+        RECORD_SEP,
+        UNIT_SEP
+      }
 
       this.updateCurrentStep('Rendering CSV...')
       this.parseCSV(this.props.content)
     } catch (err) {
       Logger.error(err)
 
-      this.setState(prevState => ({
-        isLoading: false,
-        errors: new Set([...prevState.errors, LIBRARY_IMPORT_ERROR])
-      }))
+      this.setState(prevState => {
+        const errors = new Set(Array.from(prevState.errors))
+        errors.add(LIBRARY_IMPORT_ERROR)
+
+        return {
+          errors,
+          isLoading: false
+        }
+      })
     }
   }
 
-  filterTable(value) {
+  filterTable(value: string): void {
     const { tableRows } = this.state
 
     const rows = tableRows.map(data => {
@@ -154,7 +198,7 @@ class CSVRenderer extends React.Component {
     this.setState({ tableRows: rows })
   }
 
-  renderTable() {
+  renderTable(): JSX.Element {
     const { tableHeaders, tableRows } = this.state
 
     return (
@@ -181,7 +225,7 @@ class CSVRenderer extends React.Component {
     )
   }
 
-  render() {
+  render(): JSX.Element {
     const { inputValue, errors, isLoading, currentStep } = this.state
 
     if (isLoading) {
@@ -226,10 +270,6 @@ class CSVRenderer extends React.Component {
       </div>
     )
   }
-}
-
-CSVRenderer.propTypes = {
-  content: PropTypes.string.isRequired
 }
 
 export default CSVRenderer

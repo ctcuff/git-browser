@@ -1,11 +1,16 @@
 import '../style/image-grid.scss'
 import React, { useState, useEffect } from 'react'
 import { GrGrid } from 'react-icons/gr'
-import { connect } from 'react-redux'
-import { SettingsState } from '../store/reducers/settings'
+import { connect, ConnectedProps } from 'react-redux'
 import { State } from '../store'
 
-type ImageGridProps = Pick<SettingsState, 'theme'>
+const mapStateToProps = (state: State) => ({
+  theme: state.settings.theme
+})
+
+const connector = connect(mapStateToProps)
+
+type ImageGridProps = ConnectedProps<typeof connector>
 
 /**
  * Used to display a checkered background for images. This allows
@@ -15,7 +20,7 @@ const ImageGrid = ({ theme }: ImageGridProps): JSX.Element => {
   const [gridClass, setGridClass] = useState('')
   const [showGrid, setShowGrid] = useState(false)
 
-  const toggleGrid = () => setShowGrid(!showGrid)
+  const toggleGrid = (): void => setShowGrid(!showGrid)
 
   useEffect(() => {
     const { userTheme, preferredTheme } = theme
@@ -36,8 +41,4 @@ const ImageGrid = ({ theme }: ImageGridProps): JSX.Element => {
   )
 }
 
-const mapStateToProps = (state: State) => ({
-  theme: state.settings.theme
-})
-
-export default connect(mapStateToProps)(ImageGrid)
+export default connector(ImageGrid)

@@ -2,7 +2,8 @@
 import firebase from 'firebase/app'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'firebase/auth'
-import { ActionCreator, Dispatch } from 'redux'
+import { AnyAction } from 'redux'
+import { ThunkAction, ThunkDispatch } from 'redux-thunk'
 import Logger from '../../scripts/logger'
 import { showModal } from './modal'
 import { ModalTypes } from '../../components/ModalRoot'
@@ -62,8 +63,47 @@ const loadProfileFromStorage = (
   payload
 })
 
-const login = (su = false): ActionCreator<void> => {
-  return async function (dispatch: Dispatch, getState: () => State) {
+// The thunk generic type takes the return type of the thunk function,
+// the state type used by getState(), any "extra arguments" injected
+// into the thunk function (none in the case), and known types of
+// actions that can be dispatched
+const logout = (): ThunkAction<Promise<void>, State, unknown, AnyAction> => {
+  // The dispatch type generic takes the same values as ThunkAction
+  // but the return type provided in the first slot needs to be
+  // the return type of this function
+  return async function (
+    dispatch: ThunkDispatch<State, unknown, AnyAction>,
+    getState: () => State
+  ): Promise<void> {
+    if (getState().user.isLoading) {
+      return
+    }
+
+    dispatch(toggleLoading(true))
+    localStorage.removeItem('profile')
+
+    try {
+      await firebase.auth().signOut()
+      dispatch(clearUserInfo())
+    } catch (err) {
+      Logger.error(err)
+    }
+
+    dispatch(toggleLoading(false))
+  }
+}
+
+/**
+ * @param su If true, `scope` will be added to Firebase's GitHub provider scope
+ * allowing the user to view their private repositories
+ */
+const login = (
+  su = false
+): ThunkAction<Promise<void>, State, unknown, AnyAction> => {
+  return async function (
+    dispatch: ThunkDispatch<State, unknown, AnyAction>,
+    getState: () => State
+  ): Promise<void> {
     if (getState().user.isLoading) {
       return
     }
@@ -76,7 +116,7 @@ const login = (su = false): ActionCreator<void> => {
       const res = await firebase.auth().signInWithPopup(provider)
       const credential = res.credential as firebase.auth.OAuthCredential
       const payload: UserInfoPayload = {
-        accessToken: 's',
+        accessToken: '',
         username: ''
       }
 
@@ -94,26 +134,6 @@ const login = (su = false): ActionCreator<void> => {
           code: err.code
         })
       )
-    }
-
-    dispatch(toggleLoading(false))
-  }
-}
-
-const logout = (): ActionCreator<void> => {
-  return async function (dispatch: Dispatch, getState: () => State) {
-    if (getState().user.isLoading) {
-      return
-    }
-
-    dispatch(toggleLoading(true))
-    localStorage.removeItem('profile')
-
-    try {
-      await firebase.auth().signOut()
-      dispatch(clearUserInfo())
-    } catch (err) {
-      Logger.error(err)
     }
 
     dispatch(toggleLoading(false))

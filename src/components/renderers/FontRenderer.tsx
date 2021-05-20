@@ -1,8 +1,15 @@
 import '../../style/renderers/font-renderer.scss'
 import React, { useEffect, useState } from 'react'
 import { ImFont } from 'react-icons/im'
-import PropTypes from 'prop-types'
 import ErrorOverlay from '../ErrorOverlay'
+
+type FontRendererProps = {
+  /**
+   * Not base64 encoded
+   */
+  content: string
+  extension: '.eot' | '.otf' | '.ttf' | '.woff' | '.woff2'
+}
 
 const glpyhs = `
 ABCČĆDĐEFGHIJKLMNOPQRSŠTUVWXYZŽabcčćdđefghijklmnopqrsštuvwx
@@ -88,7 +95,7 @@ const extendedPreview = (
   </div>
 )
 
-const getFontFormat = fontName => {
+const getFontFormat = (fontName: string): string => {
   switch (fontName) {
     case 'otf':
       return 'opentype'
@@ -101,7 +108,7 @@ const getFontFormat = fontName => {
   }
 }
 
-const FontRenderer = props => {
+const FontRenderer = (props: FontRendererProps): JSX.Element => {
   // Need to replace new line characters to
   // get the font-family to load properly
   const content = props.content.replace(/[\r\n]/g, '')
@@ -109,9 +116,9 @@ const FontRenderer = props => {
   const format = getFontFormat(fontType)
   const mimeType = `font/${fontType}`
   const [isPreviewShowing, setShowPreview] = useState(false)
-  const [preview, setPreview] = useState(null)
+  const [preview, setPreview] = useState<JSX.Element | null>(null)
 
-  const togglePreview = () => setShowPreview(!isPreviewShowing)
+  const togglePreview = (): void => setShowPreview(!isPreviewShowing)
 
   useEffect(() => {
     const style = document.createElement('style')
@@ -162,12 +169,6 @@ const FontRenderer = props => {
       </button>
     </div>
   )
-}
-
-FontRenderer.propTypes = {
-  content: PropTypes.string.isRequired,
-  extension: PropTypes.oneOf(['.eot', '.otf', '.ttf', '.woff', '.woff2'])
-    .isRequired
 }
 
 export default FontRenderer

@@ -1,9 +1,9 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
-import modalReducer, { ModalState } from './reducers/modal'
-import userReducer, { UserState } from './reducers/user'
-import settingsReducer, { SettingsState } from './reducers/settings'
-import searchReducer, { SearchState } from './reducers/search'
+import modalReducer from './reducers/modal'
+import userReducer from './reducers/user'
+import settingsReducer from './reducers/settings'
+import searchReducer from './reducers/search'
 
 const storeEnhancers =
   (process.env.DEBUG &&
@@ -22,9 +22,4 @@ const reducer = combineReducers({
 const store = createStore(reducer, storeEnhancers(applyMiddleware(thunk)))
 
 export default store
-export type State = {
-  modal: ModalState
-  user: UserState
-  settings: SettingsState
-  search: SearchState
-}
+export type State = ReturnType<typeof store.getState>

@@ -1,18 +1,43 @@
 import '../style/settings.scss'
 import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
 import { VscGithub } from 'react-icons/vsc'
 import { login, logout, loadProfileFromStorage } from '../store/actions/user'
-import { setPreferredTheme, setTheme } from '../store/actions/settings'
+import { setPreferredTheme, setTheme, Theme } from '../store/actions/settings'
 import { showModal } from '../store/actions/modal'
 import { ModalTypes } from './ModalRoot'
+import { State } from '../store'
 
-const Settings = props => {
+const mapDispatchToProps = {
+  login,
+  logout,
+  loadProfileFromStorage,
+  setTheme,
+  showModal,
+  setPreferredTheme
+}
+
+const mapStateToProps = (state: State) => ({
+  isLoggedIn: state.user.isLoggedIn,
+  username: state.user.username,
+  isLoading: state.user.isLoading
+})
+
+const connector = connect(mapStateToProps, mapDispatchToProps)
+
+// Let TypeScript infer the prop types from redux
+type SettingsProps = ConnectedProps<typeof connector>
+
+type ProfileInfo = {
+  accessToken: string
+  username: string
+}
+
+const Settings = (props: SettingsProps): JSX.Element => {
   const { isLoggedIn, username, isLoading } = props
-  const [currentTheme, setCurrentTheme] = useState('theme-auto')
+  const [currentTheme, setCurrentTheme] = useState<Theme>('theme-auto')
 
-  const onAuthClick = hasFullAccess => {
+  const onAuthClick = (hasFullAccess: boolean): void => {
     if (isLoggedIn) {
       props.logout()
     } else {
@@ -20,7 +45,7 @@ const Settings = props => {
     }
   }
 
-  const toggleTheme = theme => {
+  const toggleTheme = (theme: Theme): void => {
     setCurrentTheme(theme)
     props.setTheme(theme)
 
@@ -32,13 +57,17 @@ const Settings = props => {
     }
   }
 
-  const openAccessModal = () => {
+  const openAccessModal = (): void => {
     props.showModal(ModalTypes.FULL_ACCESS)
   }
 
   useEffect(() => {
-    const profile = JSON.parse(localStorage.getItem('profile'))
-    setCurrentTheme(localStorage.getItem('userTheme') ?? currentTheme)
+    const userTheme = localStorage.getItem('userTheme')
+    const profile = JSON.parse(
+      localStorage.getItem('profile') as string
+    ) as ProfileInfo | null
+
+    setCurrentTheme((userTheme || currentTheme) as Theme)
 
     if (profile) {
       props.loadProfileFromStorage({
@@ -130,35 +159,4 @@ const Settings = props => {
   )
 }
 
-Settings.propTypes = {
-  username: PropTypes.string,
-  isLoggedIn: PropTypes.bool.isRequired,
-  login: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  loadProfileFromStorage: PropTypes.func.isRequired,
-  setTheme: PropTypes.func.isRequired,
-  showModal: PropTypes.func.isRequired,
-  setPreferredTheme: PropTypes.func.isRequired
-}
-
-Settings.defaultProps = {
-  username: ''
-}
-
-const mapDispatchToProps = {
-  login,
-  logout,
-  loadProfileFromStorage,
-  setTheme,
-  showModal,
-  setPreferredTheme
-}
-
-const mapStateToProps = state => ({
-  isLoggedIn: state.user.isLoggedIn,
-  username: state.user.username,
-  isLoading: state.user.isLoading
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Settings)
+export default connector(Settings)

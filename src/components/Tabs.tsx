@@ -4,7 +4,7 @@ import '../style/tabs.scss'
 import React, { useEffect, useState } from 'react'
 import { Tabs, TabList, TabPanel, Tab as ReactTab } from 'react-tabs'
 import SimpleBar from 'simplebar-react'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
 import { VscCloseAll } from 'react-icons/vsc'
 import { AiOutlineMenu } from 'react-icons/ai'
 import ContextMenu, { MenuOption } from './ContextMenu'
@@ -13,6 +13,17 @@ import { copyToClipboard } from '../scripts/util'
 import { showModal } from '../store/actions/modal'
 import { ModalTypes } from './ModalRoot'
 import { State } from '../store'
+
+const mapStateToProps = (state: State) => ({
+  branch: state.search.branch,
+  repoPath: state.search.repoPath
+})
+
+const mapDispatchToProps = {
+  showModal
+}
+
+const connector = connect(mapStateToProps, mapDispatchToProps)
 
 type TabProps = {
   // These props are accessed in the TabView component
@@ -23,16 +34,13 @@ type TabProps = {
   children: React.ReactNode
 }
 
-type TabViewProps = {
+type TabViewProps = ConnectedProps<typeof connector> & {
   children: typeof Tab[] & React.ReactNode
-  repoPath: string
-  branch: string
-  onTabClosed: (tabIndex: number) => void
   activeTabIndex: number
-  onSelectTab: (tabIndex: number) => void
   onCloseAllClick: () => void
-  showModal: typeof showModal
   onCloseOtherTabsClick: (menuTabIndex: number) => void
+  onTabClosed: (tabIndex: number) => void
+  onSelectTab: (tabIndex: number) => void
 }
 
 // Just a wrapper that makes working with tha tab view feel a little
@@ -60,7 +68,7 @@ const TabView = (props: TabViewProps): JSX.Element | null => {
     onSelectTab(index)
   }
 
-  const onContextMenu = (index: number, event: React.MouseEvent) => {
+  const onContextMenu = (index: number, event: React.MouseEvent): void => {
     event.preventDefault()
 
     setMenuTabIndex(index)
@@ -71,7 +79,7 @@ const TabView = (props: TabViewProps): JSX.Element | null => {
     toggleContextMenu(true)
   }
 
-  const openFileInGitHub = () => {
+  const openFileInGitHub = (): void => {
     const filePath = tabs[menuTabIndex].props.path
     const url = URLUtil.buildGithubFileURL({
       repoPath,
@@ -82,7 +90,7 @@ const TabView = (props: TabViewProps): JSX.Element | null => {
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 
-  const downloadFile = () => {
+  const downloadFile = (): void => {
     setShowDownloadAlert(true)
 
     URLUtil.downloadGithubFile({
@@ -220,15 +228,6 @@ const TabView = (props: TabViewProps): JSX.Element | null => {
   )
 }
 
-const mapStateToProps = (state: State) => ({
-  branch: state.search.branch,
-  repoPath: state.search.repoPath
-})
-
-const mapDispatchToProps = {
-  showModal
-}
-
-const ConnectedTabView = connect(mapStateToProps, mapDispatchToProps)(TabView)
+const ConnectedTabView = connector(TabView)
 
 export { ConnectedTabView as TabView, Tab }

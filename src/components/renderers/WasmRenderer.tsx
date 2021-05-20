@@ -14,7 +14,6 @@ type WasmRendererState = {
   hasError: boolean
   isLoading: boolean
 }
-
 class WasmRenderer extends React.Component<
   WasmRendererProps,
   WasmRendererState

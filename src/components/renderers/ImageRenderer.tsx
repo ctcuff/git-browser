@@ -1,12 +1,33 @@
 import '../../style/renderers/image-renderer.scss'
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import ImageGrid from '../ImageGrid'
 import Logger from '../../scripts/logger'
 
-const getMimeType = extension => {
+type ImageRendererProps = {
+  /**
+   * base64 encoded
+   */
+  content: string
+  alt: string
+  extension:
+    | '.apng' //  MIME Type: image/apng
+    | '.avif' //  MIME Type: image/avif
+    | '.gif' //  MIME Type: image/gif
+    | '.jpg' //  MIME Type: image/jpeg
+    | '.jpeg' //  MIME Type: image/jpeg
+    | '.jfif' //  MIME Type: image/jpeg
+    | '.pjpeg' //  MIME Type: image/jpeg
+    | '.pjp' //  MIME Type: image/jpeg
+    | '.bmp' //  MIME Type: image/png
+    | '.png' //  MIME Type: image/png
+    | '.svg' //  MIME Type: image/svg+xml
+    | '.webp' //  MIME Type: image/webp
+    | '.ico' //  MIME Type: image/x-icon
+}
+
+const getMimeType = (extension: string): string => {
   let type = ''
 
   switch (extension) {
@@ -40,14 +61,18 @@ const getMimeType = extension => {
   return `image/${type}`
 }
 
-const ImageRenderer = ({ extension, alt, content }) => {
+const ImageRenderer = ({
+  extension,
+  alt,
+  content
+}: ImageRendererProps): JSX.Element => {
   const [isLoading, setLoading] = useState(true)
   const [hasError, setError] = useState(false)
   const mimeType = getMimeType(extension)
 
-  const onImageLoaded = () => setLoading(false)
+  const onImageLoaded = (): void => setLoading(false)
 
-  const onLoadError = () => {
+  const onLoadError = (): void => {
     setLoading(false)
     setError(true)
   }
@@ -71,34 +96,6 @@ const ImageRenderer = ({ extension, alt, content }) => {
       <ImageGrid />
     </div>
   )
-}
-
-ImageRenderer.propTypes = {
-  alt: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
-  extension: PropTypes.oneOf([
-    // MIME Type: image/apng
-    '.apng',
-    // MIME Type: image/avif
-    '.avif',
-    // MIME Type: image/gif
-    '.gif',
-    // MIME Type: image/jpeg
-    '.jpg',
-    '.jpeg',
-    '.jfif',
-    '.pjpeg',
-    '.pjp',
-    // MIME Type: image/png
-    '.bmp',
-    '.png',
-    // MIME Type: image/svg+xml
-    '.svg',
-    // MIME Type: image/webp
-    '.webp',
-    // MIME Type: image/x-icon
-    '.ico'
-  ]).isRequired
 }
 
 export default ImageRenderer

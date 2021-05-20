@@ -16,7 +16,7 @@ type ContextMenuProps = {
   options: MenuOption[]
 }
 
-const preventDefault = (event: React.MouseEvent) => event.preventDefault()
+const preventDefault = (event: React.MouseEvent): void => event.preventDefault()
 
 const ContextMenu = (props: ContextMenuProps): JSX.Element | null => {
   // Sometimes, repositioning the menu causes it to flicker then
@@ -24,13 +24,13 @@ const ContextMenu = (props: ContextMenuProps): JSX.Element | null => {
   // menu and display it after its new position is calculated
   const [hasAdjusted, setAdjusted] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [coords, setCoords] = useState({
+  const [coords, setCoords] = useState<ContextMenuProps['coords']>({
     x: props.coords.x,
     y: props.coords.y
   })
   const { isOpen, options } = props
 
-  const onOptionClick = (option: MenuOption) => {
+  const onOptionClick = (option: MenuOption): void => {
     if (!option.disabled) {
       option.onClick()
     }

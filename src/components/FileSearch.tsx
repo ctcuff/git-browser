@@ -22,12 +22,12 @@ const FileSearch = (props: FileSearchProps): JSX.Element => {
     FileSearchProps['treeData']
   >({})
 
-  const onChange = (value: string) => {
+  const onChange = (value: string): void => {
     setInputValue(value)
     setHasError(false)
   }
 
-  const onSearch = (value: string) => {
+  const onSearch = (value: string): void => {
     if (!value.trim()) {
       setFilteredTreeData({})
       return

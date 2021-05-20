@@ -7,15 +7,14 @@ type LoadingOverlayProps = {
   text: string
 }
 
-const LoadingOverlay = (props: LoadingOverlayProps): JSX.Element => (
-  <div className={`loading-overlay ${props.className}`}>
+const LoadingOverlay = ({
+  text,
+  className = ''
+}: LoadingOverlayProps): JSX.Element => (
+  <div className={`loading-overlay ${className}`}>
     <AiOutlineLoading className="loading-icon" />
-    <p className="loading-text">{props.text}</p>
+    <p className="loading-text">{text}</p>
   </div>
 )
-
-LoadingOverlay.defaultProps = {
-  className: ''
-}
 
 export default LoadingOverlay

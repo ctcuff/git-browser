@@ -10,23 +10,22 @@ type ErrorOverlayProps = {
   className?: string
 }
 
-const ErrorOverlay = (props: ErrorOverlayProps): JSX.Element => (
-  <div className={`error-overlay ${props.className}`}>
-    {props.showIcon && <AiOutlineFileExcel className="error-icon" />}
-    <p className="error-message">{props.message}</p>
-    {props.retryMessage && (
-      <button onClick={props.onRetryClick} className="reload-btn" type="button">
-        {props.retryMessage}
+const ErrorOverlay = ({
+  message,
+  showIcon = true,
+  className = '',
+  onRetryClick = () => {},
+  retryMessage = ''
+}: ErrorOverlayProps): JSX.Element => (
+  <div className={`error-overlay ${className}`}>
+    {showIcon && <AiOutlineFileExcel className="error-icon" />}
+    <p className="error-message">{message}</p>
+    {retryMessage && (
+      <button onClick={onRetryClick} className="reload-btn" type="button">
+        {retryMessage}
       </button>
     )}
   </div>
 )
-
-ErrorOverlay.defaultProps = {
-  showIcon: true,
-  className: '',
-  onRetryClick: () => {},
-  retryMessage: ''
-}
 
 export default ErrorOverlay

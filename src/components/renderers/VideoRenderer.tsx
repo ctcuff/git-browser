@@ -1,25 +1,32 @@
 import '../../style/renderers/video-renderer.scss'
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
 import ErrorOverlay from '../ErrorOverlay'
 import LoadingOverlay from '../LoadingOverlay'
 
-const VideoRenderer = props => {
+type VideoRendererProps = {
+  /**
+   * base64 encoded
+   */
+  content: string
+  extension: '.mp4' | '.webm'
+}
+
+const VideoRenderer = (props: VideoRendererProps): JSX.Element => {
   const [hasError, setHasError] = useState(false)
   const [isLoading, setLoading] = useState(true)
   const mimeType = `video/${props.extension.slice(1)}`
 
-  const onError = () => {
+  const onError = (): void => {
     setHasError(true)
     setLoading(false)
   }
 
-  const onReloadClick = () => {
+  const onReloadClick = (): void => {
     setHasError(false)
     setLoading(true)
   }
 
-  const onVideoLoad = () => setLoading(false)
+  const onVideoLoad = (): void => setLoading(false)
 
   if (hasError) {
     return (
@@ -49,11 +56,6 @@ const VideoRenderer = props => {
       </video>
     </div>
   )
-}
-
-VideoRenderer.propTypes = {
-  content: PropTypes.string.isRequired,
-  extension: PropTypes.oneOf(['.mp4', '.webm']).isRequired
 }
 
 export default VideoRenderer

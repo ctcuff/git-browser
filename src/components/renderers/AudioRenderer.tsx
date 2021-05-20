@@ -1,22 +1,29 @@
 import '../../style/renderers/audio-renderer.scss'
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 
-const AudioRenderer = props => {
+type AudioRendererProps = {
+  /**
+   * base64 encoded
+   */
+  content: string
+  extension: '.mp3' | '.wav' | '.ogg' | '.aac'
+}
+
+const AudioRenderer = (props: AudioRendererProps): JSX.Element => {
   const [hasError, setHasError] = useState(false)
   const [isLoading, setLoading] = useState(true)
   const mimeType = `audio/${props.extension.slice(1)}`
 
-  const onLoadError = () => {
+  const onLoadError = (): void => {
     setHasError(true)
     setLoading(false)
   }
 
-  const onAudioLoad = () => setLoading(false)
+  const onAudioLoad = (): void => setLoading(false)
 
-  const onRetryClick = () => {
+  const onRetryClick = (): void => {
     setHasError(false)
     setLoading(true)
   }
@@ -47,11 +54,6 @@ const AudioRenderer = props => {
       </audio>
     </div>
   )
-}
-
-AudioRenderer.propTypes = {
-  content: PropTypes.string.isRequired,
-  extension: PropTypes.oneOf(['.mp3', '.wav', '.ogg', '.aac']).isRequired
 }
 
 export default AudioRenderer

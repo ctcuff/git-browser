@@ -1,7 +1,7 @@
 import '../style/file-renderer.scss'
 import React from 'react'
 import { VscCode } from 'react-icons/vsc'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
 import PDFRenderer from './renderers/PDFRenderer'
 import ImageRenderer from './renderers/ImageRenderer'
 import VideoRenderer from './renderers/VideoRenderer'
@@ -23,7 +23,14 @@ import Editor from './Editor'
 import URLUtil from '../scripts/url-util'
 import { State } from '../store'
 
-type FileRendererProps = {
+const mapStateToProps = (state: State) => ({
+  repoPath: state.search.repoPath,
+  branch: state.search.branch
+})
+
+const connector = connect(mapStateToProps)
+
+type FileRendererProps = ConnectedProps<typeof connector> & {
   /**
    * base64 encoded
    */
@@ -32,9 +39,7 @@ type FileRendererProps = {
   fileName: string
   extension: string
   onForceRender: (content: string, canEditorRender: boolean) => void
-  repoPath: string
   filePath: string
-  branch: string
 }
 
 type FileRendererState = {
@@ -183,7 +188,7 @@ class FileRenderer extends React.Component<
         return <AsciiDocRenderer content={decodedContent} />
       case '.csv':
       case '.tsv':
-        return <CSVRenderer content={decodedContent} />
+        return <CSVRenderer content={decodedContent || ''} />
       case '.ipynb':
         return <JupyterRenderer content={decodedContent} />
       case '.doc':
@@ -316,9 +321,4 @@ class FileRenderer extends React.Component<
   }
 }
 
-const mapStateToProps = (state: State) => ({
-  repoPath: state.search.repoPath,
-  branch: state.search.branch
-})
-
-export default connect(mapStateToProps)(FileRenderer)
+export default connector(FileRenderer)

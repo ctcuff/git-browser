@@ -13,8 +13,8 @@ type SearchInputProps = {
   isLoading?: boolean
 }
 
-const rand = () => Math.floor(Math.random() * 1_000_000)
-const randomId = () => `input-${rand()}-${rand()}-${rand()}`
+const randNum = () => Math.floor(Math.random() * 1_000_000)
+const randomId = () => `input-${randNum()}-${randNum()}-${randNum()}`
 
 const SearchInput = (props: SearchInputProps): JSX.Element => {
   const [inputValue, setInputValue] = useState(props.value)
@@ -23,19 +23,21 @@ const SearchInput = (props: SearchInputProps): JSX.Element => {
   const [isLoading, setLoading] = useState(props.isLoading ?? false)
   const inputId = randomId()
 
-  const onSearch = () => {
+  const onSearch = (): void => {
     if (!isLoading) {
       props.onSearch(inputValue)
     }
   }
 
-  const onInputValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onInputValueChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     const { value } = event.currentTarget
     setInputValue(value)
     props.onChange(value)
   }
 
-  const onPressEnter = (event: KeyboardEvent) => {
+  const onPressEnter = (event: KeyboardEvent): void => {
     if (
       event.repeat ||
       event.key !== 'Enter' ||
