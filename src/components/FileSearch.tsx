@@ -1,14 +1,13 @@
 import '../style/file-search.scss'
 import React, { useEffect, useState } from 'react'
 import SearchInput from './SearchInput'
-import TreeNode, { TreeNodeData } from './TreeNode'
+import TreeNode from './TreeNode'
+import { TreeNodeObject, TreeObject } from '../scripts/tree'
 
 type FileSearchProps = {
-  onSelectFile: (node: TreeNodeData) => void
+  onSelectFile: (node: TreeNodeObject) => void
   activeFilePath: string
-  treeData: {
-    [key: string]: TreeNodeData
-  }
+  treeData: TreeObject
 }
 
 // The maximum number of files that a search

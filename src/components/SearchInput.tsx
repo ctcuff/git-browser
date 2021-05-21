@@ -20,7 +20,7 @@ const SearchInput = (props: SearchInputProps): JSX.Element => {
   const [inputValue, setInputValue] = useState(props.value)
   const [hasError, setHasError] = useState(props.hasError)
   const [errorMessage, setErrorMessage] = useState(props.errorMessage)
-  const [isLoading, setLoading] = useState(props.isLoading ?? false)
+  const [isLoading, setLoading] = useState(props.isLoading || false)
   const inputId = randomId()
 
   const onSearch = (): void => {
@@ -65,7 +65,7 @@ const SearchInput = (props: SearchInputProps): JSX.Element => {
   }, [props.hasError, props.errorMessage])
 
   useEffect(() => {
-    setLoading(props.isLoading ?? false)
+    setLoading(props.isLoading || false)
   }, [props.isLoading])
 
   useEffect(() => {

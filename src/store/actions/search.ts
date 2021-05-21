@@ -5,11 +5,11 @@ type SetRepoDataAction = {
   payload: SearchState
 }
 
-const setRepoData = (payload: SearchState): SetRepoDataAction => ({
+const setRepoData = (payload: Partial<SearchState>): SetRepoDataAction => ({
   type: 'SET_REPO_DATA',
   payload: {
-    repoPath: payload.repoPath,
-    branch: payload.branch
+    repoPath: payload.repoPath || '',
+    branch: payload.branch || ''
   }
 })
 

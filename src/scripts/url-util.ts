@@ -157,7 +157,7 @@ class URLUtil {
    * Takes a key and return the value of that search param from current URL.
    * If defaultValue is present, that's returned instead if `key` isn't found.
    */
-  static getSearchParam<Type>(key: string, defaultValue: Type): string | Type {
+  static getSearchParam(key: string, defaultValue = ''): string {
     const params = new URLSearchParams(window.location.search)
     return params.get(key) ?? defaultValue
   }

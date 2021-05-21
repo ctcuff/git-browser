@@ -35,7 +35,7 @@ type TabProps = {
 }
 
 type TabViewProps = ConnectedProps<typeof connector> & {
-  children: typeof Tab[] & React.ReactNode
+  children: typeof Tab[] | React.ReactNode
   activeTabIndex: number
   onCloseAllClick: () => void
   onCloseOtherTabsClick: (menuTabIndex: number) => void

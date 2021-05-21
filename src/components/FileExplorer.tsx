@@ -1,16 +1,34 @@
 import '../style/file-explorer.scss'
 import React from 'react'
 import partition from 'lodash/partition'
-import PropTypes from 'prop-types'
 import { VscCollapseAll } from 'react-icons/vsc'
-import TreeNode from './TreeNode'
 import URLUtil from '../scripts/url-util'
+import TreeNode from './TreeNode'
+import { TreeNodeObject, TreeObject } from '../scripts/tree'
 
-class FileExplorer extends React.PureComponent {
-  constructor(props) {
+type FileExplorerProps = {
+  nodes: TreeObject
+  onSelectFile: (file: TreeNodeObject) => void
+  activeFilePath: string
+}
+
+type FileExplorerState = {
+  nodes: TreeObject
+}
+
+class FileExplorer extends React.PureComponent<
+  FileExplorerProps,
+  FileExplorerState
+> {
+  static defaultProps: Partial<FileExplorerProps> = {
+    activeFilePath: '',
+    onSelectFile: (): void => {}
+  }
+
+  constructor(props: FileExplorerProps) {
     super(props)
     this.state = {
-      nodes: this.props.nodes
+      nodes: props.nodes
     }
 
     this.getRootNodes = this.getRootNodes.bind(this)
@@ -21,13 +39,13 @@ class FileExplorer extends React.PureComponent {
     this.openUpToRoot = this.openUpToRoot.bind(this)
   }
 
-  componentDidMount() {
-    const key = URLUtil.getSearchParam('file')
+  componentDidMount(): void {
+    const key = URLUtil.getSearchParam('file', '')
     const node = this.state.nodes[key]
     const { activeFilePath } = this.props
 
     if (node) {
-      this.props.onSelectFile(node)
+      this.onSelectFile(node)
     }
 
     if (activeFilePath) {
@@ -35,14 +53,14 @@ class FileExplorer extends React.PureComponent {
     }
   }
 
-  onSelectFile(node) {
+  onSelectFile(node: TreeNodeObject): void {
     if (node.type === 'file') {
       this.props.onSelectFile(node)
     }
   }
 
-  getRootNodes() {
-    const nodes = {}
+  getRootNodes(): TreeNodeObject[] {
+    const nodes: TreeObject = {}
 
     // Partition the nodes into folders and files so that
     // folders appear before files
@@ -62,7 +80,7 @@ class FileExplorer extends React.PureComponent {
     return Object.values(nodes).filter(node => node.isRoot)
   }
 
-  getChildren(node) {
+  getChildren(node: TreeNodeObject): TreeNodeObject[] {
     const { nodes } = this.state
 
     if (!node.children) {
@@ -75,7 +93,7 @@ class FileExplorer extends React.PureComponent {
     return [...left, ...right]
   }
 
-  openUpToRoot(path) {
+  openUpToRoot(path: string): void {
     const { nodes } = this.state
 
     if (!nodes[path]) {
@@ -87,11 +105,11 @@ class FileExplorer extends React.PureComponent {
     }
 
     if (nodes[path].parent) {
-      this.openUpToRoot(nodes[path].parent)
+      this.openUpToRoot(nodes[path].parent as string)
     }
   }
 
-  toggleNode(node) {
+  toggleNode(node: TreeNodeObject): void {
     const { nodes } = this.state
 
     nodes[node.path].isOpen = !node.isOpen
@@ -103,7 +121,7 @@ class FileExplorer extends React.PureComponent {
     })
   }
 
-  closeAllFolders() {
+  closeAllFolders(): void {
     const { nodes } = this.state
 
     Object.keys(nodes).forEach(key => {
@@ -120,7 +138,7 @@ class FileExplorer extends React.PureComponent {
     })
   }
 
-  render() {
+  render(): JSX.Element | null {
     const rootNodes = this.getRootNodes()
 
     if (rootNodes?.length === 0) {
@@ -151,26 +169,6 @@ class FileExplorer extends React.PureComponent {
       </div>
     )
   }
-}
-
-FileExplorer.propTypes = {
-  onSelectFile: PropTypes.func,
-  nodes: PropTypes.objectOf(
-    PropTypes.shape({
-      type: PropTypes.oneOf(['file', 'folder']),
-      name: PropTypes.string,
-      path: PropTypes.path,
-      url: PropTypes.string,
-      isRoot: PropTypes.bool
-    })
-  ),
-  activeFilePath: PropTypes.string
-}
-
-FileExplorer.defaultProps = {
-  nodes: {},
-  activeFilePath: '',
-  onSelectFile: () => {}
 }
 
 export default FileExplorer

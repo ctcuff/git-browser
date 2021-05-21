@@ -85,6 +85,7 @@
         "no-use-before-define": "off",
         "react/prop-types": "off",
         "lines-between-class-members": "off",
+        "react/static-property-placement": "off",
         "react/require-default-props": [
           "error",
           {

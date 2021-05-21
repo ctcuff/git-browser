@@ -60,7 +60,9 @@ class Tree {
       const parts = path.split('/').filter(str => !!str.trim())
       const parentPath = parts.splice(0, parts.length - 1).join('/')
       const treeData = {
+        name: parts[parts.length - 1],
         parent: null,
+        isOpen: false,
         path,
         url
       }
@@ -71,7 +73,6 @@ class Tree {
           tree[path] = {
             ...treeData,
             type: 'file',
-            name: parts[parts.length - 1],
             size,
             url
           }
@@ -104,14 +105,19 @@ class Tree {
 }
 
 export default Tree
+
+export type TreeNodeObject = {
+  type: 'file' | 'folder'
+  parent: string | null
+  url: string
+  path: string
+  isOpen: boolean
+  size?: number
+  name: string
+  isRoot?: boolean
+  children?: string[]
+}
+
 export type TreeObject = {
-  [key: string]: {
-    type: 'file' | 'folder'
-    parent: string | null
-    url: string
-    size?: number
-    name?: string
-    isRoot?: boolean
-    children?: string[]
-  }
+  [key: string]: TreeNodeObject
 }

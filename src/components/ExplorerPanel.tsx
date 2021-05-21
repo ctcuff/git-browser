@@ -2,7 +2,6 @@
 import 'simplebar/dist/simplebar.css'
 import '../style/explorer-panel.scss'
 import SimpleBar from 'simplebar-react'
-import PropTypes from 'prop-types'
 import React from 'react'
 import {
   AiOutlineSearch,
@@ -12,24 +11,62 @@ import {
   AiOutlineLeft,
   AiOutlineMenu
 } from 'react-icons/ai'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
 import { VscFiles } from 'react-icons/vsc'
 import FileExplorer from './FileExplorer'
-import Tree from '../scripts/tree'
+import Tree, { TreeNodeObject } from '../scripts/tree'
 import Collapse from './Collapse'
 import GitHubAPI from '../scripts/github-api'
 import SearchInput from './SearchInput'
-import BranchList from './BranchList'
+import BranchList, { Branch } from './BranchList'
 import URLUtil from '../scripts/url-util'
 import Settings from './Settings'
 import ResizePanel from './ResizePanel'
 import Logger from '../scripts/logger'
 import FileSearch from './FileSearch'
-import ExplorerPanelOverlay from './ExplorerPanelOverlay'
+import ExplorerPanelOverlay, { PanelAction } from './ExplorerPanelOverlay'
 import { setRepoData } from '../store/actions/search'
 
-class ExplorerPanel extends React.Component {
-  constructor(props) {
+const mapDispatchToProps = {
+  setRepoData
+}
+
+const connector = connect(null, mapDispatchToProps)
+
+type Panel = {
+  isOpen: boolean
+  ref: React.RefObject<HTMLDivElement>
+}
+
+type ExplorerPanelProps = ConnectedProps<typeof connector> & {
+  onSelectFile: (file: TreeNodeObject) => void
+  onSearchStarted: () => void
+  onSearchFinished: (hasError: boolean) => void
+  activeFilePath: string
+}
+
+type ExplorerPanelState = {
+  treeData: { [key: string]: TreeNodeObject }
+  inputValue: string
+  currentRepoUrl: string
+  currentBranch: string
+  searchErrorMessage: string
+  isLoading: boolean
+  isExplorerOpen: boolean
+  branches: Branch[]
+  isBranchListTruncated: boolean
+  panels: {
+    [key: string]: Panel
+  }
+}
+
+class ExplorerPanel extends React.Component<
+  ExplorerPanelProps,
+  ExplorerPanelState
+> {
+  private mountedWithFile = false
+
+  constructor(props: ExplorerPanelProps) {
     super(props)
 
     this.state = {
@@ -37,7 +74,7 @@ class ExplorerPanel extends React.Component {
       inputValue: '',
       currentRepoUrl: '',
       currentBranch: '',
-      searchErrorMessage: null,
+      searchErrorMessage: '',
       isLoading: false,
       isExplorerOpen: window.innerWidth >= 900,
       branches: [],
@@ -78,11 +115,9 @@ class ExplorerPanel extends React.Component {
     this.togglePanel = this.togglePanel.bind(this)
     this.panelButtons = this.panelButtons.bind(this)
     this.scrollToPanel = this.scrollToPanel.bind(this)
-
-    this.mountedWithFile = false
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     // Get the repo and branch queries from the URL and make a search
     const url = `github.com${window.location.pathname}`
     const repo = URLUtil.extractRepoPath(url)
@@ -99,14 +134,14 @@ class ExplorerPanel extends React.Component {
     }
   }
 
-  onInputChange(inputValue) {
+  onInputChange(inputValue: string): void {
     this.setState({
       inputValue,
-      searchErrorMessage: null
+      searchErrorMessage: ''
     })
   }
 
-  async getRepo(url, branch = 'default') {
+  async getRepo(url: string, branch = 'default'): Promise<void> {
     const extractedPath = URLUtil.extractRepoPath(url)
 
     if (!url) {
@@ -115,7 +150,7 @@ class ExplorerPanel extends React.Component {
 
     this.props.onSearchStarted()
 
-    this.setState({ searchErrorMessage: null })
+    this.setState({ searchErrorMessage: '' })
 
     // If we try to load the tree for the repository and it
     // fails, don't try to load the branches
@@ -125,7 +160,7 @@ class ExplorerPanel extends React.Component {
 
       this.props.onSearchFinished(false)
       this.props.setRepoData({
-        repoPath: extractedPath,
+        repoPath: extractedPath as string,
         branch: this.state.currentBranch
       })
     } catch (err) {
@@ -133,7 +168,7 @@ class ExplorerPanel extends React.Component {
     }
   }
 
-  getTree(repoUrl, branch) {
+  getTree(repoUrl: string, branch: string): Promise<void> {
     this.toggleLoading()
 
     return GitHubAPI.getTree(repoUrl, branch)
@@ -156,7 +191,7 @@ class ExplorerPanel extends React.Component {
         // path in the URL, we need to make sure we don't reset that URL
         // on load since that URL might contain a file path
         if (!this.mountedWithFile) {
-          URLUtil.updateURLPath(repoPath)
+          URLUtil.updateURLPath(repoPath as string)
         }
 
         URLUtil.updateURLSearchParams({ branch: res.branch })
@@ -174,7 +209,7 @@ class ExplorerPanel extends React.Component {
       })
   }
 
-  getBranches(repoUrl) {
+  getBranches(repoUrl: string): Promise<void> {
     return GitHubAPI.getBranches(repoUrl).then(data => {
       this.setState(prevState => ({
         branches: data.branches,
@@ -190,7 +225,7 @@ class ExplorerPanel extends React.Component {
     })
   }
 
-  getBranch(branch) {
+  getBranch(branch: Branch): void {
     if (this.state.currentBranch === branch.name) {
       return
     }
@@ -208,23 +243,23 @@ class ExplorerPanel extends React.Component {
       })
   }
 
-  toggleLoading() {
+  toggleLoading(): void {
     this.setState(prevState => ({ isLoading: !prevState.isLoading }))
   }
 
-  toggleExplorer() {
+  toggleExplorer(): void {
     this.setState(prevState => ({ isExplorerOpen: !prevState.isExplorerOpen }))
   }
 
-  openExplorer() {
+  openExplorer(): void {
     this.setState({ isExplorerOpen: true })
   }
 
-  closeExplorer() {
+  closeExplorer(): void {
     this.setState({ isExplorerOpen: false })
   }
 
-  togglePanel(panel, isOpen, scrollIntoView = false) {
+  togglePanel(panel: string, isOpen: boolean, scrollIntoView = false): void {
     if (!this.state.panels[panel]) {
       Logger.warn('No panel with name', panel)
       return
@@ -249,14 +284,15 @@ class ExplorerPanel extends React.Component {
     )
   }
 
-  scrollToPanel(panelName) {
+  scrollToPanel(panelName: string) {
     const panel = this.state.panels[panelName].ref.current
+
     if (panel) {
       panel.scrollIntoView()
     }
   }
 
-  panelButtons() {
+  panelButtons(): PanelAction[] {
     return [
       {
         icon: <AiOutlineSearch />,
@@ -286,7 +322,7 @@ class ExplorerPanel extends React.Component {
     ]
   }
 
-  render() {
+  render(): JSX.Element {
     const {
       panels,
       currentRepoUrl,
@@ -407,16 +443,4 @@ class ExplorerPanel extends React.Component {
   }
 }
 
-ExplorerPanel.propTypes = {
-  onSelectFile: PropTypes.func.isRequired,
-  onSearchStarted: PropTypes.func.isRequired,
-  onSearchFinished: PropTypes.func.isRequired,
-  setRepoData: PropTypes.func.isRequired,
-  activeFilePath: PropTypes.string.isRequired
-}
-
-const mapDispatchToProps = {
-  setRepoData
-}
-
-export default connect(null, mapDispatchToProps)(ExplorerPanel)
+export default connector(ExplorerPanel)

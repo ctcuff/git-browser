@@ -12,18 +12,47 @@ import FileRenderer from './FileRenderer'
 import Logger from '../scripts/logger'
 import LandingScreen from './LandingScreen'
 import URLUtil from '../scripts/url-util'
+import { TreeNodeObject } from '../scripts/tree'
+
+type FileTab = {
+  isLoading: boolean
+  index: number
+  title: string
+  path: string
+  isTooLarge: boolean
+  canEditorRender: boolean
+  hasError: boolean
+  content: string
+  wasForceRendered: boolean
+}
+
+type AppState = {
+  /**
+   * Used to make sure the same tab can't be opened multiple times
+   */
+  openedFilePaths: Set<string>
+  openedTabs: FileTab[]
+  activeTabIndex: number
+  isLoading: boolean
+  activeFilePath: string
+}
 
 // Don't allow API requests to files that meet/exceed this size
 // (in bytes) to avoid network strain and long render times
 const MAX_FILE_SIZE = 20_000_000 // 20 MB
 
-class App extends React.Component {
-  constructor(props) {
+// eslint-disable-next-line @typescript-eslint/ban-types
+class App extends React.Component<unknown, AppState> {
+  /**
+   * All tabs get cleared when a load finishes. This flag tells the
+   * component not to clear tabs if the ?file="" query is in the URL
+   */
+  private mountedWithFile = !!URLUtil.getSearchParam('file')
+
+  constructor(props: unknown) {
     super(props)
 
     this.state = {
-      // Used to make sure the same tab can't be
-      // opened multiple times
       openedFilePaths: new Set(),
       openedTabs: [],
       activeTabIndex: 0,
@@ -44,13 +73,9 @@ class App extends React.Component {
     this.onSearchFinished = this.onSearchFinished.bind(this)
     this.decodeTabContent = this.decodeTabContent.bind(this)
     this.onCloseOtherTabsClick = this.onCloseOtherTabsClick.bind(this)
-
-    // All tabs get cleared when a load finishes. This flag tells the
-    // component not to clear tabs if the ?file="" query is in the URL
-    this.mountedWithFile = !!URLUtil.getSearchParam('file')
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.updateViewport()
     window.addEventListener('resize', this.updateViewport)
 
@@ -60,7 +85,7 @@ class App extends React.Component {
     })
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: unknown, prevState: AppState): void {
     const { openedTabs, activeTabIndex } = this.state
 
     if (
@@ -77,11 +102,11 @@ class App extends React.Component {
     this.setState({ activeFilePath })
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     window.removeEventListener('resize', this.updateViewport)
   }
 
-  onSelectFile(node) {
+  onSelectFile(node: TreeNodeObject): void {
     const { openedFilePaths, openedTabs } = this.state
 
     // Don't open this file in a new tab since it's already open
@@ -92,7 +117,7 @@ class App extends React.Component {
 
     URLUtil.updateURLSearchParams({ file: node.path })
 
-    const initialTabState = {
+    const initialTabState: FileTab = {
       isLoading: true,
       index: openedTabs.length,
       title: node.name,
@@ -117,7 +142,7 @@ class App extends React.Component {
     )
   }
 
-  onToggleRenderable(content, canEditorRender) {
+  onToggleRenderable(content: string, canEditorRender: boolean): void {
     // Marks a tab as either renderable by the file preview
     // component, or by the Editor component
     const { activeTabIndex, openedTabs } = this.state
@@ -129,7 +154,7 @@ class App extends React.Component {
     this.setState({ openedTabs })
   }
 
-  onTabClosed(tabIndex) {
+  onTabClosed(tabIndex: number): void {
     let { activeTabIndex } = this.state
 
     // eslint-disable-next-line react/no-access-state-in-setstate
@@ -164,7 +189,7 @@ class App extends React.Component {
     })
   }
 
-  onCloseOtherTabsClick(index) {
+  onCloseOtherTabsClick(index: number): void {
     const { openedTabs } = this.state
 
     if (openedTabs.length <= 1) {
@@ -180,7 +205,7 @@ class App extends React.Component {
     })
   }
 
-  onSearchFinished(hasError) {
+  onSearchFinished(hasError: boolean): void {
     this.setState({ isLoading: false })
 
     // Small hack to make sure the App doesn't immediately close
@@ -192,7 +217,7 @@ class App extends React.Component {
     this.mountedWithFile = false
   }
 
-  setActiveTabIndex(activeTabIndex) {
+  setActiveTabIndex(activeTabIndex: number): void {
     const tab = this.state.openedTabs[activeTabIndex]
 
     if (this.state.activeTabIndex === activeTabIndex) {
@@ -206,15 +231,15 @@ class App extends React.Component {
     this.setState({ activeTabIndex })
   }
 
-  toggleLoadingOverlay() {
+  toggleLoadingOverlay(): void {
     this.setState(prevState => ({ isLoading: !prevState.isLoading }))
   }
 
-  findTabIndex(path) {
+  findTabIndex(path: string): number {
     return this.state.openedTabs.findIndex(tab => tab.path === path)
   }
 
-  closeAllTabs() {
+  closeAllTabs(): void {
     URLUtil.updateURLSearchParams({ file: null })
     this.setState({
       openedFilePaths: new Set(),
@@ -222,7 +247,7 @@ class App extends React.Component {
     })
   }
 
-  decodeTabContent(content, tabIndex) {
+  decodeTabContent(content: string, tabIndex: number): void {
     const { openedTabs } = this.state
     // Use a worker to avoid UI freezes
     const decodeWorker = new Worker('../scripts/encode-decode.worker.ts', {
@@ -251,12 +276,12 @@ class App extends React.Component {
     }
   }
 
-  loadFile(file) {
+  loadFile(file: TreeNodeObject): void {
     const { extension } = getLanguageFromFileName(file.name)
     const { openedTabs } = this.state
     let tabIndex = this.findTabIndex(file.path)
 
-    if (file.size >= MAX_FILE_SIZE) {
+    if (file.size && file.size >= MAX_FILE_SIZE) {
       openedTabs[tabIndex].isLoading = false
       openedTabs[tabIndex].isTooLarge = true
       this.setState({ openedTabs })
@@ -308,12 +333,12 @@ class App extends React.Component {
       })
   }
 
-  updateViewport() {
+  updateViewport(): void {
     // Updates the --vh variable used in the height mixin
     setCSSVar('--vh', `${window.innerHeight * 0.01}px`)
   }
 
-  renderTabContent(tab, index) {
+  renderTabContent(tab: FileTab, index: number): JSX.Element | null {
     const {
       title,
       content,
@@ -366,7 +391,7 @@ class App extends React.Component {
     )
   }
 
-  render() {
+  render(): JSX.Element {
     const { activeTabIndex, openedTabs, isLoading, activeFilePath } = this.state
 
     return (

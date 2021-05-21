@@ -1,6 +1,6 @@
 {
-  "sha": "040913f63a91d7f9a9a55e08b152d0222189fe71",
-  "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/040913f63a91d7f9a9a55e08b152d0222189fe71",
+  "sha": "df8cffbac8624be0433f015b5c1eda003bdac521",
+  "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/df8cffbac8624be0433f015b5c1eda003bdac521",
   "tree": [
     {
       "path": ".eslintrc.json",
@@ -93,8 +93,8 @@
       "path": "src",
       "mode": "040000",
       "type": "tree",
-      "sha": "358553e5a2ee066d0bb0f52e4033456921a83c3f",
-      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/358553e5a2ee066d0bb0f52e4033456921a83c3f"
+      "sha": "1a47c89f546d791c3e71be0ea987ca4fcc62c097",
+      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/1a47c89f546d791c3e71be0ea987ca4fcc62c097"
     },
     {
       "path": "src/App.vue",
@@ -108,8 +108,8 @@
       "path": "src/assets",
       "mode": "040000",
       "type": "tree",
-      "sha": "ad47492ec059ba4b7aa3942ea2192b5ffa46bdc3",
-      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/ad47492ec059ba4b7aa3942ea2192b5ffa46bdc3"
+      "sha": "673898532318f16787b719207bec4325fe9f3df1",
+      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/673898532318f16787b719207bec4325fe9f3df1"
     },
     {
       "path": "src/assets/fonts",
@@ -138,8 +138,8 @@
       "path": "src/assets/images",
       "mode": "040000",
       "type": "tree",
-      "sha": "a1803fada114460f20c2a4a24b6c055be1fc6c66",
-      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/a1803fada114460f20c2a4a24b6c055be1fc6c66"
+      "sha": "8172577e625a9e4dabafcdde2624192f77c208e5",
+      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/trees/8172577e625a9e4dabafcdde2624192f77c208e5"
     },
     {
       "path": "src/assets/images/dependency-visualizer-fullscreen.png",
@@ -156,6 +156,22 @@
       "sha": "e18aadc5db64debdb54a60d7361b1fee2e7c4ee6",
       "size": 590795,
       "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/e18aadc5db64debdb54a60d7361b1fee2e7c4ee6"
+    },
+    {
+      "path": "src/assets/images/git-browser-fullscreen.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "036a473ee6e438f493be40890e0e839da8232c58",
+      "size": 315094,
+      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/036a473ee6e438f493be40890e0e839da8232c58"
+    },
+    {
+      "path": "src/assets/images/git-browser.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ebae58bee8c0851f79972f26272018f172ac6e58",
+      "size": 339606,
+      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/ebae58bee8c0851f79972f26272018f172ac6e58"
     },
     {
       "path": "src/assets/images/livecode-fullscreen.png",
@@ -280,9 +296,9 @@
       "path": "src/project-info.js",
       "mode": "100644",
       "type": "blob",
-      "sha": "91ae6f135e58cd3a56db3e48d6c25acbf1bb0ed9",
-      "size": 14542,
-      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/91ae6f135e58cd3a56db3e48d6c25acbf1bb0ed9"
+      "sha": "17b77ff11d1fda66f8493c1bdf66c0fd177341c7",
+      "size": 19255,
+      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/17b77ff11d1fda66f8493c1bdf66c0fd177341c7"
     },
     {
       "path": "src/router.js",
@@ -436,9 +452,9 @@
       "path": "yarn.lock",
       "mode": "100644",
       "type": "blob",
-      "sha": "cd0e99d014ba22327483ad5d23b4b46311499e5c",
+      "sha": "60e6ed688259461749e24cd859add845d6fbc393",
       "size": 390989,
-      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/cd0e99d014ba22327483ad5d23b4b46311499e5c"
+      "url": "https://api.github.com/repos/ctcuff/ctcuff.github.io/git/blobs/60e6ed688259461749e24cd859add845d6fbc393"
     }
   ],
   "truncated": false

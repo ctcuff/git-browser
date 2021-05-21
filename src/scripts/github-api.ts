@@ -73,7 +73,7 @@ class GitHubAPI {
   public static getTree(
     repoUrl: string,
     branch = 'default'
-  ): Promise<GitHubBranchInfo> {
+  ): Promise<GitHubBranchInfo & { branch: string }> {
     if (branch === 'default') {
       return GitHubAPI.getDefaultBranch(repoUrl)
         .then(branchName => GitHubAPI.getBranch(repoUrl, branchName))

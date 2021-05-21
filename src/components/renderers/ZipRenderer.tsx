@@ -159,7 +159,7 @@ class ZipRenderer extends React.Component<ZipRendererProps, ZipRendererState> {
             Here&apos;s what this zip contains (note that this is only a
             preview)
           </p>
-          <FileExplorer nodes={tree} updateURLOnClick={false} />
+          <FileExplorer nodes={tree} />
         </div>
       </div>
     )
