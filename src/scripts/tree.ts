@@ -1,17 +1,5 @@
 import { GitHubTreeItem } from '../@types/github-api'
 
-type TreeObject = {
-  [key: string]: {
-    type: 'file' | 'folder'
-    parent: string | null
-    url: string
-    size?: number
-    name?: string
-    isRoot?: boolean
-    children?: string[]
-  }
-}
-
 class Tree {
   /**
    * Takes the response from the GitHub tree API and turns it into a flat
@@ -116,3 +104,14 @@ class Tree {
 }
 
 export default Tree
+export type TreeObject = {
+  [key: string]: {
+    type: 'file' | 'folder'
+    parent: string | null
+    url: string
+    size?: number
+    name?: string
+    isRoot?: boolean
+    children?: string[]
+  }
+}

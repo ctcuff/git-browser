@@ -1,20 +1,34 @@
 import '../../style/renderers/psd-renderer.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
 import { AiOutlineSave } from 'react-icons/ai'
 import Logger from '../../scripts/logger'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import ImageGrid from '../ImageGrid'
 
-class PSDRenderer extends React.Component {
-  constructor(props) {
+type PSDRendererProps = {
+  content: string
+  fileName: string
+}
+
+type PSDRendererState = {
+  isLoading: boolean
+  hasError: boolean
+  base64Image: string
+  pngObjectUrl: string
+}
+
+class PSDRenderer extends React.Component<PSDRendererProps, PSDRendererState> {
+  private rawDecodeWorker: Worker
+  private PSD!: typeof import('psd.js')
+
+  constructor(props: PSDRendererProps) {
     super(props)
 
     this.state = {
       isLoading: false,
       hasError: false,
-      base64ImageString: '',
+      base64Image: '',
       pngObjectUrl: ''
     }
 
@@ -27,18 +41,18 @@ class PSDRenderer extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.init()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     // Let the browser know that it no longer
     // needs to keep a reference to this file
     URL.revokeObjectURL(this.state.pngObjectUrl)
     this.rawDecodeWorker.terminate()
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.setState({
       isLoading: true,
       hasError: false
@@ -52,7 +66,7 @@ class PSDRenderer extends React.Component {
       this.setState({
         isLoading: false,
         hasError: false,
-        base64ImageString: imageData
+        base64Image: imageData
       })
     } catch (err) {
       Logger.error(err)
@@ -64,7 +78,7 @@ class PSDRenderer extends React.Component {
     }
   }
 
-  async convertPSD() {
+  async convertPSD(): Promise<string> {
     // Need to convert the base 64 content string into a blob so that it can
     // be converted to a base 64 PNG string by PSD. Using fetch for the conversion
     // results in a large network request (sometimes more than 10 MB)
@@ -79,7 +93,7 @@ class PSDRenderer extends React.Component {
     return psd.image.toBase64()
   }
 
-  convertToUint8Array(content) {
+  convertToUint8Array(content: string): Promise<Uint8Array> {
     this.rawDecodeWorker.postMessage({
       message: content,
       type: 'convertToArrayBuffer'
@@ -92,8 +106,8 @@ class PSDRenderer extends React.Component {
     })
   }
 
-  render() {
-    const { isLoading, hasError, base64ImageString, pngObjectUrl } = this.state
+  render(): JSX.Element {
+    const { isLoading, hasError, base64Image, pngObjectUrl } = this.state
     const fileName = this.props.fileName.replace('.psd', '')
 
     if (isLoading) {
@@ -123,18 +137,10 @@ class PSDRenderer extends React.Component {
         >
           <AiOutlineSave />
         </a>
-        <img
-          src={base64ImageString}
-          alt={`${fileName} Rendered from photoshop`}
-        />
+        <img src={base64Image} alt={`${fileName} Rendered from photoshop`} />
       </div>
     )
   }
-}
-
-PSDRenderer.propTypes = {
-  content: PropTypes.string.isRequired,
-  fileName: PropTypes.string.isRequired
 }
 
 export default PSDRenderer

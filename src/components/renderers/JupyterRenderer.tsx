@@ -1,12 +1,34 @@
 import '../../style/renderers/jupyter-renderer.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
 import Logger from '../../scripts/logger'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 
-class JupyterRenderer extends React.Component {
-  constructor(props) {
+type JupyterRendererProps = {
+  /**
+   * Not base64 encoded
+   */
+  content: string
+}
+
+type JupyterRendererState = {
+  HTML: string
+  isLoading: boolean
+  hasError: boolean
+  currentStep: string
+}
+
+class JupyterRenderer extends React.Component<
+  JupyterRendererProps,
+  JupyterRendererState
+> {
+  private nb!: typeof import('notebook')
+  private MarkdownIt!: typeof import('markdown-it')
+  private hljs!: typeof import('highlight.js')
+  private Anser!: typeof import('anser')
+  private DOMPurify!: typeof import('dompurify')
+
+  constructor(props: JupyterRendererProps) {
     super(props)
 
     this.state = {
@@ -24,15 +46,15 @@ class JupyterRenderer extends React.Component {
     this.sanitizeNotebook = this.sanitizeNotebook.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.init()
   }
 
-  setCurrentStep(currentStep) {
+  setCurrentStep(currentStep: string): void {
     this.setState({ currentStep })
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.setState({
       isLoading: true,
       hasError: false
@@ -58,7 +80,7 @@ class JupyterRenderer extends React.Component {
     }
   }
 
-  async loadLibraries() {
+  async loadLibraries(): Promise<void> {
     try {
       const [nb, MarkdownIt, hljs, anser, DOMPurify] = await Promise.all([
         import('../../lib/notebook'),
@@ -68,7 +90,9 @@ class JupyterRenderer extends React.Component {
         import('dompurify')
       ])
 
-      this.nb = nb.default
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      this.nb = nb
       this.MarkdownIt = MarkdownIt.default
       this.hljs = hljs.default
       this.Anser = anser.default
@@ -83,7 +107,7 @@ class JupyterRenderer extends React.Component {
     }
   }
 
-  parseNotebook(content) {
+  parseNotebook(content: string): string {
     const { nb, Anser, MarkdownIt } = this
 
     nb.ansi = text => Anser.ansiToText(text)
@@ -116,21 +140,21 @@ class JupyterRenderer extends React.Component {
     }
   }
 
-  sanitizeNotebook(content) {
+  sanitizeNotebook(content: string): string {
     const { DOMPurify } = this
 
-    DOMPurify.addHook('afterSanitizeAttributes', node => {
+    DOMPurify.addHook('afterSanitizeAttributes', (node: Element) => {
       // Opens all links in a new tab when clicked
-      if ('target' in node) {
+      if (node.hasAttribute('target')) {
         node.setAttribute('target', '_blank')
         node.setAttribute('rel', 'noopener noreferrer')
       }
     })
 
-    return DOMPurify.sanitize(content)
+    return DOMPurify.sanitize(content, { RETURN_TRUSTED_TYPE: false })
   }
 
-  highlighter(code, language) {
+  highlighter(code: string, language: string): string {
     const { hljs } = this
 
     if (language && hljs.getLanguage(language)) {
@@ -143,7 +167,7 @@ class JupyterRenderer extends React.Component {
     return ''
   }
 
-  render() {
+  render(): JSX.Element {
     const { isLoading, hasError, currentStep, HTML } = this.state
 
     if (hasError) {
@@ -170,10 +194,6 @@ class JupyterRenderer extends React.Component {
       </div>
     )
   }
-}
-
-JupyterRenderer.propTypes = {
-  content: PropTypes.string.isRequired
 }
 
 export default JupyterRenderer

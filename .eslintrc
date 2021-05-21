@@ -93,7 +93,6 @@
         ],
         "@typescript-eslint/no-use-before-define": ["error"],
         "@typescript-eslint/explicit-module-boundary-types": "error",
-        "@typescript-eslint/ban-ts-comment": "off", // Temporary?
         "@typescript-eslint/no-empty-function": "off"
       }
     }

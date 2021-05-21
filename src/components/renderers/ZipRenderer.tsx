@@ -1,14 +1,30 @@
 import '../../style/renderers/zip-renderer.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
-import Tree from '../../scripts/tree'
+import Tree, { TreeObject } from '../../scripts/tree'
 import FileExplorer from '../FileExplorer'
 import LoadingOverlay from '../LoadingOverlay'
 import Logger from '../../scripts/logger'
 import ErrorOverlay from '../ErrorOverlay'
+import { GitHubTreeItem } from '../../@types/github-api'
 
-class ZipRenderer extends React.Component {
-  constructor(props) {
+type ZipRendererProps = {
+  /**
+   * base64 encoded
+   */
+  content: string
+}
+
+type ZipRendererState = {
+  isLoading: boolean
+  hasError: boolean
+  tree: TreeObject
+}
+
+class ZipRenderer extends React.Component<ZipRendererProps, ZipRendererState> {
+  private rawDecodeWorker: Worker
+  private zip!: typeof import('@zip.js/zip.js')
+
+  constructor(props: ZipRendererProps) {
     super(props)
 
     this.state = {
@@ -27,15 +43,15 @@ class ZipRenderer extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.init()
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this.rawDecodeWorker.terminate()
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.setState({
       isLoading: true,
       hasError: false
@@ -63,17 +79,21 @@ class ZipRenderer extends React.Component {
     }
   }
 
-  async importLibrary() {
+  async importLibrary(): Promise<void> {
     try {
       // Need to import from the dist directory so it'll work with webpack
-      // https://github.com/gildas-lormeau/zip.js/issues/212#issuecomment-769708718
+      // https://github.com/gildas-lormeau/zip.js/issues/212#issuecomment-769708718.
+      // Typescript complains when this library is imported since the type definitions
+      // are imported under @zip.js/zip.js
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       this.zip = await import('@zip.js/zip.js/dist/zip-full')
     } catch (err) {
       Logger.error('Error importing zip library', err)
     }
   }
 
-  async parseZip(buffer) {
+  async parseZip(buffer: Uint8Array): Promise<TreeObject> {
     const { ZipReader, Uint8ArrayReader } = this.zip
 
     const uintReader = new Uint8ArrayReader(buffer)
@@ -81,21 +101,23 @@ class ZipRenderer extends React.Component {
 
     const entries = await reader.getEntries()
 
-    const treeData = entries.map(({ filename, directory }) => {
-      // Folders that end with '/' aren't parsed correctly
-      // by Tree.treeify so we need to remove any trailing '/'
-      const path = filename.endsWith('/') ? filename.slice(0, -1) : filename
+    const treeData: GitHubTreeItem[] = entries.map(
+      ({ filename, directory }) => {
+        // Folders that end with '/' aren't parsed correctly
+        // by Tree.treeify so we need to remove any trailing '/'
+        const path = filename.endsWith('/') ? filename.slice(0, -1) : filename
 
-      return {
-        path,
-        type: directory ? 'tree' : 'blob'
+        return {
+          path,
+          type: directory ? 'tree' : 'blob'
+        }
       }
-    })
+    ) as GitHubTreeItem[]
 
     return Tree.treeify(treeData)
   }
 
-  convertToUint8Array(content) {
+  convertToUint8Array(content: string): Promise<Uint8Array> {
     this.rawDecodeWorker.postMessage({
       message: content,
       type: 'convertToArrayBuffer'
@@ -108,7 +130,7 @@ class ZipRenderer extends React.Component {
     })
   }
 
-  render() {
+  render(): JSX.Element {
     const { isLoading, hasError, tree } = this.state
 
     if (isLoading) {
@@ -142,10 +164,6 @@ class ZipRenderer extends React.Component {
       </div>
     )
   }
-}
-
-ZipRenderer.propTypes = {
-  content: PropTypes.string.isRequired
 }
 
 export default ZipRenderer

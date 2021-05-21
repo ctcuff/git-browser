@@ -1,13 +1,48 @@
 import '../../style/renderers/markdown-renderer.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
 import LoadingOverlay from '../LoadingOverlay'
 import Logger from '../../scripts/logger'
 import ErrorOverlay from '../ErrorOverlay'
+import { State } from '../../store'
 
-class MarkdownRenderer extends React.Component {
-  constructor(props) {
+const mapStateToProps = (state: State) => ({
+  theme: state.settings.theme
+})
+
+const connector = connect(mapStateToProps)
+
+type MarkdownRendererProps = ConnectedProps<typeof connector> & {
+  /**
+   * Not base64 encoded
+   */
+  content: string
+}
+
+type MarkdownRendererState = {
+  markdownContent: string
+  isLoading: boolean
+  hasError: boolean
+  currentStep: string
+}
+
+class MarkdownRenderer extends React.Component<
+  MarkdownRendererProps,
+  MarkdownRendererState
+> {
+  private hljs!: typeof import('highlight.js')
+  private DOMPurify!: typeof import('dompurify')
+  private MarkdownIt!: typeof import('markdown-it')
+  private mdPluginFrontMatter!: typeof import('markdown-it-front-matter')
+  private mdPluginCheckbox!: typeof import('markdown-it-checkbox')
+  private domConfig: import('dompurify').Config = {
+    FORBID_TAGS: ['script', 'button'],
+    FORBID_ATTR: ['style'],
+    // Allows DOMPurify to return a string instead of TrustedHTML
+    RETURN_TRUSTED_TYPE: false
+  }
+
+  constructor(props: MarkdownRendererProps) {
     super(props)
 
     this.state = {
@@ -17,11 +52,6 @@ class MarkdownRenderer extends React.Component {
       currentStep: 'Loading...'
     }
 
-    this.domConfig = {
-      FORBID_TAGS: ['script', 'button'],
-      FORBID_ATTR: ['style']
-    }
-
     this.init = this.init.bind(this)
     this.importLibraries = this.importLibraries.bind(this)
     this.unsafeParseMarkdown = this.unsafeParseMarkdown.bind(this)
@@ -29,13 +59,14 @@ class MarkdownRenderer extends React.Component {
     this.afterSanitizeElements = this.afterSanitizeElements.bind(this)
     this.afterSanitizeAttributes = this.afterSanitizeAttributes.bind(this)
     this.updateStep = this.updateStep.bind(this)
+    this.highlighter = this.highlighter.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.init()
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.setState({
       hasError: false,
       isLoading: true,
@@ -65,7 +96,7 @@ class MarkdownRenderer extends React.Component {
     }
   }
 
-  async importLibraries() {
+  async importLibraries(): Promise<void> {
     try {
       const [
         hljs,
@@ -91,57 +122,51 @@ class MarkdownRenderer extends React.Component {
     }
   }
 
-  updateStep(currentStep) {
+  updateStep(currentStep: string): void {
     this.setState({ currentStep })
   }
 
-  afterSanitizeElements(node) {
-    const { nodeName, type, parentNode, innerHTML } = node
+  afterSanitizeElements(node: Element): void {
+    const { nodeName, parentNode, innerHTML } = node
 
     if (!parentNode) {
       return
     }
 
     // Only allow checkbox inputs to render
-    if (nodeName === 'INPUT' && type !== 'checkbox') {
+    if (
+      nodeName === 'INPUT' &&
+      (node as HTMLInputElement).type !== 'checkbox'
+    ) {
       parentNode.removeChild(node)
     }
 
     // Rare case: replace <video> tags with the content inside of it as text
     if (nodeName === 'VIDEO') {
       const sanitized = this.DOMPurify.sanitize(innerHTML, this.domConfig)
-      const textNode = document.createTextNode(sanitized)
+      const textNode = document.createTextNode(sanitized as string)
 
       parentNode.removeChild(node)
       parentNode.appendChild(textNode)
     }
   }
 
-  afterSanitizeAttributes(node) {
+  afterSanitizeAttributes(node: Element): void {
     // Opens all links in a new tab when clicked
-    if ('target' in node) {
+    if (node.hasAttribute('target')) {
       node.setAttribute('target', '_blank')
       node.setAttribute('rel', 'noopener noreferrer')
     }
   }
 
-  unsafeParseMarkdown(rawMarkdown) {
-    const { MarkdownIt, mdPluginFrontMatter, mdPluginCheckbox, hljs } = this
+  unsafeParseMarkdown(rawMarkdown: string): string {
+    const { MarkdownIt, mdPluginFrontMatter, mdPluginCheckbox } = this
     const md = new MarkdownIt({
       html: true,
       typographer: true,
       linkify: true,
       breaks: false,
-      highlight: (code, language) => {
-        if (language && hljs.getLanguage(language)) {
-          try {
-            return hljs.highlight(code, { language }).value
-          } catch (e) {
-            Logger.warn(e)
-          }
-        }
-        return ''
-      }
+      highlight: this.highlighter
     })
 
     md.use(mdPluginFrontMatter, () => {})
@@ -153,13 +178,26 @@ class MarkdownRenderer extends React.Component {
     return md.render(rawMarkdown)
   }
 
-  sanitizeMarkdown(markdown) {
+  highlighter(code: string, language: string): string {
+    const { hljs } = this
+
+    if (language && hljs.getLanguage(language)) {
+      try {
+        return hljs.highlight(code, { language }).value
+      } catch (e) {
+        Logger.warn(e)
+      }
+    }
+    return ''
+  }
+
+  sanitizeMarkdown(markdown: string): string {
     const { DOMPurify } = this
 
     DOMPurify.addHook('afterSanitizeElements', this.afterSanitizeElements)
     DOMPurify.addHook('afterSanitizeAttributes', this.afterSanitizeAttributes)
 
-    return DOMPurify.sanitize(markdown, this.domConfig)
+    return DOMPurify.sanitize(markdown, this.domConfig) as string
   }
 
   render() {
@@ -179,7 +217,7 @@ class MarkdownRenderer extends React.Component {
       return <LoadingOverlay text={currentStep} />
     }
 
-    if (!markdownContent.trim()) {
+    if (!markdownContent?.trim()) {
       return <ErrorOverlay message="No content to display." showIcon={false} />
     }
 
@@ -195,17 +233,6 @@ class MarkdownRenderer extends React.Component {
   }
 }
 
-MarkdownRenderer.propTypes = {
-  content: PropTypes.string.isRequired,
-  theme: PropTypes.shape({
-    userTheme: PropTypes.oneOf(['theme-light', 'theme-dark', 'theme-auto'])
-      .isRequired,
-    preferredTheme: PropTypes.oneOf(['theme-light', 'theme-dark']).isRequired
-  }).isRequired
-}
+const ConnectedMarkdownRenderer = connector(MarkdownRenderer)
 
-const mapStateToProps = state => ({
-  theme: state.settings.theme
-})
-
-export default connect(mapStateToProps)(MarkdownRenderer)
+export default ConnectedMarkdownRenderer

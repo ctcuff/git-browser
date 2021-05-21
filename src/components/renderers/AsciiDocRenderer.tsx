@@ -1,12 +1,31 @@
 import '../../style/renderers/ascii-doc-renderer.scss'
 import React from 'react'
-import PropTypes from 'prop-types'
 import ErrorOverlay from '../ErrorOverlay'
 import LoadingOverlay from '../LoadingOverlay'
 import Logger from '../../scripts/logger'
 
-class AsciiDocRenderer extends React.Component {
-  constructor(props) {
+type AsciiDocRendererProps = {
+  /**
+   * Not base64 encoded
+   */
+  content: string
+}
+
+type AsciiDocRendererState = {
+  isLoading: boolean
+  hasError: boolean
+  content: string
+}
+
+class AsciiDocRenderer extends React.Component<
+  AsciiDocRendererProps,
+  AsciiDocRendererState
+> {
+  private asciidoctor!: import('asciidoctor').Asciidoctor
+  private DOMPurify!: import('dompurify').DOMPurifyI
+  private hljs!: typeof import('highlight.js')
+
+  constructor(props: AsciiDocRendererProps) {
     super(props)
 
     this.state = {
@@ -23,11 +42,11 @@ class AsciiDocRenderer extends React.Component {
     this.afterSanitizeElements = this.afterSanitizeElements.bind(this)
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.init()
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.setState({
       hasError: false,
       isLoading: true
@@ -52,7 +71,7 @@ class AsciiDocRenderer extends React.Component {
     }
   }
 
-  async loadLibraries() {
+  async loadLibraries(): Promise<void> {
     try {
       const [asciidoctor, DOMPurify, hljs] = await Promise.all([
         import('asciidoctor'),
@@ -68,16 +87,16 @@ class AsciiDocRenderer extends React.Component {
     }
   }
 
-  parseAsciiDoc(content) {
+  parseAsciiDoc(content: string): string {
     return this.asciidoctor.convert(content, {
       attributes: {
         showTitle: true,
         standalone: false
       }
-    })
+    }) as string
   }
 
-  sanitizeAsciiDoc(content) {
+  sanitizeAsciiDoc(content: string): string {
     const { DOMPurify } = this
 
     DOMPurify.addHook('afterSanitizeAttributes', this.afterSanitizeAttributes)
@@ -85,32 +104,33 @@ class AsciiDocRenderer extends React.Component {
 
     return DOMPurify.sanitize(content, {
       FORBID_TAGS: ['script', 'button', 'video'],
-      FORBID_ATTR: ['style']
+      FORBID_ATTR: ['style'],
+      RETURN_TRUSTED_TYPE: false
     })
   }
 
-  afterSanitizeAttributes(node) {
+  afterSanitizeAttributes(node: Element): void {
     // Opens all links in a new tab when clicked
-    if ('target' in node) {
+    if (node.hasAttribute('target')) {
       node.setAttribute('target', '_blank')
       node.setAttribute('rel', 'noopener noreferrer')
     }
   }
 
-  afterSanitizeElements(node) {
+  afterSanitizeElements(node: Element): void {
     // asciidoctor doesn't automatically highlight code blocks so
     // we have to do it after sanitization. Only code blocks with a language
     // will be highlighted: <code data-lang="ruby">...</code>
     if (node.nodeName === 'CODE' && node.hasAttribute('data-lang')) {
       try {
-        this.hljs.highlightBlock(node)
+        this.hljs.highlightBlock(node as HTMLElement)
       } catch (err) {
         Logger.warn(err)
       }
     }
   }
 
-  render() {
+  render(): JSX.Element {
     const { isLoading, content, hasError } = this.state
 
     if (hasError) {
@@ -141,10 +161,6 @@ class AsciiDocRenderer extends React.Component {
       </div>
     )
   }
-}
-
-AsciiDocRenderer.propTypes = {
-  content: PropTypes.string.isRequired
 }
 
 export default AsciiDocRenderer

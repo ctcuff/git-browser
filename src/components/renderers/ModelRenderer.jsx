@@ -14,7 +14,7 @@ const ModelRenderer = ({ content, extension }) => {
   const [modelViewer, setModelViewer] = useState(null)
   const [isModelVisible, setIsModelVisible] = useState(false)
 
-  let animationCheckInterval
+  let animationCheckInterval = null
 
   // Attaching events to the custom element won't actually fire
   // those events. We need to poll the element to make sure the
@@ -154,6 +154,9 @@ const ModelRenderer = ({ content, extension }) => {
 }
 
 ModelRenderer.propTypes = {
+  /**
+   * base64 encoded
+   */
   content: PropTypes.string.isRequired,
   extension: PropTypes.oneOf(['.gltf', '.glb']).isRequired
 }

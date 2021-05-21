@@ -183,14 +183,14 @@ class FileRenderer extends React.Component<
         return <ZipRenderer content={content} />
       case '.md':
       case '.mdx':
-        return <MarkdownRenderer content={decodedContent} />
+        return <MarkdownRenderer content={decodedContent || ''} />
       case '.adoc':
-        return <AsciiDocRenderer content={decodedContent} />
+        return <AsciiDocRenderer content={decodedContent || ''} />
       case '.csv':
       case '.tsv':
         return <CSVRenderer content={decodedContent || ''} />
       case '.ipynb':
-        return <JupyterRenderer content={decodedContent} />
+        return <JupyterRenderer content={decodedContent || ''} />
       case '.doc':
       case '.docx':
       case '.ppt':
