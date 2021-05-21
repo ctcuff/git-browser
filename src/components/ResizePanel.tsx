@@ -80,7 +80,7 @@ class ResizePanel extends React.Component<ResizePanelProps> {
   }
 
   resizePanel(event: MouseEvent): void {
-    requestAnimationFrame(() => this.resize(event))
+    window.requestAnimationFrame(() => this.resize(event))
   }
 
   render(): JSX.Element {

@@ -22,7 +22,7 @@ const AuthErrorModal = (props: AuthErrorModalProps): JSX.Element | null => {
     case 'auth/popup-closed-by-user':
     case 'auth/cancelled-popup-request':
       // Need to make sure the modal state gets reset
-      setTimeout(props.hideModal, 100)
+      window.setTimeout(props.hideModal, 100)
       return null
     case 'auth/network-request-failed':
       message = `A network error occurred while signing in.

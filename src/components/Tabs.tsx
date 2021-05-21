@@ -101,7 +101,7 @@ const TabView = (props: TabViewProps): JSX.Element | null => {
       .catch(() => props.showModal(ModalTypes.FILE_DOWNLOAD_ERROR))
       .finally(() => {
         // Prevents the alert message from flickering if it closes too fast
-        setTimeout(() => setShowDownloadAlert(false), 5000)
+        window.setTimeout(() => setShowDownloadAlert(false), 5000)
       })
   }
 

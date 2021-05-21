@@ -22,9 +22,9 @@ const ModelRenderer = ({
   const [hasError, setHasError] = useState(false)
   const [modelAnimations, setModelAnimations] = useState<string[]>([])
   const [selectedAnimation, setSelectedAnimation] = useState('')
+  const [isModelVisible, setIsModelVisible] = useState(false)
   const [modelViewer, setModelViewer] =
     useState<ModelViewerElement | null>(null)
-  const [isModelVisible, setIsModelVisible] = useState(false)
 
   let animationCheckInterval: number
 
