@@ -1,37 +1,49 @@
 import '../../style/renderers/model-renderer.scss'
 import React, { useCallback, useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
+import { ModelViewerElement } from '@google/model-viewer'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import Logger from '../../scripts/logger'
 import Collapse from '../Collapse'
 
-const ModelRenderer = ({ content, extension }) => {
+type ModelRendererProps = {
+  /**
+   * base64 encoded
+   */
+  content: string
+  extension: '.gltf' | '.glb'
+}
+
+const ModelRenderer = ({
+  content,
+  extension
+}: ModelRendererProps): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
-  const [modelAnimations, setModelAnimations] = useState([])
+  const [modelAnimations, setModelAnimations] = useState<string[]>([])
   const [selectedAnimation, setSelectedAnimation] = useState('')
-  const [modelViewer, setModelViewer] = useState(null)
+  const [modelViewer, setModelViewer] =
+    useState<ModelViewerElement | null>(null)
   const [isModelVisible, setIsModelVisible] = useState(false)
 
-  let animationCheckInterval = null
+  let animationCheckInterval: number
 
   // Attaching events to the custom element won't actually fire
   // those events. We need to poll the element to make sure the
   // model was loaded successfully
-  const checkIfModelLoaded = modelViewerNode => {
+  const checkIfModelLoaded = (modelViewerNode: ModelViewerElement) => {
     let timer = 0
     const timeout = 5 * 1000
     const intervalTime = 20
 
-    animationCheckInterval = setInterval(() => {
+    animationCheckInterval = window.setInterval(() => {
       timer += intervalTime
 
       // model-viewer doesn't have it's available animations ready immediately after
       // it's loaded the model so we need to keep checking to see if the model
       // actually has any animations.
       if (modelViewerNode.loaded) {
-        clearInterval(animationCheckInterval)
+        window.clearInterval(animationCheckInterval)
         setModelAnimations(modelViewerNode.availableAnimations || [])
         setIsModelVisible(true)
         setIsLoading(false)
@@ -44,12 +56,12 @@ const ModelRenderer = ({ content, extension }) => {
           setIsLoading(false)
         }
 
-        clearInterval(animationCheckInterval)
+        window.clearInterval(animationCheckInterval)
       }
     }, intervalTime)
   }
 
-  const modelViewerRef = useCallback(modelViewerNode => {
+  const modelViewerRef = useCallback((modelViewerNode: ModelViewerElement) => {
     setModelViewer(modelViewerNode)
 
     if (modelViewerNode) {
@@ -57,7 +69,7 @@ const ModelRenderer = ({ content, extension }) => {
     }
   }, [])
 
-  const playAnimation = animationName => {
+  const playAnimation = (animationName: string) => {
     if (!modelViewer) {
       return
     }
@@ -84,6 +96,8 @@ const ModelRenderer = ({ content, extension }) => {
     try {
       import('@google/model-viewer')
       // Used to get rid of the outline that appears when dragging the model
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       import('../../lib/focus-visible')
       setIsLoading(false)
     } catch (err) {
@@ -98,7 +112,7 @@ const ModelRenderer = ({ content, extension }) => {
 
   useEffect(() => {
     init()
-    return () => clearInterval(animationCheckInterval)
+    return () => window.clearInterval(animationCheckInterval)
   }, [])
 
   if (isLoading) {
@@ -126,7 +140,7 @@ const ModelRenderer = ({ content, extension }) => {
       {!isModelVisible && <LoadingOverlay text="Loading model..." />}
       {modelAnimations.length > 0 && (
         <Collapse className="model-animations" title="animations" open>
-          {modelAnimations.map(animationName => (
+          {modelAnimations.map((animationName: string) => (
             <button
               className={`animation-btn ${
                 selectedAnimation === animationName ? 'active' : ''
@@ -151,14 +165,6 @@ const ModelRenderer = ({ content, extension }) => {
       />
     </div>
   )
-}
-
-ModelRenderer.propTypes = {
-  /**
-   * base64 encoded
-   */
-  content: PropTypes.string.isRequired,
-  extension: PropTypes.oneOf(['.gltf', '.glb']).isRequired
 }
 
 export default ModelRenderer

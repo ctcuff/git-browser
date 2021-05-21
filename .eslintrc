@@ -47,7 +47,6 @@
     "import/extensions": ["error", "never"],
     "react-hooks/exhaustive-deps": "off",
     "react/no-array-index-key": "off",
-    "react/prop-types": 2,
     "react/jsx-props-no-spreading": "off",
     "react/destructuring-assignment": "off",
     "react/jsx-one-expression-per-line": "off",
