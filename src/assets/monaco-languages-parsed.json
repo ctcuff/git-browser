@@ -949,5 +949,10 @@
     "language": "html",
     "displayName": "Embedded Javascript",
     "extension": ".ejs"
+  },
+  ".gltf": {
+    "language": "json",
+    "displayName": "glTF",
+    "extension": ".gltf"
   }
 }

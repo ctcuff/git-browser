@@ -16,6 +16,10 @@ const includedFiles = [
   'stackoverflow-dark.css'
 ]
 
+/**
+ * @param {*} env
+ * @returns {import('webpack').Configuration}
+ */
 module.exports = env => {
   const plugins = [
     new Dotenv({
@@ -59,7 +63,7 @@ module.exports = env => {
   return {
     plugins,
     mode: 'development',
-    entry: path.resolve(__dirname, 'src', 'index.jsx'),
+    entry: path.resolve(__dirname, 'src', 'index.tsx'),
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: 'bundle.js',
@@ -82,7 +86,7 @@ module.exports = env => {
     module: {
       rules: [
         {
-          test: /\.(js|jsx?)$/,
+          test: /\.(ts|js)x?$/,
           include: path.resolve(__dirname, 'src'),
           exclude: /node_modules/,
           use: 'babel-loader'
@@ -98,7 +102,18 @@ module.exports = env => {
       ]
     },
     resolve: {
-      extensions: ['.js', '.jsx']
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      // HACK: wabt.js uses modules from node which aren't available in the browser
+      // so they need to be replaced with an empty object. HOWEVER: this may
+      // mean that some functions of the library may not work properly
+      // https://webpack.js.org/configuration/resolve/#resolvefallback
+      // https://github.com/AssemblyScript/wabt.js/issues/21#issuecomment-790203740
+      fallback: {
+        fs: false,
+        crypto: false,
+        buffer: false,
+        path: false
+      }
     }
   }
 }

@@ -73,6 +73,7 @@
 }
 
 body {
+  overscroll-behavior: none;
   margin: 0;
   font-size: 1em;
   font-family: var(--font-default);

@@ -5,8 +5,8 @@ import { ModalTypes } from 'src/components/ModalRoot'
 
 let store
 const initialState = {
-  accessToken: null,
-  username: null,
+  accessToken: '',
+  username: '',
   isLoggedIn: false,
   isLoading: false
 }

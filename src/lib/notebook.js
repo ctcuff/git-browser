@@ -1,4 +1,3 @@
-/* eslint-disable */
 // notebook.js 0.5.2
 // http://github.com/jsvine/notebookjs
 // notebook.js may be freely distributed under the MIT license.

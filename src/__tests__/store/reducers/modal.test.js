@@ -2,7 +2,7 @@ import modalReducer from 'src/store/reducers/modal'
 
 const initialState = {
   isOpen: false,
-  modalType: null,
+  modalType: '',
   modalProps: {}
 }
 
