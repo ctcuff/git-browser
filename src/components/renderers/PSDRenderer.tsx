@@ -59,7 +59,7 @@ class PSDRenderer extends React.Component<PSDRendererProps, PSDRendererState> {
     })
 
     try {
-      this.PSD = await import('psd.js')
+      this.PSD = (await import('psd.js')).default
 
       const imageData = await this.convertPSD()
 

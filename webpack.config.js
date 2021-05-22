@@ -7,6 +7,7 @@ const Dotenv = require('dotenv-webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const CopyPlugin = require('copy-webpack-plugin')
 const ESLintPlugin = require('eslint-webpack-plugin')
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 
 // Files in the `/public` directory that will be copied to `/dist during build
 const includedFiles = [
@@ -22,11 +23,16 @@ const includedFiles = [
  */
 module.exports = env => {
   const plugins = [
+    // psd.js uses node modules that can't just be replaced with an empty object
+    // so those modules need to be pollyfilled
+    new NodePolyfillPlugin({
+      excludeAliases: ['console']
+    }),
     new Dotenv({
       systemvars: true
     }),
     new ESLintPlugin({
-      extensions: ['js', 'jsx']
+      extensions: ['js', 'jsx', 'ts', 'tsx']
     }),
     new HotModuleReplacementPlugin(),
     new MonacoWebpackPlugin({
@@ -76,6 +82,7 @@ module.exports = env => {
       port: 9000,
       host: '0.0.0.0',
       useLocalIp: true,
+      writeToDisk: true,
       hot: true,
       // Allows any url to be visited without throwing a 404 in dev mode
       historyApiFallback: {
@@ -103,16 +110,13 @@ module.exports = env => {
     },
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      // HACK: wabt.js uses modules from node which aren't available in the browser
+      // wabt.js uses fs and other modules from node which aren't available in the browser
       // so they need to be replaced with an empty object. HOWEVER: this may
       // mean that some functions of the library may not work properly
       // https://webpack.js.org/configuration/resolve/#resolvefallback
       // https://github.com/AssemblyScript/wabt.js/issues/21#issuecomment-790203740
       fallback: {
-        fs: false,
-        crypto: false,
-        buffer: false,
-        path: false
+        fs: false
       }
     }
   }
