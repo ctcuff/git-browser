@@ -1,3 +1,4 @@
+import { Octokit } from '@octokit/rest'
 import URLUtil, { BASE_REPO_URL } from './url-util'
 import Logger from './logger'
 import {
@@ -8,11 +9,17 @@ import {
   GitHubBranch
 } from '../@types/github-api'
 
-const ERROR_INVALID_GITHUB_URL = 'Invalid GitHub URL'
-const ERROR_REPO_NOT_FOUND = "Couldn't find repository"
-const ERROR_FILE_NOT_FOUND = 'File not found'
-const UNKNOWN_ERROR = 'An unknown error occurred'
-const ERROR_BRANCH_NOT_FOUND = "Couldn't find branch"
+// Eslint bug with enums.
+// eslint-disable-next-line no-shadow
+enum ErrorMsg {
+  INVALID_GITHUB_URL = 'Invalid Github URL',
+  REPO_NOT_FOUND = "Couldn't find repository",
+  FILE_NOT_FOUND = 'File not found',
+  UNKNOWN = 'An unknown error occurred',
+  BRANCH_NOT_FOUND = "Couldn't find branch"
+}
+
+const octokit = new Octokit()
 
 class GitHubAPI {
   /**
@@ -21,46 +28,26 @@ class GitHubAPI {
    *
    * @see https://docs.github.com/rest/reference/repos#get-a-repository
    */
-  public static getDefaultBranch(repoUrl: string): Promise<string> {
+  public static async getDefaultBranch(repoUrl: string): Promise<string> {
     if (!URLUtil.isGithubUrl(repoUrl)) {
-      return Promise.reject(new Error(ERROR_INVALID_GITHUB_URL))
+      throw new Error(ErrorMsg.INVALID_GITHUB_URL)
     }
 
+    const [owner, repo] = URLUtil.decomposeURL(repoUrl)
+    console.log(owner + repo)
     const repoPath = URLUtil.extractRepoPath(repoUrl)
-    const apiUrl = `${BASE_REPO_URL}/${repoPath}`
 
     if (!repoPath) {
-      return Promise.reject(new Error(ERROR_REPO_NOT_FOUND))
+      throw new Error(ErrorMsg.REPO_NOT_FOUND)
     }
 
-    return URLUtil.request(apiUrl)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
-
-        switch (res.status) {
-          case 404:
-            return Promise.reject(new Error(ERROR_REPO_NOT_FOUND))
-          default:
-            return Promise.reject(new Error(UNKNOWN_ERROR))
-        }
-      })
-      .then((res: GitHubRepo & GitHubError) => {
-        // eslint-disable-next-line camelcase
-        const { default_branch, message } = res
-
-        if (message?.toLowerCase() === 'not found') {
-          return Promise.reject(new Error(UNKNOWN_ERROR))
-        }
-
-        // eslint-disable-next-line camelcase
-        return default_branch
-      })
-      .catch(err => {
-        Logger.error(err)
-        return Promise.reject(err)
-      })
+    try {
+      const fetchedRepo = await octokit.repos.get({ owner, repo })
+      return fetchedRepo.data.default_branch
+    } catch (err) {
+      Logger.error(err)
+      throw err
+    }
   }
 
   /**
@@ -98,7 +85,7 @@ class GitHubAPI {
 
     if (!repoPath) {
       Logger.error('Invalid repo path')
-      return Promise.reject(new Error(UNKNOWN_ERROR))
+      return Promise.reject(new Error(ErrorMsg.UNKNOWN))
     }
 
     const branchUrl = URLUtil.buildBranchUrl(repoPath, branch)
@@ -111,9 +98,9 @@ class GitHubAPI {
 
         switch (res.status) {
           case 404:
-            return Promise.reject(new Error(ERROR_BRANCH_NOT_FOUND))
+            return Promise.reject(new Error(ErrorMsg.BRANCH_NOT_FOUND))
           default:
-            return Promise.reject(new Error(UNKNOWN_ERROR))
+            return Promise.reject(new Error(ErrorMsg.UNKNOWN))
         }
       })
       .then((res: GitHubBranchInfo) => ({
@@ -141,9 +128,9 @@ class GitHubAPI {
 
         switch (res.status) {
           case 404:
-            return Promise.reject(new Error(ERROR_FILE_NOT_FOUND))
+            return Promise.reject(new Error(ErrorMsg.FILE_NOT_FOUND))
           default:
-            return Promise.reject(new Error(UNKNOWN_ERROR))
+            return Promise.reject(new Error(ErrorMsg.UNKNOWN))
         }
       })
       .then((res: GitHubBlob) => res.content)
@@ -164,14 +151,14 @@ class GitHubAPI {
     truncated: boolean
   }> {
     if (!URLUtil.isGithubUrl(repoUrl)) {
-      return Promise.reject(new Error(ERROR_INVALID_GITHUB_URL))
+      return Promise.reject(new Error(ErrorMsg.INVALID_GITHUB_URL))
     }
 
     const repoPath = URLUtil.extractRepoPath(repoUrl)
 
     if (!repoPath) {
       Logger.error('Invalid repo path')
-      return Promise.reject(new Error(UNKNOWN_ERROR))
+      return Promise.reject(new Error(ErrorMsg.UNKNOWN))
     }
 
     const branchesUrl = URLUtil.buildBranchesUrl(repoPath)
@@ -186,9 +173,9 @@ class GitHubAPI {
 
         switch (res.status) {
           case 404:
-            return Promise.reject(new Error(UNKNOWN_ERROR))
+            return Promise.reject(new Error(ErrorMsg.UNKNOWN))
           default:
-            return Promise.reject(new Error(UNKNOWN_ERROR))
+            return Promise.reject(new Error(ErrorMsg.UNKNOWN))
         }
       })
       .then((res: GitHubBranch[]) => {

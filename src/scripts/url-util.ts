@@ -104,6 +104,21 @@ class URLUtil {
     return `${segments[0]}/${segments[1]}`
   }
 
+  public static decomposeURL(url: string): string[] {
+    if (!this.isUrlValid(url)) {
+      throw new Error(`Invalid URL: ${url}`)
+    }
+
+    const uri = new URI(this.addScheme(url))
+    const components = uri.segment()
+
+    if (components.length < 2) {
+      throw new Error("URL should be in format 'https://base/user/repo'")
+    }
+
+    return components
+  }
+
   public static buildBranchUrl(repoPath: string, branchName: string): string {
     return `${BASE_REPO_URL}/${repoPath}/git/trees/${branchName}?recursive=true`
   }

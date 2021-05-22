@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@google/model-viewer": "^1.3.0",
+    "@octokit/rest": "^18.5.3",
     "@zip.js/zip.js": "^2.2.14",
     "anser": "^2.0.1",
     "asciidoctor": "^2.2.1",
