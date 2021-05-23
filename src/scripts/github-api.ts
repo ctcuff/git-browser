@@ -2,6 +2,7 @@ import { Octokit } from '@octokit/rest'
 import URLUtil from './url-util'
 import Logger from './logger'
 import { Blob, TreeResponse, BranchListResponse } from '../@types/github-api'
+import store from '../store'
 
 // Eslint bug with enums.
 // eslint-disable-next-line no-shadow
@@ -14,6 +15,27 @@ enum ErrorMsg {
 }
 
 const octokit = new Octokit()
+
+// Wraps each request with the auth header.
+octokit.hook.wrap('request', async (request, options) => {
+  const oauthToken = store.getState().user.accessToken
+  const debugToken = process.env.OAUTH_TOKEN
+
+  if (process.env.DEBUG && debugToken) {
+    options.headers.authorization = `token ${debugToken}`
+  } else if (oauthToken) {
+    options.headers.authorization = `token ${oauthToken}`
+  }
+
+  return request(options)
+})
+
+// octokit.hook.wrap('request', async (request, options) => {
+//   Logger.info(oauthToken)
+//   const debugToken = process.env.OAUTH_TOKEN
+//   options.headers.authorization = oauthToken
+//   return options
+// })
 
 class GitHubAPI {
   /**
