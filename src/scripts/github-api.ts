@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest'
 import URLUtil from './url-util'
 import Logger from './logger'
-import { Blob, TreeResponse, BranchListResponse } from '../@types/github-api'
+import { TreeResponse, BranchListResponse } from '../@types/github-api'
 import store from '../store'
 
 // Eslint bug with enums.
@@ -129,25 +129,17 @@ class GitHubAPI {
    *
    * @see https://docs.github.com/rest/reference/git#get-a-blob
    */
-  public static getFile(url: string): Promise<string> {
-    return URLUtil.request(url)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
+  public static async getFile(url: string): Promise<string> {
+    const components = url.split('/')
+    const owner = components[4]
+    const repo = components[5]
+    const sha = components[8]
 
-        switch (res.status) {
-          case 404:
-            throw new Error(ErrorMsg.FILE_NOT_FOUND)
-          default:
-            throw new Error(ErrorMsg.UNKNOWN)
-        }
-      })
-      .then((res: Blob) => res.content)
-      .catch(err => {
-        Logger.error(err)
-        return Promise.reject(err)
-      })
+    return (await octokit.rest.git.getBlob({
+      owner,
+      repo,
+      file_sha: sha
+    })).data.content
   }
 
   /**

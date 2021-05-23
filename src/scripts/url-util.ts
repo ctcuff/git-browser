@@ -1,4 +1,5 @@
 import URI from 'urijs'
+import { assert } from 'pdfjs-dist/types/shared/util'
 import store from '../store'
 import { showModal } from '../store/actions/modal'
 import { ModalTypes } from '../components/ModalRoot'
@@ -21,40 +22,6 @@ type RepoPathParams = {
 }
 
 class URLUtil {
-  /**
-   * A wrapper around fetch that makes a request to the GitHub API.
-   * This rejects if the GitHub rate limit is exceeded.
-   */
-  public static request(url: string): Promise<Response> {
-    const oauthToken = store.getState().user.accessToken
-    const debugToken = process.env.OAUTH_TOKEN
-    const config: RequestConfig = {
-      headers: {}
-    }
-
-    if (process.env.DEBUG && debugToken) {
-      config.headers.Authorization = `token ${debugToken}`
-    } else if (oauthToken) {
-      config.headers.Authorization = `token ${oauthToken}`
-    }
-
-    return new Promise((resolve, reject) => {
-      fetch(url, config)
-        .then(res => {
-          const rateLimitRemaining =
-            res.headers.get('x-ratelimit-remaining') || ''
-
-          if (parseInt(rateLimitRemaining, 10) === 0) {
-            reject(new Error('rate limit exceeded'))
-            store.dispatch(showModal(ModalTypes.RATE_LIMIT))
-          } else {
-            resolve(res)
-          }
-        })
-        .catch(err => reject(err))
-    })
-  }
-
   public static isUrlValid(url: string): boolean {
     try {
       // eslint-disable-next-line no-new
@@ -104,7 +71,7 @@ class URLUtil {
     return `${segments[0]}/${segments[1]}`
   }
 
-  public static decomposeURL(url: string): string[] {
+  public static decomposeURL(url: string): [string, string] {
     if (!this.isUrlValid(url)) {
       throw new Error(`Invalid URL: ${url}`)
     }
@@ -116,7 +83,11 @@ class URLUtil {
       throw new Error("URL should be in format 'https://base/user/repo'")
     }
 
-    return components
+    if (components[0] === 'repos') {
+      return [components[1], components[2]]
+    }
+
+    return [components[0], components[1]]
   }
 
   /**

@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import { GetResponseTypeFromEndpointMethod } from '@octokit/types'
 import { Octokit } from '@octokit/rest'
 
@@ -22,12 +20,3 @@ type BranchListResponse = GetResponseTypeFromEndpointMethod<
 
 type TreeData = TreeResponse['data']['tree']
 type TreeNode = TreeData[number]
-
-export type Blob = {
-  sha: string
-  node_id: string
-  size: number
-  url: string
-  content: string
-  encoding: 'base64'
-}

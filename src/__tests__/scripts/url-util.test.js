@@ -22,66 +22,68 @@ describe('URLUtil', () => {
     jest.restoreAllMocks()
   })
 
-  test('request adds oauth token if found', async () => {
-    const mockStore = jest.spyOn(store, 'getState')
-    global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
+  // Octokit should handle these cases/errors
 
-    const res = await URLUtil.request('test1')
+  // test('request adds oauth token if found', async () => {
+  //   const mockStore = jest.spyOn(store, 'getState')
+  //   global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
 
-    expect(fetch).toHaveBeenCalledWith(
-      'test1',
-      expect.objectContaining({
-        headers: {}
-      })
-    )
+  //   const res = await URLUtil.request('test1')
 
-    expect(res).toEqual(mockResp)
+  //   expect(fetch).toHaveBeenCalledWith(
+  //     'test1',
+  //     expect.objectContaining({
+  //       headers: {}
+  //     })
+  //   )
 
-    process.env.DEBUG = 'true'
-    process.env.OAUTH_TOKEN = 'mock-token'
-    URLUtil.request('test2')
+  //   expect(res).toEqual(mockResp)
 
-    expect(fetch).toHaveBeenCalledWith(
-      'test2',
-      expect.objectContaining({
-        headers: {
-          Authorization: 'token mock-token'
-        }
-      })
-    )
+  //   process.env.DEBUG = 'true'
+  //   process.env.OAUTH_TOKEN = 'mock-token'
+  //   URLUtil.request('test2')
 
-    process.env.DEBUG = ''
-    process.env.OAUTH_TOKEN = ''
-    mockStore.mockReturnValue({
-      user: {
-        accessToken: 'mock-user-token'
-      }
-    })
+  //   expect(fetch).toHaveBeenCalledWith(
+  //     'test2',
+  //     expect.objectContaining({
+  //       headers: {
+  //         Authorization: 'token mock-token'
+  //       }
+  //     })
+  //   )
 
-    URLUtil.request('test3')
+  //   process.env.DEBUG = ''
+  //   process.env.OAUTH_TOKEN = ''
+  //   mockStore.mockReturnValue({
+  //     user: {
+  //       accessToken: 'mock-user-token'
+  //     }
+  //   })
 
-    expect(fetch).toHaveBeenCalledWith(
-      'test3',
-      expect.objectContaining({
-        headers: {
-          Authorization: 'token mock-user-token'
-        }
-      })
-    )
-  })
+  //   URLUtil.request('test3')
 
-  test('request handles rate limit and other errors', async () => {
-    mockResp.headers.set('x-ratelimit-remaining', '0')
-    global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
+  //   expect(fetch).toHaveBeenCalledWith(
+  //     'test3',
+  //     expect.objectContaining({
+  //       headers: {
+  //         Authorization: 'token mock-user-token'
+  //       }
+  //     })
+  //   )
+  // })
 
-    expect(URLUtil.request('test')).rejects.toEqual(
-      new Error('rate limit exceeded')
-    )
+  // test('request handles rate limit and other errors', async () => {
+  //   mockResp.headers.set('x-ratelimit-remaining', '0')
+  //   global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
 
-    global.fetch = jest.fn().mockReturnValue(Promise.reject('mockError'))
+  //   expect(URLUtil.request('test')).rejects.toEqual(
+  //     new Error('rate limit exceeded')
+  //   )
 
-    expect(URLUtil.request('test')).rejects.toEqual('mockError')
-  })
+  //   global.fetch = jest.fn().mockReturnValue(Promise.reject('mockError'))
+
+  //   expect(URLUtil.request('test')).rejects.toEqual('mockError')
+  // })
 
   test('isUrlValid checks url validity', () => {
     expect(URLUtil.isUrlValid(null)).toEqual(false)
