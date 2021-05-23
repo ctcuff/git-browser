@@ -101,11 +101,6 @@
     "worker-plugin": "^5.0.0",
     "husky": "^6.0.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "postcss": {
     "plugins": {
       "autoprefixer": {}
