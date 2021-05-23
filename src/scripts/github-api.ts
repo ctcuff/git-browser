@@ -61,7 +61,8 @@ class GitHubAPI {
         const tree = await octokit.git.getTree({
           owner,
           repo,
-          tree_sha: branchName
+          tree_sha: branchName,
+          recursive: 'true'
         })
         return { ...tree, branch: branchName }
       } catch (err) {
