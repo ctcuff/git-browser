@@ -110,9 +110,7 @@ export default Tree
 export type TreeNodeObject = TreeNode & {
   type: 'file' | 'folder'
   parent: string | null
-  url: string | undefined
   isOpen: boolean
-  size?: number
   name: string
   isRoot?: boolean
   children?: string[]
