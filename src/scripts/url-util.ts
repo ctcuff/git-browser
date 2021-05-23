@@ -1,5 +1,4 @@
 import URI from 'urijs'
-import { Octokit } from '@octokit/rest'
 import store from '../store'
 import { showModal } from '../store/actions/modal'
 import { ModalTypes } from '../components/ModalRoot'
@@ -7,8 +6,6 @@ import Logger from './logger'
 
 const BASE_API_URL = 'https://api.github.com'
 const BASE_REPO_URL = `${BASE_API_URL}/repos`
-
-const octokit = new Octokit()
 
 type RequestConfig = {
   headers: {

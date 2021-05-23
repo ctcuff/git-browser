@@ -43,6 +43,7 @@ const getPaddingLeft = (
  * or file. Ex: `src/components/App.jsx => App.jsx`
  */
 const getNodeLabel = (node: TreeNodeObject): string => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const path = node.path!.split('/').filter(str => !!str.trim())
   return path[path.length - 1]
 }

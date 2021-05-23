@@ -1,4 +1,5 @@
-import { GitHubTreeItem, TreeData, TreeNode } from '../@types/github-api'
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { TreeData, TreeNode } from '../@types/github-api'
 
 class Tree {
   /**

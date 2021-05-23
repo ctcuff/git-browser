@@ -5,7 +5,7 @@ import FileExplorer from '../FileExplorer'
 import LoadingOverlay from '../LoadingOverlay'
 import Logger from '../../scripts/logger'
 import ErrorOverlay from '../ErrorOverlay'
-import { GitHubTreeItem } from '../../@types/github-api'
+import { TreeNode } from '../../@types/github-api'
 
 type ZipRendererProps = {
   /**
@@ -101,18 +101,16 @@ class ZipRenderer extends React.Component<ZipRendererProps, ZipRendererState> {
 
     const entries = await reader.getEntries()
 
-    const treeData: GitHubTreeItem[] = entries.map(
-      ({ filename, directory }) => {
-        // Folders that end with '/' aren't parsed correctly
-        // by Tree.treeify so we need to remove any trailing '/'
-        const path = filename.endsWith('/') ? filename.slice(0, -1) : filename
+    const treeData: TreeNode[] = entries.map(({ filename, directory }) => {
+      // Folders that end with '/' aren't parsed correctly
+      // by Tree.treeify so we need to remove any trailing '/'
+      const path = filename.endsWith('/') ? filename.slice(0, -1) : filename
 
-        return {
-          path,
-          type: directory ? 'tree' : 'blob'
-        }
+      return {
+        path,
+        type: directory ? 'tree' : 'blob'
       }
-    ) as GitHubTreeItem[]
+    }) as TreeNode[]
 
     return Tree.treeify(treeData)
   }

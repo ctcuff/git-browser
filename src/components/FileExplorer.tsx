@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import '../style/file-explorer.scss'
 import React from 'react'
 import partition from 'lodash/partition'

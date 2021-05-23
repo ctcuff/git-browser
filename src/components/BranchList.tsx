@@ -1,7 +1,7 @@
 import '../style/branch-list.scss'
 import React, { useState, useEffect } from 'react'
 import { AiOutlineBranches } from 'react-icons/ai'
-import { GitHubBranch } from '../@types/github-api'
+import { BranchData } from '../@types/github-api'
 
 type BranchListProps = {
   branches: Branch[]
@@ -50,4 +50,4 @@ const BranchList = (props: BranchListProps): JSX.Element => {
 }
 
 export default BranchList
-export type Branch = GitHubBranch & { repoUrl: string }
+export type Branch = BranchData & { repoUrl: string }

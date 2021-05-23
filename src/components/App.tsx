@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import '../style/app.scss'
 import React from 'react'
 import debounce from 'lodash/debounce'

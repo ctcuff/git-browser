@@ -1,11 +1,7 @@
 import { Octokit } from '@octokit/rest'
 import URLUtil from './url-util'
 import Logger from './logger'
-import {
-  GitHubBlob,
-  TreeResponse,
-  BranchListResponse
-} from '../@types/github-api'
+import { Blob, TreeResponse, BranchListResponse } from '../@types/github-api'
 
 // Eslint bug with enums.
 // eslint-disable-next-line no-shadow
@@ -124,7 +120,7 @@ class GitHubAPI {
             throw new Error(ErrorMsg.UNKNOWN)
         }
       })
-      .then((res: GitHubBlob) => res.content)
+      .then((res: Blob) => res.content)
       .catch(err => {
         Logger.error(err)
         return Promise.reject(err)
