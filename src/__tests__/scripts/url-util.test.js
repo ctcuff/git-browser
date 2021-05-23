@@ -94,6 +94,12 @@ describe('URLUtil', () => {
     expect(URLUtil.isGithubUrl('github.com/user')).toEqual(true)
   })
 
+  test('decomposeURL properly splits url components', () => {
+    expect(URLUtil.decomposeURL('https://github.com/user/repo')).toEqual(['user', 'repo'])
+    expect(URLUtil.decomposeURL('github.com/user/repo')).toEqual(['user', 'repo'])
+    expect(() => URLUtil.decomposeURL(null)).toThrowError()
+  })
+
   test('addScheme adds scheme to url if necessary', () => {
     expect(URLUtil.addScheme('test.com')).toEqual('https://test.com')
     expect(URLUtil.addScheme('https://test.com')).toEqual('https://test.com')
