@@ -119,14 +119,6 @@ class URLUtil {
     return components
   }
 
-  public static buildBranchUrl(repoPath: string, branchName: string): string {
-    return `${BASE_REPO_URL}/${repoPath}/git/trees/${branchName}?recursive=true`
-  }
-
-  static buildBranchesUrl(repoPath: string): string {
-    return `${BASE_REPO_URL}/${repoPath}/branches`
-  }
-
   /**
    * Takes an object and appends each key and value to the window URL as a query.
    * Any false value is removed from the URL.
@@ -175,23 +167,6 @@ class URLUtil {
   static getSearchParam(key: string, defaultValue = ''): string {
     const params = new URLSearchParams(window.location.search)
     return params.get(key) ?? defaultValue
-  }
-
-  /**
-   * Takes a repo path (`user/repo-name`), branch, and file path and returns
-   * a URL to view that file on GitHub. If `raw` is `true`, this will return
-   * a link similar to clicking the "raw" button on github.
-   */
-  buildGithubFileURL(params: RepoPathParams): string {
-    const { repoPath, branch, filePath, raw = false } = params
-
-    let URL = `https://github.com/${repoPath}/blob/${branch}/${filePath}`
-
-    if (raw) {
-      URL += '?raw=true'
-    }
-
-    return URL
   }
 
   /**

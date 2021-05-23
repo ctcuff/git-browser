@@ -119,18 +119,6 @@ describe('URLUtil', () => {
     )
   })
 
-  test('buildBranchUrl returns GitHub API branch url', () => {
-    expect(URLUtil.buildBranchUrl('user/test-repo', 'master')).toEqual(
-      'https://api.github.com/repos/user/test-repo/git/trees/master?recursive=true'
-    )
-  })
-
-  test('buildBranchesUrl returns GitHub API branches url', () => {
-    expect(URLUtil.buildBranchesUrl('user/test-repo')).toEqual(
-      'https://api.github.com/repos/user/test-repo/branches'
-    )
-  })
-
   test('updateURLSearchParams updates url', () => {
     const spy = jest.spyOn(window.history, 'replaceState')
     URLUtil.updateURLSearchParams({
