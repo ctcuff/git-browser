@@ -1,12 +1,10 @@
 import { Octokit } from '@octokit/rest'
-import URLUtil, { BASE_REPO_URL } from './url-util'
+import URLUtil from './url-util'
 import Logger from './logger'
 import {
-  GitHubRepo,
-  GitHubError,
-  GitHubBranchInfo,
   GitHubBlob,
-  GitHubBranch
+  TreeResponse,
+  BranchListResponse
 } from '../@types/github-api'
 
 // Eslint bug with enums.
@@ -34,7 +32,6 @@ class GitHubAPI {
     }
 
     const [owner, repo] = URLUtil.decomposeURL(repoUrl)
-    console.log(owner + repo)
     const repoPath = URLUtil.extractRepoPath(repoUrl)
 
     if (!repoPath) {
@@ -57,17 +54,24 @@ class GitHubAPI {
    *
    * @see https://docs.github.com/rest/reference/git#get-a-tree
    */
-  public static getTree(
+  public static async getTree(
     repoUrl: string,
     branch = 'default'
-  ): Promise<GitHubBranchInfo & { branch: string }> {
+  ): Promise<TreeResponse & { branch: string }> {
+    const [owner, repo] = URLUtil.decomposeURL(repoUrl)
     if (branch === 'default') {
-      return GitHubAPI.getDefaultBranch(repoUrl)
-        .then(branchName => GitHubAPI.getBranch(repoUrl, branchName))
-        .catch(err => {
-          Logger.error(err)
-          return Promise.reject(err)
+      try {
+        const branchName = await GitHubAPI.getDefaultBranch(repoUrl)
+        const tree = await octokit.git.getTree({
+          owner,
+          repo,
+          tree_sha: branchName
         })
+        return { ...tree, branch: branchName }
+      } catch (err) {
+        Logger.error(err)
+        throw err
+      }
     }
 
     return GitHubAPI.getBranch(repoUrl, branch)
@@ -77,10 +81,10 @@ class GitHubAPI {
    * Takes a github url: `https://github.com/user/repo/` and a
    * branch name and returns the tree (all files).
    */
-  public static getBranch(
+  public static async getBranch(
     repoUrl: string,
     branch: string
-  ): Promise<GitHubBranchInfo & { branch: string }> {
+  ): Promise<TreeResponse & { branch: string }> {
     const repoPath = URLUtil.extractRepoPath(repoUrl)
 
     if (!repoPath) {
@@ -88,29 +92,16 @@ class GitHubAPI {
       return Promise.reject(new Error(ErrorMsg.UNKNOWN))
     }
 
-    const branchUrl = URLUtil.buildBranchUrl(repoPath, branch)
+    const [owner, repo] = URLUtil.decomposeURL(repoUrl)
 
-    return URLUtil.request(branchUrl)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
+    const res = await octokit.git.getTree({
+      owner,
+      repo,
+      tree_sha: branch,
+      recursive: 'true'
+    })
 
-        switch (res.status) {
-          case 404:
-            return Promise.reject(new Error(ErrorMsg.BRANCH_NOT_FOUND))
-          default:
-            return Promise.reject(new Error(ErrorMsg.UNKNOWN))
-        }
-      })
-      .then((res: GitHubBranchInfo) => ({
-        ...res,
-        branch
-      }))
-      .catch(err => {
-        Logger.error(err)
-        return Promise.reject(err)
-      })
+    return { ...res, branch }
   }
 
   /**
@@ -128,9 +119,9 @@ class GitHubAPI {
 
         switch (res.status) {
           case 404:
-            return Promise.reject(new Error(ErrorMsg.FILE_NOT_FOUND))
+            throw new Error(ErrorMsg.FILE_NOT_FOUND)
           default:
-            return Promise.reject(new Error(ErrorMsg.UNKNOWN))
+            throw new Error(ErrorMsg.UNKNOWN)
         }
       })
       .then((res: GitHubBlob) => res.content)
@@ -146,53 +137,23 @@ class GitHubAPI {
    *
    * @see https://docs.github.com/rest/reference/repos#branches
    */
-  public static getBranches(repoUrl: string): Promise<{
-    branches: (GitHubBranch & { repoUrl: string })[]
+  public static async getBranches(repoUrl: string): Promise<{
+    branches: BranchListResponse['data']
     truncated: boolean
   }> {
     if (!URLUtil.isGithubUrl(repoUrl)) {
       return Promise.reject(new Error(ErrorMsg.INVALID_GITHUB_URL))
     }
 
-    const repoPath = URLUtil.extractRepoPath(repoUrl)
+    const [owner, repo] = URLUtil.decomposeURL(repoUrl)
+    const response = await octokit.repos.listBranches({ owner, repo })
 
-    if (!repoPath) {
-      Logger.error('Invalid repo path')
-      return Promise.reject(new Error(ErrorMsg.UNKNOWN))
+    let truncated = false
+    if (response.headers.link) {
+      truncated = true
     }
 
-    const branchesUrl = URLUtil.buildBranchesUrl(repoPath)
-    let truncated = false
-
-    return URLUtil.request(`${branchesUrl}?per_page=100`)
-      .then(res => {
-        if (res.ok) {
-          truncated = res.headers.has('link')
-          return res.json()
-        }
-
-        switch (res.status) {
-          case 404:
-            return Promise.reject(new Error(ErrorMsg.UNKNOWN))
-          default:
-            return Promise.reject(new Error(ErrorMsg.UNKNOWN))
-        }
-      })
-      .then((res: GitHubBranch[]) => {
-        const branches = res.map(branch => ({
-          ...branch,
-          repoUrl
-        }))
-
-        return {
-          branches,
-          truncated
-        }
-      })
-      .catch(err => {
-        Logger.error(err)
-        return Promise.reject(err)
-      })
+    return { branches: response.data, truncated }
   }
 }
 

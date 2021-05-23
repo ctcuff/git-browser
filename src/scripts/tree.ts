@@ -1,4 +1,4 @@
-import { GitHubTreeItem } from '../@types/github-api'
+import { GitHubTreeItem, TreeData, TreeNode } from '../@types/github-api'
 
 class Tree {
   /**
@@ -39,7 +39,7 @@ class Tree {
    *
    * @see https://docs.github.com/en/free-pro-team@latest/rest/reference/git#trees
    */
-  public static treeify(data: GitHubTreeItem[]): TreeObject {
+  public static treeify(data: TreeData): TreeObject {
     const tree: TreeObject = {}
 
     for (let i = 0; i < data.length; i++) {
@@ -57,10 +57,10 @@ class Tree {
       // If this file/folder is contained in a folder, split the path
       // to try and find the name of the parent folder. For example:
       // `src/components/App.js` => `components`
-      const parts = path.split('/').filter(str => !!str.trim())
-      const parentPath = parts.splice(0, parts.length - 1).join('/')
+      const parts = path?.split('/').filter(str => !!str.trim())
+      const parentPath = parts?.splice(0, parts.length - 1).join('/')
       const treeData = {
-        name: parts[parts.length - 1],
+        name: parts![parts!.length - 1],
         parent: null,
         isOpen: false,
         path,
@@ -70,17 +70,17 @@ class Tree {
       // eslint-disable-next-line default-case
       switch (type) {
         case 'blob':
-          tree[path] = {
+          tree[path!] = {
             ...treeData,
             type: 'file',
-            size,
-            url
+            size: size!,
+            url: url!
           }
           break
         case 'tree':
           // Make sure we don't add folders we've seen before
-          if (!tree[path]) {
-            tree[path] = {
+          if (!tree[path!]) {
+            tree[path!] = {
               ...treeData,
               type: 'folder',
               children: []
@@ -92,11 +92,11 @@ class Tree {
       // If the file/folder had a parent, make sure that file/folder
       // gets added to the parent's children
       if (parentPath && tree[parentPath]) {
-        tree[parentPath].children?.push(path)
-        tree[path].parent = parentPath
+        tree[parentPath].children?.push(path!)
+        tree[path!].parent = parentPath
       } else {
         // This file doesn't have a parent so it must be in the root
-        tree[path].isRoot = true
+        tree[path!].isRoot = true
       }
     }
 
@@ -106,11 +106,10 @@ class Tree {
 
 export default Tree
 
-export type TreeNodeObject = {
+export type TreeNodeObject = TreeNode & {
   type: 'file' | 'folder'
   parent: string | null
-  url: string
-  path: string
+  url: string | undefined
   isOpen: boolean
   size?: number
   name: string

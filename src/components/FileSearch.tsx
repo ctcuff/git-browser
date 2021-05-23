@@ -43,7 +43,7 @@ const FileSearch = (props: FileSearchProps): JSX.Element => {
         count < MAX_DISPLAY_COUNT &&
         node.type === 'file' &&
         (node.name.toLowerCase().includes(query) ||
-          node.path.toLowerCase().includes(query))
+          node.path!.toLowerCase().includes(query))
       ) {
         // Mark the node as root so the FileExplorer doesn't
         // add any margin to the file

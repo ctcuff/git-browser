@@ -70,11 +70,11 @@ class FileExplorer extends React.PureComponent<
     )
 
     left.forEach(node => {
-      nodes[node.path] = node
+      nodes[node.path!] = node
     })
 
     right.forEach(node => {
-      nodes[node.path] = node
+      nodes[node.path!] = node
     })
 
     return Object.values(nodes).filter(node => node.isRoot)
@@ -112,7 +112,7 @@ class FileExplorer extends React.PureComponent<
   toggleNode(node: TreeNodeObject): void {
     const { nodes } = this.state
 
-    nodes[node.path].isOpen = !node.isOpen
+    nodes[node.path!].isOpen = !node.isOpen
 
     this.setState({
       nodes: {

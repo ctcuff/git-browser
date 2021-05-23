@@ -1,6 +1,27 @@
 /* eslint-disable camelcase */
 
-// Directly mapped from GitHub's API responses
+import { GetResponseTypeFromEndpointMethod } from '@octokit/types'
+import { Octokit } from '@octokit/rest'
+
+const octokit = new Octokit()
+
+// For some reason octokit types need to be reified in this manner...
+type BranchResponse = GetResponseTypeFromEndpointMethod<
+  typeof octokit.repos.getBranch
+>
+
+type TreeResponse = GetResponseTypeFromEndpointMethod<
+  typeof octokit.git.getTree
+>
+
+type BranchListResponse = GetResponseTypeFromEndpointMethod<
+  typeof octokit.repos.listBranches.data
+>
+
+type TreeData = TreeResponse['data']['tree']
+type TreeNode = TreeData[number]
+
+// Directly mapped from GitHub's API response.
 
 export type GitHubRepoOwner = {
   login: string

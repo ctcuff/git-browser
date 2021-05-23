@@ -26,6 +26,7 @@ import Logger from '../scripts/logger'
 import FileSearch from './FileSearch'
 import ExplorerPanelOverlay, { PanelAction } from './ExplorerPanelOverlay'
 import { setRepoData } from '../store/actions/search'
+import { BranchListResponse } from '../@types/github-api'
 
 const mapDispatchToProps = {
   setRepoData
@@ -53,7 +54,7 @@ type ExplorerPanelState = {
   searchErrorMessage: string
   isLoading: boolean
   isExplorerOpen: boolean
-  branches: Branch[]
+  branches: BranchListResponse['data']
   isBranchListTruncated: boolean
   panels: {
     [key: string]: Panel
@@ -174,7 +175,7 @@ class ExplorerPanel extends React.Component<
     return GitHubAPI.getTree(repoUrl, branch)
       .then(res => {
         this.setState(prevState => ({
-          treeData: Tree.treeify(res.tree),
+          treeData: Tree.treeify(res.data.tree),
           currentBranch: res.branch,
           panels: {
             ...prevState.panels,

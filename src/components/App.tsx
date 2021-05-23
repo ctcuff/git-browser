@@ -110,18 +110,18 @@ class App extends React.Component<unknown, AppState> {
     const { openedFilePaths, openedTabs } = this.state
 
     // Don't open this file in a new tab since it's already open
-    if (openedFilePaths.has(node.path)) {
-      this.setActiveTabIndex(this.findTabIndex(node.path))
+    if (openedFilePaths.has(node.path!)) {
+      this.setActiveTabIndex(this.findTabIndex(node.path!))
       return
     }
 
-    URLUtil.updateURLSearchParams({ file: node.path })
+    URLUtil.updateURLSearchParams({ file: node.path! })
 
     const initialTabState: FileTab = {
       isLoading: true,
       index: openedTabs.length,
       title: node.name,
-      path: node.path,
+      path: node.path!,
       isTooLarge: false,
       canEditorRender: false,
       hasError: false,
@@ -133,10 +133,10 @@ class App extends React.Component<unknown, AppState> {
     // GitHub API request to finish
     this.setState(
       {
-        openedFilePaths: new Set(openedFilePaths.add(node.path)),
+        openedFilePaths: new Set(openedFilePaths.add(node.path!)),
         activeTabIndex: openedTabs.length,
         openedTabs: [...openedTabs, initialTabState],
-        activeFilePath: node.path
+        activeFilePath: node.path!
       },
       () => this.loadFile(node)
     )
@@ -279,7 +279,7 @@ class App extends React.Component<unknown, AppState> {
   loadFile(file: TreeNodeObject): void {
     const { extension } = getLanguageFromFileName(file.name)
     const { openedTabs } = this.state
-    let tabIndex = this.findTabIndex(file.path)
+    let tabIndex = this.findTabIndex(file.path!)
 
     if (file.size && file.size >= MAX_FILE_SIZE) {
       openedTabs[tabIndex].isLoading = false
@@ -288,12 +288,12 @@ class App extends React.Component<unknown, AppState> {
       return
     }
 
-    GitHubAPI.getFile(file.url)
+    GitHubAPI.getFile(file!.url!)
       .then(content => {
         // Need to find this tab again to make sure it wasn't closed.
         // The index will be -1 if the tab was closed
         // before the request finished loading
-        tabIndex = this.findTabIndex(file.path)
+        tabIndex = this.findTabIndex(file.path!)
 
         if (tabIndex === -1) {
           return
@@ -318,7 +318,7 @@ class App extends React.Component<unknown, AppState> {
         this.decodeTabContent(content, tabIndex)
       })
       .catch(err => {
-        tabIndex = this.findTabIndex(file.path)
+        tabIndex = this.findTabIndex(file.path!)
 
         if (tabIndex === -1) {
           return
