@@ -1,6 +1,5 @@
 import '../../style/renderers/pdf-renderer.scss'
 import React from 'react'
-import { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist/types/display/api'
 import LoadingOverlay from '../LoadingOverlay'
 import ErrorOverlay from '../ErrorOverlay'
 import PDFPage from '../PDFPage'
@@ -14,7 +13,6 @@ type PDFRendererState = {
   isLoading: boolean
   hasError: boolean
   currentStep: string
-  // TODO: Check this
   pages: React.ReactElement<typeof PDFPage>[]
 }
 
@@ -79,7 +77,9 @@ class PDFRenderer extends React.Component<PDFRendererProps, PDFRendererState> {
 
   loadPDF(decodedPdfData: string): void {
     this.pdfjs.getDocument({ data: decodedPdfData }).promise.then(
-      (pdfDocument: PDFDocumentProxy) => {
+      (
+        pdfDocument: import('pdfjs-dist/types/display/api').PDFDocumentProxy
+      ) => {
         this.renderPages(pdfDocument)
       },
       err => {
@@ -115,14 +115,16 @@ class PDFRenderer extends React.Component<PDFRendererProps, PDFRendererState> {
     )
   }
 
-  async renderPages(pdfDocument: PDFDocumentProxy): Promise<void> {
+  async renderPages(
+    pdfDocument: import('pdfjs-dist/types/display/api').PDFDocumentProxy
+  ): Promise<void> {
     const pages: React.ReactElement<typeof PDFPage>[] = []
     const promises: Promise<void>[] = []
     const { numPages } = pdfDocument
 
     for (let i = 0; i < numPages; i++) {
       const promise = pdfDocument.getPage(i + 1).then(
-        (page: PDFPageProxy) => {
+        (page: import('pdfjs-dist/types/display/api').PDFPageProxy) => {
           pages.push(<PDFPage page={page} key={i} />)
           this.setState({
             currentStep: `Loading page ${i + 1}/${numPages}`

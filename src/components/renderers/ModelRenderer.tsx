@@ -28,18 +28,21 @@ const ModelRenderer = ({
 
   let animationCheckInterval: number
 
-  // Attaching events to the custom element won't actually fire
-  // those events. We need to poll the element to make sure the
-  // model was loaded successfully
+  /**
+   * Attaching events to the custom element won't actually fire those
+   * events. We need to poll the element to make sure the
+   * model was loaded successfully
+   */
   const checkIfModelLoaded = (modelViewerNode: ModelViewerElement) => {
-    let timer = 0
-    const timeout = 5 * 1000
-    const intervalTime = 20
+    let elapsed = 0
+    const duration = 5 * 1000
+    // The time between checks (in ms)
+    const pollInterval = 20
 
     animationCheckInterval = window.setInterval(() => {
-      timer += intervalTime
+      elapsed += pollInterval
 
-      // model-viewer doesn't have it's available animations ready immediately after
+      // model-viewer doesn't have its available animations ready immediately after
       // it's loaded the model so we need to keep checking to see if the model
       // actually has any animations.
       if (modelViewerNode.loaded) {
@@ -50,7 +53,7 @@ const ModelRenderer = ({
         return
       }
 
-      if (timer > timeout) {
+      if (elapsed > duration) {
         if (!modelViewerNode.modelIsVisible) {
           setHasError(true)
           setIsLoading(false)
@@ -58,7 +61,7 @@ const ModelRenderer = ({
 
         window.clearInterval(animationCheckInterval)
       }
-    }, intervalTime)
+    }, pollInterval)
   }
 
   const modelViewerRef = useCallback((modelViewerNode: ModelViewerElement) => {
