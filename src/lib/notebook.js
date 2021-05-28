@@ -377,17 +377,6 @@
   };
 
   // Exports
-  if (typeof define === "function" && define.amd) {
-    define(function () {
-      return nb;
-    });
-  }
-  if (typeof exports !== "undefined") {
-    if (typeof module !== "undefined" && module.exports) {
-      exports = module.exports = nb;
-    }
-    exports.nb = nb;
-  } else {
-    root.nb = nb;
-  }
+  // HOTFIX: only use the "exports" syntax
+  module.exports = nb;
 }.call(this));

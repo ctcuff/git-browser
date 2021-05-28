@@ -73,6 +73,8 @@ class JupyterRenderer extends React.Component<
         isLoading: false
       })
     } catch (err) {
+      Logger.error(err)
+
       this.setState({
         isLoading: false,
         hasError: true
@@ -90,9 +92,7 @@ class JupyterRenderer extends React.Component<
         import('dompurify')
       ])
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.nb = nb
+      this.nb = nb.default
       this.MarkdownIt = MarkdownIt.default
       this.hljs = hljs.default
       this.Anser = anser.default
@@ -128,16 +128,11 @@ class JupyterRenderer extends React.Component<
       return md.render(str)
     }
 
-    try {
-      const ipynb = JSON.parse(content)
-      const notebook = nb.parse(ipynb)
-      const HTMLString = notebook.render().outerHTML
+    const ipynb = JSON.parse(content)
+    const notebook = nb.parse(ipynb)
+    const HTMLString = notebook.render().outerHTML
 
-      return HTMLString
-    } catch (err) {
-      Logger.error(err)
-      throw err
-    }
+    return HTMLString
   }
 
   sanitizeNotebook(content: string): string {
