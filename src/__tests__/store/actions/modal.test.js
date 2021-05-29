@@ -13,7 +13,7 @@ describe('modal actions', () => {
     expect(actions.showModal(modalType, mockProps)).toEqual({
       type: 'SHOW_MODAL',
       payload: {
-        modalType: modalType,
+        modalType,
         modalProps: mockProps
       }
     })

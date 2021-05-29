@@ -19,8 +19,8 @@ describe('Logger', () => {
     Logger.error(...args)
 
     expect(log).toHaveBeenCalledWith(...args)
-    expect(warn).toHaveBeenCalledWith('WARNING:', ...args)
-    expect(error).toHaveBeenCalledWith('ERROR:', ...args)
+    expect(warn).toHaveBeenCalledWith(...args)
+    expect(error).toHaveBeenCalledWith(...args)
   })
 
   test('does not write messages if not in debug mode', () => {

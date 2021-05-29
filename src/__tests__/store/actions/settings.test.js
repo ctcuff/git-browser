@@ -3,7 +3,7 @@ import Logger from 'src/scripts/logger'
 
 describe('settings actions', () => {
   beforeEach(() => {
-    document.documentElement.innerHTML = /*html*/ `
+    document.documentElement.innerHTML = /* html */ `
       <head>
         <link title="theme-light">
         <link title="theme-dark" disabled>
@@ -35,7 +35,7 @@ describe('settings actions', () => {
   test('setTheme toggles link elements and body class', () => {
     const lightStyle = document.querySelector('link[title="theme-light"]')
     const darkStyle = document.querySelector('link[title="theme-dark"]')
-    const body = document.body
+    const { body } = document
     const loggerSpy = jest.spyOn(Logger, 'warn')
 
     actions.setTheme('theme-dark')

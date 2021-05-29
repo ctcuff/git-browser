@@ -183,9 +183,9 @@ describe('URLUtil', () => {
       raw: true
     })
 
-    expect(url).toEqual(`https://github.com/user/repo/blob/main/src/test.js`)
+    expect(url).toEqual('https://github.com/user/repo/blob/main/src/test.js')
     expect(rawUrl).toEqual(
-      `https://raw.githubusercontent.com/user/repo/main/src/test.js`
+      'https://raw.githubusercontent.com/user/repo/main/src/test.js'
     )
   })
 
@@ -210,7 +210,7 @@ describe('URLUtil', () => {
     global.fetch = jest.fn().mockReturnValue(Promise.resolve(mockResp))
 
     expect(async () => {
-      return await URLUtil.downloadGithubFile({
+      return URLUtil.downloadGithubFile({
         repoPath: 'user/repo',
         branch: 'main',
         filePath: 'src/test.js'
@@ -220,7 +220,7 @@ describe('URLUtil', () => {
     global.fetch = jest.fn().mockReturnValue(Promise.reject())
 
     expect(async () => {
-      return await URLUtil.downloadGithubFile({
+      return URLUtil.downloadGithubFile({
         repoPath: 'user/repo',
         branch: 'main',
         filePath: 'src/test.js'
